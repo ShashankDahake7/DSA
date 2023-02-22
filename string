@@ -1,1 +1,63 @@
+// Reverse string
+
+class Solution {
+public:
+    void reverseString(vector<char>& s) {
+        int i=0,j=s.size()-1;
+        while(i<j){
+            swap(s[i++],s[j--]);
+        }
+    }    
+};
+
+// Palindrome String
+
+class Solution{
+public:
+	int isPalindrome(string S)
+	{
+        int start=0;
+        int end=S.length()-1;
+        while(start<=end){
+             if(S[start++]!=S[end--]){
+                return 0;
+             }
+        }
+        return 1;
+	}
+};
+
+// Print all the duplicates in the input string
+
+// C++ program to count all duplicates
+// from string using maps
+#include <bits/stdc++.h>
+using namespace std;
+void printDups(string str)
+{
+	map<char, int> count;
+	for (int i = 0; i < str.length(); i++) {
+		count[str[i]]++;
+	}
+
+	for (auto it : count) {
+		if (it.second > 1)
+			cout << it.first << ", count = " << it.second
+				<< "\n";
+	}
+}
+/* Driver code*/
+int main()
+{
+	string str = "test string";
+	printDups(str);
+	return 0;
+}
+
+// Why Java Strings are Immutable?
+
+https://www.geeksforgeeks.org/java-string-is-immutable-what-exactly-is-the-meaning/
+
+// Check if given strings are rotations of each other or not
+
 
