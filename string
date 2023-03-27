@@ -60,4 +60,190 @@ https://www.geeksforgeeks.org/java-string-is-immutable-what-exactly-is-the-meani
 
 // Check if given strings are rotations of each other or not
 
+#include <bits/stdc++.h>
+using namespace std;
+/* Function checks if passed strings (str1 and str2) are rotations of each other */
+bool areRotations(string str1, string str2)
+{
+	/* Check if sizes of two strings are same */
+	if (str1.length() != str2.length())
+		return false;
 
+	string temp = str1 + str1;
+	return (temp.find(str2) != string::npos);
+}
+/* Driver code */
+int main()
+{
+	string str1 = "AACD", str2 = "ACDA";
+
+	// Function call
+	if (areRotations(str1, str2))
+		printf("Strings are rotations of each other");
+	else
+		printf("Strings are not rotations of each other");
+	return 0;
+}
+
+// Check if a string is a valid shuffle of two distinct strings
+
+#include<iostream>
+#include<string>
+using namespace std;
+int main(){
+    string s1,s2;
+    cin>>s1>>s2;
+    string res;
+    cin>>res;
+    int l1=s1.length();
+    int l2=s2.length();
+    int lr=res.length();
+    if((l1+l2)!=lr){
+        cout<<"No";
+    }
+    else{
+        int f=0,i=0,j=0,k=0;
+        while(k<lr){
+            if(i<l1 && s1[i]==res[k]){
+                i++;
+            }
+            else if(j<l2 && s2[j]==res[k]){
+                j++;
+            }
+            else{
+                f=1;
+                break;
+            }
+            k++;
+        }
+        if(i<l1 || j<l2){
+            cout<<"No";
+        }
+        else{
+            cout<<"Yes";
+        }
+    }
+}
+
+// Count and Say
+
+class Solution {
+public:
+    string countAndSay(int n) {
+        if(n==1){
+            return "1";
+        }
+        if(n==2){
+            return "11";
+        }
+        string s="11";
+        for(int i=3;i<=n;i++){
+            string t="";
+            s=s+'&';
+            int c=1;
+            for(int j=1;j<s.length();j++){
+                if(s[j]!=s[j-1]){
+                    t=t+to_string(c);
+                    t=t+s[j-1];
+                    c=1;
+                }
+                else{
+                    c++;
+                }
+            }
+            s=t;
+        }
+        return s;
+    }
+};
+
+// Longest plaindrome in a string
+
+string longestPalin (string S) {
+        // code here
+        int start = 0;
+        int end = 1;
+
+        for(int i=1;i<S.size();i++)
+        {
+            int low = i-1;
+            int high = i;
+            while(low>=0 && high<S.size()&& S[low]==S[high])
+            {
+                if(high-low+1>end)
+                {
+                    start = low;
+                    end = high-low+1;
+                }
+
+                low--;
+                high++;
+            }
+
+            low = i-1;
+            high = i+1;
+            while(low>=0 && high<S.size()&& S[low]==S[high])
+            {
+                if(high-low+1>end)
+                {
+                    start = low;
+                    end = high-low+1;
+                }
+
+                low--;
+                high++;
+            }
+
+        }
+
+        string ans = "";
+        for(int i=start;i<=start+end-1;i++)
+        {
+            ans = ans+S[i];
+        }
+   return ans;
+}
+
+// Longest Repeating subsequence
+
+class Solution {
+    public:
+    int LongestRepeatingSubsequence(string str){
+        int n = str.size();
+        vector <vector <int>> dp(n + 1,vector <int> (n + 1,0));
+        for(int i = 1;i <= n;i++){
+            for(int j = 1;j <=n;j++){
+                if(str[i - 1] == str[j - 1] and i != j){
+                    dp[i][j] = 1 + dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j] = max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        return dp[n][n];
+    }
+};
+
+// Print all subsequences of a string
+
+#include<iostream>
+using namespace std;
+void func(string str,int start,int n,string s){
+    if(start==n){
+        cout<<str<<endl;
+    }
+    else{
+        func(str,start+1,n,s);
+        str=str+s[start];
+        func(str,start+1,n,s);
+    }
+}
+int main(){
+    string s;
+    cin>>s;
+    func("",0,s.length(),s);
+    return 0;
+}
+
+// 
