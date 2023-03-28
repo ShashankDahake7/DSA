@@ -246,4 +246,235 @@ int main(){
     return 0;
 }
 
-// 
+// Permutations of a given string
+
+(Method-1 => Using next_permutation stl)
+class Solution{
+	public:
+		vector<string>find_permutation(string s)
+		{
+		    sort(s.begin(),s.end());
+            vector<string>ans;
+            do{
+                ans.push_back(s);
+            }
+            while(next_permutation(s.begin(),s.end()));
+            return ans;
+        }
+};
+
+(Method-2)
+class Solution{
+    public:
+    void solve(string s,int n,set<string>&st){
+        if(n==0){
+            st.insert(s);
+            return;
+        }
+        
+        for(int i=n;i>=0;i--){
+            string temp=s;
+            swap(temp[i],temp[n]);
+            solve(temp,n-1,st);
+        }
+    }
+    vector<string> find_permutation(string s){
+        int n=s.size();
+        set<string>st;
+            
+        solve(s,n-1,st);
+        vector<string>ans;
+        for(auto i:st){
+            ans.push_back(i);
+        }
+        sort(ans.begin(),ans.end());
+        return ans;
+    }
+};
+
+
+// Split the binary string into substrings with equal number of 0s and 1s
+
+class Solution {
+public:
+    int maxSubStr(string str){
+        int n= str.length();
+        int count=0;
+        int ans=0;
+        for(int i=0;i<n;i++){
+            if(str[i]=='0'){
+                count++;    
+            } 
+            if(str[i]=='1'){
+                count--;
+            } 
+            if(count==0){
+                ans++;
+            }  
+        }
+        if(count!=0){
+            return -1;    
+        } 
+        return ans;
+    }
+};
+
+// Word Wrap
+
+class Solution{
+    public:
+      int solveWordWrap(vector<int>nums, int k){ 
+            int n=nums.size();
+            vector<int> dp(n,1000000000);
+            int ans[n];
+            int cost=0;
+            int curlen=0;
+            dp[n-1]=0;
+            ans[n-1]=n-1;
+            for(int i=n-2;i>=0;i--)
+            {
+                curlen=-1;
+                for(int j=i;j<n;j++)
+                {
+                    curlen+=nums[j]+1;
+                    if(curlen>k)
+                    break;
+                    if(j==n-1)
+                    cost=0;
+                    else
+                    {
+                        cost=pow(k-curlen,2)+dp[j+1];
+                    }
+                    if(cost<dp[i])
+                    {
+                        dp[i]=cost;
+                        ans[i]=j;
+                    }
+                }
+            }
+            return dp[0];
+        } 
+};
+
+// Edit Distance
+
+class Solution{
+    public:
+    int editDistance(string s, string t)
+    {
+        int m = s.length();
+        int n = t.length();
+        vector<vector<int>> dp(m+1, vector<int>(n+1));
+        for (int i = 0; i <= m; i++)
+        {
+            for (int j = 0; j <= n; j++)
+            {
+                if (i == 0)
+                {
+                    dp[i][j] = j;
+                }
+                else if (j == 0)
+                {
+                    dp[i][j] = i;
+                }
+                else if (s[i-1] == t[j-1]) 
+                {
+                    dp[i][j] = dp[i-1][j-1];
+                }
+                else
+                {
+                    dp[i][j] = 1 + min(dp[i-1][j-1], min(dp[i-1][j], dp[i][j-1]));
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};
+
+// Next Permutation
+
+class Solution{
+public:
+    vector<int> nextPermutation(int N, vector<int> arr){
+        int i;
+        int index=-1;
+        for(int i=N-2;i>=0;i--){ // piche se dekho increasing order pe hai array.
+           if(arr[i]<arr[i+1]){  // pehle wo index dhundho jahape ye order break ho raha (BREAKPOINT).
+               index=i;          // agar nehi mila index to index= -1 hi rahega.
+               break;
+           }
+        }
+        // EDGE CASE 
+        if(index==-1){   
+            reverse(arr.begin(),arr.end()); // nahi mila matlab yeh last permutation hai 
+            return arr;                     // so reverse karke return kar do pehla permutation
+        }  
+        
+        for(int i=N-1;i>index;i--){ // ab piche se check karo konsa wala element just
+            if(arr[i]>arr[index]){  // greater hai breakpoint wala element se. array
+                swap(arr[i],arr[index]); // piche se increasing order main hai. so
+                break;  // loop chalake easily find out kar liya konsa just greater hai.
+            }  // ab dono element ko swap kardo.
+        }
+        reverse(arr.begin()+(index+1),arr.end()); // ab jaha pe array ka breakpoint
+        return arr;// mila useke baadke index se baki ka array sort ya reverse kar do.
+    }
+};
+
+// Parenthesis Checker
+
+class Solution
+{
+    public:
+    bool ispar(string x)
+    {
+        stack<char> st;
+        for(int i=0; i < x.length(); i++){
+            char a = x[i];
+            if(a == '[' || a == '(' || a == '{'){
+                st.push(a);
+            }
+            else{
+                if(st.empty()){
+                    return false;
+                }
+                else{
+                    char t = st.top(); // for the top element of the stack
+                    if(t == '(' && a == ')' || t == '[' && a == ']' || t == '{' && a == '}'){
+                        st.pop();
+                    }
+                    else{
+                        return false;
+                    }
+                }
+            }
+        }
+        return st.empty();
+    }
+};
+
+// Word Break
+
+class Solution{
+public:
+// A : given string to search
+// B : vector of available strings
+    int func(int id,string &A,vector<string> &B){
+        string ans = "";
+        if(id >= A.size()){
+            return 1;
+        }
+        for(int i = id;i<A.size();i++){
+            ans += A[i];
+            if(find(B.begin(),B.end(),ans) != B.end()){
+                if(1 and func(i+1,A,B)){
+                    return true;
+                }
+            }
+        }
+        return 0;
+    }
+    int wordBreak(string A, vector<string> &B) {
+       return func(0,A,B);
+    }
+};
