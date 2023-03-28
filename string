@@ -163,7 +163,6 @@ string longestPalin (string S) {
         // code here
         int start = 0;
         int end = 1;
-
         for(int i=1;i<S.size();i++)
         {
             int low = i-1;
@@ -179,7 +178,6 @@ string longestPalin (string S) {
                 low--;
                 high++;
             }
-
             low = i-1;
             high = i+1;
             while(low>=0 && high<S.size()&& S[low]==S[high])
@@ -478,3 +476,235 @@ public:
        return func(0,A,B);
     }
 };
+
+// Rabin-Karp Algorithm
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// d is the number of characters in the input alphabet
+#define d 256
+
+// pat -> pattern , txt -> text , q -> A prime number 
+
+void search(char pat[], char txt[], int q){
+	int M = strlen(pat);
+	int N = strlen(txt);
+	int i, j;
+	int p = 0; // hash value for pattern
+	int t = 0; // hash value for txt
+	int h = 1; // The value of h would be "pow(d, M-1)%q"
+	for (i = 0; i < M - 1; i++)
+		h = (h * d) % q;
+	// Calculate the hash value of pattern and first window of text
+	for (i = 0; i < M; i++) {
+		p = (d * p + pat[i]) % q;
+		t = (d * t + txt[i]) % q;
+	}
+	// Slide the pattern over text one by one
+	for (i = 0; i <= N - M; i++) {
+		// Check the hash values of current window of text and pattern. If the hash values match then only check for characters one by one
+		if (p == t) {
+			/* Check for characters one by one */
+			for (j = 0; j < M; j++) {
+				if (txt[i + j] != pat[j]) {
+					break;
+				}
+			}
+			// if p == t and pat[0...M-1] = txt[i, i+1,...i+M-1]
+			if (j == M)
+				cout << "Pattern found at index " << i
+					<< endl;
+		}
+		// Calculate hash value for next window of text: Remove leading digit, add trailing digit
+		if (i < N - M) {
+			t = (d * (t - txt[i] * h) + txt[i + M]) % q;
+			// We might get negative value of t, converting it to positive
+			if (t < 0)
+				t = (t + q);
+		}
+	}
+}
+int main()
+{
+	char txt[] = "GEEKS FOR GEEKS";
+	char pat[] = "GEEK";
+	// we mod to avoid overflowing of value but we should take as big q as possible to avoid the collison
+	int q = INT_MAX;
+	// Function Call
+	search(pat, txt, q);
+	return 0;
+}
+
+// Longest Prefix Suffix(KMP Algorithm)
+
+class Solution{
+  public:		
+	int lps(string s) {
+        int i=0,j=1,k=1,count=0,n=s.size(); // i : string index , j : pattern index
+        while(i < n-1 and j < n){
+            if(s[i]==s[j]){
+                count++;
+                i++;
+                j++;
+            }
+            else if(s[i]!=s[j]){
+                i=0;
+                k++;
+                count=0;
+                j=k;
+            }
+        }
+        return count;
+    }
+};
+
+// Convert a sentence into its equivalent mobile numeric keypad sequence
+
+#include <bits/stdc++.h>
+using namespace std;
+string printSequence(string arr[], string input)
+{
+    string output = "";
+    // length of input string
+    int n = input.length();
+    for (int i = 0; i < n; i++) {
+        // Checking for space
+        if (input[i] == ' ')
+            output = output + "0";
+
+        else {
+            // Calculating index for each character
+            int position = input[i] - 'A';
+            output = output + arr[position];
+        }
+    }
+    return output;
+}
+int main()
+{
+    // storing the sequence in array
+    string str[]= { "2",   "22",  "222", "3",   "33",   "333", "4",
+                    "44",  "444", "5",   "55",  "555",  "6",   "66",
+                    "666", "7",   "77",  "777", "7777", "8",   "88",
+                    "888", "9",   "99",  "999", "9999" };
+    string input = "GEEKSFORGEEKS";
+    cout << printSequence(str, input);
+    return 0;
+}
+
+// Count the Reversals
+
+int countRev (string s)
+{
+    if(s.size()%2!=0){
+        return -1;
+    }
+    stack<char> st;
+    int c2=0;
+    int c1=0;
+    for(int i=0;i<s.size();i++){
+        if(s[i]=='{'){
+            st.push(s[i]);
+            c2++;
+        }
+        else if(s[i]=='}' && !st.empty() && st.top()=='{'){
+            st.pop();
+            c2--;
+        }
+        else{
+            c1++;
+        }
+    }
+    int ans1 = (c1+1)/2;
+    int ans2 = (c2+1)/2;
+    return (ans1+ans2);
+}
+
+// Count Palindromic Subsequence
+
+class Solution{
+    public:
+    long long int countPS(string str){
+        long long int mod = 1e9 + 7;
+        int n = str.size();
+        vector<vector<long long int>> dp(n, vector<long long int>(n));
+        for (int k = 0; k < n; k++){
+            for (int i = 0, j = k + i; i < n and j < n; i++, j++){
+                if (i == j)
+                    dp[i][j] = 1;
+                else if (j == i + 1){
+                    if (str[i] == str[j])
+                        dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + 1) % mod;
+                    else
+                        dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + mod) % mod;
+                }
+                else{
+                    if (str[i] == str[j])
+                        dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + 1) % mod;
+                    else
+                        dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod - (dp[i + 1][j - 1]) % mod + mod) % mod;
+                }
+            }
+        }
+        return (dp[0][n - 1]) % mod;
+    }
+};
+
+// Count of number of given string in 2D character array
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(*a))
+
+int internalSearch(string needle, int row, int col, string hay[], int row_max, int col_max, int xx){
+	int found = 0;
+	if (row >= 0 && row <= row_max && col >= 0 && col <= col_max && needle[xx] == hay[row][col]){
+		char match = needle[xx];
+		xx += 1;
+		hay[row][col] = 0;
+		if (needle[xx] == 0){
+			found = 1;
+		}
+		else{
+			// through Backtrack searching in every directions
+			found += internalSearch(needle, row, col + 1, hay, row_max, col_max,xx);
+			found += internalSearch(needle, row, col - 1, hay, row_max, col_max,xx);
+			found += internalSearch(needle, row + 1, col, hay, row_max, col_max,xx);
+			found += internalSearch(needle, row - 1, col,hay, row_max, col_max,xx);
+		}
+		hay[row][col] = match;
+	}
+	return found;
+}
+
+// Function to search the string in 2d array
+int searchString(string needle, int row, int col, string str[], int row_count, int col_count)
+{
+	int found = 0;
+	int r, c;
+	for (r = 0; r < row_count; ++r)
+	{
+		for (c = 0; c < col_count; ++c)
+		{
+			found += internalSearch(needle, r, c, str, row_count - 1, col_count - 1, 0);
+		}
+	}
+	return found;
+}
+
+// Driver code
+int main()
+{
+	string needle = "MAGIC";
+	string input[] = { "BBABBM","CBMBBA","IBABBG","GOZBBI","ABBBBC","MCIGAM" };
+	string str[ARRAY_SIZE(input)];
+	int i;
+	for (i = 0; i < ARRAY_SIZE(input); ++i){
+		str[i] = input[i];
+	}
+	cout << "count: " << searchString(needle, 0, 0, str, ARRAY_SIZE(str), str[0].size()) << endl;
+	return 0;
+}
+
