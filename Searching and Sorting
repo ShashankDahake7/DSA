@@ -43,3 +43,1610 @@ vector<int> find(int arr[], int n , int x ){
 
 // Value  equal to index value
 
+class Solution{
+public:
+
+	vector<int> valueEqualToIndex(int arr[], int n) {
+	    vector<int> v;
+        for(int i = 0; i < n; i++){
+            if(arr[i] == i + 1){ 
+                v.push_back(arr[i]);
+            }
+        }
+        return v;
+	}
+};
+
+// Search in a rotated sorted array
+
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int n=nums.size();
+        int left=0;
+        int right=n-1;
+        int mid=left+(right-left)/2;
+        while(left<=right){
+             mid=left+(right-left)/2;
+             if(nums[mid]==target){
+                return mid;    
+             } 
+             if(nums[left]<=nums[mid]){
+                 if(nums[left]<=target && target<=nums[mid]){
+                     right=mid-1;
+                 }
+                 else{ 
+                     left=mid+1;
+                 }
+             }
+            else{
+                if(nums[mid]<=target && target<=nums[right]){
+                    left=mid+1;
+                }
+                else{
+                    right=mid-1;
+                }
+            }
+        }
+        return -1;
+    }
+};
+
+// Count Squares
+
+// Method-1
+class Solution{
+    public:
+    int countSquares(int N) {
+        int count=0;
+        for(int i=1;i<N;i++){
+            if(i*i<N){
+                count++;
+            }
+            else{
+                break;
+            }
+        }
+        return count;
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+    int countSquares(int N) {
+        return sqrt(N-1);
+    }
+};
+
+// Middle of Three
+
+// Method-1
+class Solution{
+    public:
+    int middle(int A, int B, int C){
+        if(A>B && A>C){
+            if(B>C){
+                return B;
+            }
+            else{
+                return C;
+            }
+        }
+        if(B>A && B>C){
+            if(A>C){
+                return A;
+            }
+            else{
+                return C;
+            }
+        }
+        if(C>A && C>B){
+            if(A>B){
+                return A;
+            }
+            else{
+                return B;
+            }
+        }
+        return 0;
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+    int middle(int A, int B, int C){
+        int a[3]={A,B,C};
+        sort(a,a+3);
+        return a[1];
+    }
+};
+
+// Method-3(short of method-1)
+class Solution{
+    public:
+    int middle(int A, int B, int C){
+        int mid = A;
+        if(A>B && A>C){
+            mid = max(B,C);
+        }
+        if(A<B && A<C){
+            mid = min(B,C);
+        }
+        return mid;
+    }
+};
+
+// Optimum location of point to minimize total distance
+
+class Solution{
+    public:
+    double findTotalDistance(tuple<int, int, int> &l, vector<pair<int,int>> &p, int n, double x){
+        double a= get<0>(l);
+        double b = get<1>(l);
+        double c = get<2>(l);
+        double y = -1*(c + (a*x))/b;
+        double distance = 0;
+        for(auto &e : p){
+            double x1 = e.first;
+            double y1 = e.second;
+            distance += sqrt((x1 - x)*(x1 - x) + (y1 - y)*(y1 - y));
+        }
+        return distance;
+    }
+    double findOptimumCost(tuple<int,int,int>l, vector<pair<int,int>>p, int n){
+	    double low = -1e6;
+	    double high = 1e6;
+	    double eps = 1e-6;
+	    while(high - low > eps){
+	        double x1 = low + (high - low)/3;
+	        double x2 = high - (high - low)/3;
+	        double d1 = findTotalDistance(l, p, n, x1);
+	        double d2 = findTotalDistance(l, p, n, x2);
+	        if(d1 > d2){
+	            low = x1;
+	        }
+	        else if(d1 < d2){
+	            high = x2;
+	        }
+	        else{
+	            low = x1;
+	            high = x2;
+	        }
+	    }
+	    return (findTotalDistance(l, p, n, low));
+    }
+};
+
+// Find Missing and repeating number 
+
+// Method-1
+class Solution{
+public:
+    int *findTwoElement(int *arr, int n) {
+        int *ans = new int[2];
+        vector<int> a;
+        for(int i = 0 ; i < n ; i++){
+            a.push_back(arr[i]);
+        }
+        sort(a.begin() , a.end());
+        int f = 0 , s= 1;
+        while(s < n){
+            int check = a[f] ^ a[s];
+            if(!check){
+                ans[0] = a[s];
+                break;
+            }
+            f++;
+            s++;
+        }
+        for(int i = f; i < n ; i++ ){
+            a[i] = a[i+1];
+        }
+        a[n-1] = 0;
+        int missing = 0;
+        for(int i = 0 ; i < n ; i++){
+           missing =  missing ^ a[i];      
+        }
+        for(int i = 1; i <= n ; i++){
+            missing = missing ^ i ;
+        }
+        ans[1] = missing;
+        return ans;
+    }
+};
+
+// Method-2
+class Solution{
+public:
+    int *findTwoElement(int *arr, int n) {
+        int map[n+1] = {0};
+        for(int i=0;i<n;i++)
+        {
+            // INCREMENTING FREQUENCY.
+            map[arr[i]]++;
+        }
+        int missing,repeated;
+        for(int i=0;i<n+1;i++)
+        {
+            // CHECKING FOR MISSING NUMBER.
+            if(map[i] == 0)  missing = i;
+            // CHECKING FOR REPEATED NUMBER.
+            else if(map[i] == 2)  repeated = i;
+        }
+        int ans[2];
+        ans[1] = missing;
+        ans[0] = repeated;
+        int *anss = ans;
+        return anss;
+        // TIME COMPLEXITY -> O(n) , SPACE COMPLEXITY -> O(1)
+    }
+};
+
+// Majority Element
+
+// Method-1
+class Solution{
+  public:
+    int majorityElement(int a[], int size)
+    {
+        int count=1;
+        if(size==1)
+        {
+            return a[0];
+        }
+        sort(a,a+size);
+        for(int i=1;i<size;i++)
+        {
+            if(a[i]==a[i-1])
+            {
+                count++;
+                if(count>(size/2))
+                {
+                    return a[i];
+                }
+            }
+            else{
+                count=1;
+            }
+        }
+        return -1;    
+    }
+};
+
+// Method-2
+ int majorityElement(int a[], int size)
+ {
+        unordered_map<int,int> mp;
+        for(int i=0;i<size;i++){
+            mp[a[i]]++;
+        }
+        for(auto i : mp){
+            if(i.second>size/2){
+                return i.first;
+            }
+        }
+        return -1;
+    }
+};
+
+// Searching in an array where adjacent differ by at most k
+
+int search(int arr[], int n, int x, int k)
+{
+    for(int i=0;i<n;i++){
+        if(arr[i]== x){
+            return i;
+        }
+    }
+    return -1;	
+}  
+
+// Find Pair Given Difference
+
+bool findPair(int a[], int n, int k){
+    sort(a,a+n);
+    for(int i=0;i<n;i++){
+        int l=i+1;
+        int h=n-1;
+        while(l<=h){
+            int m=(l+h)/2;
+            if(a[m]-a[i]==k){ 
+                return true;
+            }
+            if(a[m]-a[i]<k){ 
+                l=m+1;
+            }
+            else{
+                h=m-1;    
+            } 
+        }
+    }
+    return false;
+}
+
+// Find All four sum numbers
+
+class Solution{
+    public:
+    vector<vector<int>> fourSum(vector<int> &a, int sum) {
+       int n = a.size();
+       sort(a.begin(),a.end());
+       set<vector<int>>st;
+       for(int i =0;i<n;i++){
+          int val1 = sum - a[i];
+           for(int j = i+1;j<n;j++){
+               int val2 = val1 - a[j];
+                   int s = j+1,e=n-1;
+                   while(s<e){
+                       if(a[s]+a[e]==val2){
+                           vector<int>v(4);
+                           v[0] = a[i];
+                           v[1] = a[j];
+                           v[2] = a[s];
+                           v[3] = a[e];
+                           st.insert(v);
+                           s++,e--;
+                       }
+                       else if(a[s]+a[e]>val2) e--;
+                       else s++;
+               }
+           }
+       }
+       vector<vector<int>> ans;
+       for(auto i:st) ans.push_back(i);
+       return ans;
+    }
+};
+
+// Stickler theif
+
+class Solution
+{
+    public:
+    int FindMaxSum(int arr[], int n)
+    {
+        if(n<0) return 0;
+        if(n==1) return arr[n];
+        int pick=arr[n-1]+FindMaxSum(arr,n-2);
+        int dpick=0+FindMaxSum(arr,n-1);
+        return max(pick,dpick);
+    }
+};
+
+// Count triplets with sum smaller than X
+
+class Solution{
+	public:
+	long long countTriplets(long long arr[], int n, long long sum)
+	{
+	    sort(arr,arr+n);
+        long long count=0;
+        for(int i=0;i<n;i++){
+            int j=i+1;
+            int k=n-1;
+            while(j<k){
+                int total=arr[i]+arr[j]+arr[k];
+                if(total<sum){
+                    count=count+k-j;
+                    j++;
+                }
+                else{
+                   k--;
+                }
+            }
+        }
+        return count;
+	}
+};
+
+// Merge without extra space
+
+class Solution{
+    public:
+        //Function to merge the arrays.
+        void merge(long long arr1[], long long arr2[], int n, int m) 
+        { 
+            int i = 0, j = 0, k = n - 1;
+            while (i <= k && j < m) {
+                if (arr1[i] < arr2[j])
+                    i++;
+                else {
+                    swap(arr2[j++], arr1[k--]);
+                }
+            }
+
+            sort(arr1, arr1 + n);
+            sort(arr2, arr2 + m);
+        } 
+};
+
+// Zero Sum Subarrays
+
+class Solution{
+public:
+    //Function to count subarrays with sum equal to 0.
+    long long int findSubarray(vector<long long int> &arr, int n ) {
+        int i=0,sum=0,count=0;
+        unordered_map<long long,long long>mp;
+        mp[0]=1;
+        while(i<arr.size()){
+           
+            sum+=arr[i];
+             i++;
+            if(mp.find(sum)!=mp.end()){
+                count+=mp[sum];
+            }
+            mp[sum]++;
+            
+        }
+        return count; 
+    }
+};
+
+// Product array puzzle
+
+class Solution{
+  public:
+    // nums: given vector
+    // return the Product vector P that hold product except self at each index
+    vector<long long int> productExceptSelf(vector<long long int>& nums, int n) {
+        vector<long long int> ans;
+        for(int i = 0;i<n;i++){
+            long long int mul = 1;
+            for(int j = 0;j<n;j++){
+                if(i == j){
+                    continue;
+                }
+                mul = mul * nums[j];
+            }
+            ans.push_back(mul);
+        }
+        return ans;      
+    }
+};
+
+// Sort by Set Bit Count
+
+class Solution{
+    public:
+    void sortBySetBitCount(int arr[], int n){
+        map<int,vector<int>, greater<int>> map;
+        for(int i=0; i<n; i++){
+          int j=arr[i];
+          int c=0;
+           while(j){
+             if(j%2==1)
+             c++;
+              j=j/2;
+           }
+           map[c].push_back(arr[i]);
+        }
+        int index=0;
+        for (auto kv : map) {
+            for (auto const &i : kv.second){
+                arr[index++]=i;
+            }
+        }
+    }
+};
+
+// Minimum swaps to sort
+
+class Solution 
+{
+    public:
+    int minSwaps(vector<int>&nums)
+    {
+        int n=nums.size();
+        vector<int>v=nums;
+        unordered_map<int,int>m;
+        for(int i=0;i<n;i++){
+            m[nums[i]]=i;
+        }
+        sort(v.begin(),v.end());int c=0;
+        for(int i=0;i<n;i++){
+            if(v[i]!=nums[i]){
+                int in=m[v[i]];
+                swap(nums[i],nums[in]);
+                swap(m[nums[i]],m[nums[in]]);
+                c++;
+            }
+        }
+        return c;
+    }
+};
+
+// Bishu and Soldiers
+
+#include <iostream>
+#include <algorithm>
+using namespace std;
+typedef long long ll;
+ll getScore(ll soldiers[],ll n,ll power){
+    ll left=0;
+    ll right=n-1;
+    ll ans=-1;
+    while(left<=right){
+        ll mid=(right+left)/2;        
+        if(soldiers[mid]>power){           
+            right=mid-1;
+        }
+        else{
+            ans=mid;
+            left=mid+1;
+        }
+    }
+    return ans+1;
+};
+int main() {
+    ll num;
+    cin >> num;
+    ll soldiers[num];                               
+    for(ll i=0;i<num;i++){
+    cin>>soldiers[i];
+    }
+    sort(soldiers,soldiers+num);
+    //prepocess the array to find cumulative power using prefix sum algorithm
+    ll sum[num];
+    sum[0]=soldiers[0];
+    for(ll i=1;i<num;i++){
+        sum[i]=sum[i-1]+soldiers[i];
+    }
+    ll Q;
+    cin>>Q;
+    for(ll i=0;i<Q;i++){
+        ll q;
+        cin>>q;
+        ll res=getScore(soldiers,num,q);
+        cout<<res<<" "<<sum[res-1]<<endl;
+    }
+}
+
+// Rasta and kheshtak (Java Solution)
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+public class problem3 {
+
+    /**
+     * @param args
+     */
+    static int[][] matrix1;
+    static int[][] matrix2;
+    static int comparison = 0;
+
+    public static void main(String[] args) throws IOException {
+        // TODO Auto-generated method stub
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String input = br.readLine();
+        String[] parts = input.split(" ");
+        int n = Integer.parseInt(parts[0]);
+        int m = Integer.parseInt(parts[1]);
+        matrix1 = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            input = br.readLine();
+            parts = input.split(" ");
+            for (int j = 0; j < m; j++) {
+                matrix1[i][j] = Integer.parseInt(parts[j]);
+            }
+        }
+        input = br.readLine();
+        parts = input.split(" ");
+        int x = Integer.parseInt(parts[0]);
+        int y = Integer.parseInt(parts[1]);
+        matrix2 = new int[x][y];
+        for (int i = 0; i < x; i++) {
+            input = br.readLine();
+            parts = input.split(" ");
+            for (int j = 0; j < y; j++) {
+                matrix2[i][j] = Integer.parseInt(parts[j]);
+            }
+        }
+        int min = m;
+        if (n < m) {
+            min = n;
+        }
+        if (x < min) {
+            min = x;
+        }
+        if (y < min) {
+            min = y;
+        }
+//        boolean ansSet = false;
+//        for (int i = min; i > 0; i--) {
+//            if (CompareAllSquaresOfGivenSize(i, n, m, x, y)) {
+//                System.out.println(i);
+//                ansSet = true;
+//                break;
+//            }
+//        }
+//        if (!ansSet)
+//            System.out.println(0);
+       
+        System.out.println(Calc(0,min,n,m,x,y,min));
+    }
+    public static int Calc(int start,int end,int n,int m, int x, int y,int maxSquareSide)
+    {
+        if(start==0 && end==0)
+        {
+            return 0;
+        }
+            int mid=(start+end)/2;
+            if(CompareAllSquaresOfGivenSize(mid, n,m,x,y))
+            {
+                if(!CompareAllSquaresOfGivenSize(mid+1, n,m,x,y))
+                {
+                    return mid;
+                }
+                if(mid+1<=maxSquareSide)
+                    return Calc(mid+1,end,n,m,x,y,maxSquareSide);
+                else
+                    return mid;
+            }
+            else
+            {
+                return Calc(start,mid-1,n,m,x,y,maxSquareSide);
+            }
+    }
+    public static boolean CompareAllSquaresOfGivenSize(int size, int n, int m,int x, int y) {
+        for (int startingPointRow1 = 0; startingPointRow1 + size - 1 < n; startingPointRow1++) {
+            for (int startingPointColum1 = 0; startingPointColum1 + size - 1 < m; startingPointColum1++) {
+                for (int startingPointRow2 = 0; startingPointRow2 + size - 1 < x; startingPointRow2++) {
+                    for (int startingPointColum2 = 0; startingPointColum2
+                            + size - 1 < y; startingPointColum2++) {
+                        // System.out.println("matrix1row: "+startingPointRow1 +
+                        // " matrix1Col: " + startingPointColum1 +
+                        // " matrix2row: "+startingPointRow2 +
+                        // " matrix2Col: " + startingPointColum2
+                        // + " size: "+size);
+                        if (compareSquares(startingPointRow1,
+                                startingPointColum1, startingPointRow2,
+                                startingPointColum2, size))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public static boolean compareSquares(int square1Row, int square1Column,int square2Row, int square2Column, int SquareLength) {
+        comparison++;
+        for (int i = 0; i < SquareLength; i++) {
+            for (int j = 0; j < SquareLength; j++) {
+                if (matrix1[square1Row + i][square1Column + j] != matrix2[square2Row
+                        + i][square2Column + j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+
+// Kth smallest number again
+
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+// The following function helps to merge the given intervals
+vector<vector<ll>> merge(vector<vector<ll>>& intervals) {
+	sort(intervals.begin(),intervals.end());
+	vector<vector<ll>>ans;
+	int left=0,right=1,n=intervals.size();
+	while(left<n && right<n) {
+		if(intervals[left][1]<intervals[right][0]) {
+			left=right;
+		}
+		else {
+			if(intervals[left][1]<intervals[right][1]) {
+				intervals[left][1]=intervals[right][1];
+			}
+			intervals[right]={-1,-1};
+		}
+		right++;
+	}
+	for(int i=0;i<n;i++) {
+		if(intervals[i][0]!=-1) {
+			ans.push_back(intervals[i]);
+		}
+	}
+	return ans;
+}
+
+// The following function gives the index no. of the range under which 'k' falls.
+int indexProvider(vector<vector<ll>>&boundaries,ll &k) {
+	if(boundaries[boundaries.size()-1][1]<k) {
+		return -1;
+	}
+	int start=0,end=boundaries.size()-1;
+	while(start<=end) {
+		int mid=(start+(end-start)/2);
+		if(boundaries[mid][0]<=k && boundaries[mid][1]>=k) {
+			return mid;
+		}
+		else if(boundaries[mid][0]>k) {
+			end=mid-1;
+		}
+		else if(boundaries[mid][1]<k) {
+			start=mid+1;
+		}
+	}
+	return -1;
+}
+int main() {
+	int t;
+	cin>>t;
+	while(t--) {
+		int n,q;
+		cin>>n>>q;
+		vector<vector<ll>>ranges;
+		for(int i=0;i<n;i++) {
+			ll a,b;
+			cin>>a>>b;
+			ranges.push_back({a,b});
+		}
+		// Merge the given intervals so that computation can be done for distinct numbers only
+		ranges=merge(ranges);
+
+		// The following vector stores the serial no. range of the given ranges
+		vector<vector<ll>>boundaries(ranges.size(),vector<ll>(2));
+
+		// Populate the vector
+		for(int i=0;i<ranges.size();i++) {
+			ll start=(i==0?1:boundaries[i-1][1]+1);
+			ll end=start+(ranges[i][1]-ranges[i][0]);
+			boundaries[i]={start,end};
+		}
+
+		// Take the input 'q' and answer each query
+		for(int i=0;i<q;i++) {
+			ll k;
+			cin>>k;
+
+			// Get the index of the range under which 'k' falls
+			int index=indexProvider(boundaries,k);
+			if(index==-1) {
+				cout<<-1<<"\n";
+			}
+			else {
+				cout<<ranges[index][0]+(k-boundaries[index][0])<<"\n";
+			}
+		}
+	}
+	return 0;
+}
+
+// Search in a rotated array
+
+class Solution
+{
+    public:
+    int bin(int s,int e,int k,int a[]){  
+        int mid=s+(e-s)/2;
+        while(s<=e)
+        {   
+            if(k==a[mid]){ 
+             return mid;
+            }
+            else if(k>a[mid])
+            {
+                s=mid+1;
+            }
+            else{
+               e=mid-1; 
+            }
+            mid=s+(e-s)/2;
+        }
+        return -1;
+    }
+    int search(int a[], int l, int h, int key){
+        if(h==l && a[0]!=key) return -1;
+        int pivot=0;
+        while(pivot<h+1 && a[pivot]<a[pivot+1] )
+        {
+            pivot++;
+        }
+       if(pivot==h)
+       {
+            return bin(0,h,key,a);
+       }
+      
+       if(key<=a[pivot] && key>a[h])
+       {   
+           return bin(0,pivot,key,a);
+       }
+       else {
+          
+           return bin(pivot+1,h,key,a);
+       }
+    }
+};
+
+// Find pivot element in a rotated array
+
+#include <stdio.h>
+int getPivotElement(int *array, int left, int right){
+   if (right < left) /* Array not rotated */  
+       return -1;
+    
+   /* Only element in sub array */
+   if (right == left) 
+       return left;
+  
+   /* Find the mid element */
+   int middle = (left + right)/2;
+    
+   /* Only the pivot element will be 
+      more than it's next element */
+   if (middle < right && array[middle] > array[middle + 1])
+       return middle;
+ 
+   if (middle > left && array[middle] < array[middle - 1])
+       return middle-1;
+     
+   if (array[left] >= array[middle]){
+      /* Pivot element is between left and mid index */
+       return getPivotElement(array, left, middle-1);
+   } else {
+       /* Pivot element is between mid and right index */
+       return getPivotElement(array, middle + 1, right);
+   }
+}
+int main(){
+    int array[11] = {16, 18, 22, 25, 1, 3, 5, 6, 7, 10, 14};
+    printf("Pivot Element : %d \n", array[getPivotElement(array, 0, 10) + 1]);
+    return 0;
+}
+
+// K-th element of two sorted Arrays
+
+class Solution{
+    public:
+    int kthElement(int arr1[], int arr2[], int n, int m, int k)
+    {
+        vector<int> ans;
+        int i=0,j=0;
+        while(i<n && j<m){
+            if(arr1[i] <= arr2[j]){
+                ans.push_back(arr1[i++]);
+            }else{
+                ans.push_back(arr2[j++]);
+            }
+        }
+        
+        for(;i<n;++i){
+            ans.push_back(arr1[i]);
+        }
+        
+        for(;j<m;++j){
+            ans.push_back(arr2[j]);
+        }
+        
+        return ans[k-1];
+    }
+};
+
+// Aggressive cows
+
+bool isPossible(vector<int> &stalls, int k, int mid, int n) {
+    
+    int cowCount = 1;
+    int lastPos = stalls[0];
+    
+    for(int i=0; i<n; i++ ){
+        
+        if(stalls[i]-lastPos >= mid){
+            cowCount++;
+            if(cowCount==k)
+            {
+                return true;
+            }
+            lastPos = stalls[i];
+        }
+    }
+    return false;
+}
+
+int aggressiveCows(vector<int> &stalls, int k)
+{
+    sort(stalls.begin(), stalls.end());
+   	int s = 0;
+    int n = stalls.size();
+    int e=stalls[n-1];
+    int ans = -1;
+    int mid = s + (e-s)/2;
+    
+    while(s<=e) {
+        if(isPossible(stalls, k, mid, n)) {
+            ans = mid;
+            s = mid + 1;
+        }
+        else
+        {
+            e = mid - 1;
+        }
+        mid = s + (e-s)/2;
+    }
+    return ans;
+}
+
+// Allocate minimum number of pages
+
+class Solution 
+{
+    public:
+    bool IsValid(int arr[],int n,int k,int mid){
+        int student=1;
+        int sum=0;
+        for(int i=0; i<n; i++){
+            sum+=arr[i];
+            if(sum>mid){
+                student++;
+                sum=arr[i];
+            }
+            if(k<student){
+                return false;
+            }
+        }
+        return true;
+    }
+    int findPages(int A[], int N, int M) 
+    {
+        if(N<M){
+            return -1;
+        }
+        int maxi=INT_MIN;
+        int sum=0;
+        for(int i=0; i<N; i++){
+            maxi=max(maxi,A[i]);
+            sum+=A[i];
+        }
+        int start=maxi;
+        int end=sum;
+        int res=-1;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            if(IsValid(A,N,M,mid)==true){
+                res=mid;
+                end=mid-1;
+            }
+            else{
+                start=mid+1;
+            }
+        }
+        return res;
+    }
+};
+
+// EKO - Eko
+
+#include <bits/stdc++.h>
+using namespace std;
+int a[1000005];
+int bsearch(int a[],int n,int k)
+{
+    int lo;
+    int hi;
+    int mid;
+    int i;
+    long long int count;
+    lo = 1;
+    hi = a[n-1];
+    while(lo < hi) {
+        mid = lo + (hi-lo+1)/2;
+        count = 0;
+        for(i = 0; i < n; i++) {
+            if(a[i] > mid) {
+                count = count + (a[i]-mid);
+            }
+        }
+        if(count >= k) {
+            lo = mid;
+        }
+        else {
+            hi = mid-1;
+        }
+    }
+    return lo;
+}
+int main()
+{
+    long long int k;
+    int n;
+    int t;
+    int i;
+    int ans;
+        scanf("%d%lld",&n,&k);
+        for(i = 0; i < n; i++) {
+            scanf("%d",&a[i]);
+        }
+        sort(a,a+n);
+        ans = bsearch(a,n,k);
+        printf("%d\n",ans);
+}
+
+// Weighted Job Scheduling in O(n Log n) time
+
+#include <iostream>
+#include <algorithm>
+using namespace std;
+// A job has start time, finish time and profit.
+struct Job
+{
+	int start, finish, profit;
+};
+// A utility function that is used for sorting events according to finish time
+bool myfunction(Job s1, Job s2)
+{
+	return (s1.finish < s2.finish);
+}
+// A Binary Search based function to find the latest job (before current job) that doesn't conflict with current job. "index" is index of the current job. This function
+// returns -1 if all jobs before index conflict with it. The array jobs[] is sorted in increasing order of finish time.
+int binarySearch(Job jobs[], int index)
+{
+	// Initialize 'lo' and 'hi' for Binary Search
+	int lo = 0, hi = index - 1;
+	// Perform binary Search iteratively
+	while (lo <= hi)
+	{
+		int mid = (lo + hi) / 2;
+		if (jobs[mid].finish <= jobs[index].start)
+		{
+			if (jobs[mid + 1].finish <= jobs[index].start)
+				lo = mid + 1;
+			else
+				return mid;
+		}
+		else
+			hi = mid - 1;
+	}
+	return -1;
+}
+// The main function that returns the maximum possible profit from given array of jobs
+int findMaxProfit(Job arr[], int n)
+{
+	// Sort jobs according to finish time
+	sort(arr, arr+n, myfunction);
+	// Create an array to store solutions of subproblems. table[i] stores the profit for jobs till arr[i] (including arr[i])
+	int *table = new int[n];
+	table[0] = arr[0].profit;
+	// Fill entries in table[] using recursive property
+	for (int i=1; i<n; i++)
+	{
+		// Find profit including the current job
+		int inclProf = arr[i].profit;
+		int l = binarySearch(arr, i);
+		if (l != -1)
+			inclProf += table[l];
+		// Store maximum of including and excluding
+		table[i] = max(inclProf, table[i-1]);
+	}
+	// Store result and free dynamic memory allocated for table[]
+	int result = table[n-1];
+	delete[] table;
+	return result;
+}
+int main()
+{
+	Job arr[] = {{3, 10, 20}, {1, 2, 50}, {6, 19, 100}, {2, 100, 200}};
+	int n = sizeof(arr)/sizeof(arr[0]);
+	cout << "Optimal profit is " << findMaxProfit(arr, n);
+	return 0;
+}
+
+// Arithmetic Number
+
+class Solution{
+public:
+    int inSequence(int A, int B, int C){
+        if(C==0){
+            return A==B;
+        }
+        else if((B-A)%C==0 and (B-A)/C >=0){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+};
+
+// Smallest factorial Number
+
+class Solution
+{
+    public:
+    int result(int mid) {
+        int res = 0;
+        while(mid) {
+            // count no of 5 in any n factorial 
+            res = res + mid/5;
+            mid = mid / 5;
+        } 
+        return res;
+    }
+    int findNum(int n){   
+        // ans between 1 and n*5 becoz 1 <= n <= 10^4
+        int s = 1;
+        int e = n*5;
+        int ans;
+        while(s <= e) {
+            int mid =  s + (e-s)/2;
+            if(result(mid) >= n) {
+                e = mid - 1;
+                ans = mid;
+            }
+            else {
+                s = mid + 1;
+            }
+        }
+        return ans;
+    }        
+};
+
+// Painter's Partition Problem
+
+bool isPossible(vector<int> &boards, int n, int k, int mid) {
+  int PainterCount = 1;
+  int blockCount = 0;
+  for (int i = 0; i < n; ++i) {
+    if (blockCount + boards[i] <= mid) {
+      blockCount += boards[i];
+    } 
+    else {
+      PainterCount++;
+      if (PainterCount > k || boards[i] > mid) {
+        return false;
+      }
+      blockCount = boards[i];
+    }
+  }
+  return true;
+}
+int findLargestMinDistance(vector<int> &boards, int k) {
+  int n = boards.size();
+  int s = 0;
+  int sum = 0;
+  for (int i = 0; i < n; ++i) {
+    sum += boards[i];
+  }
+  int e = sum;
+  int ans = -1;
+  int mid = s + (e - s) / 2;
+  while (s <= e) {
+    if (isPossible(boards, n, k, mid)) {
+      ans = mid;
+      // Left wale bhaag jaenge
+      e = mid - 1;
+    } 
+    else {
+      s = mid + 1;
+    }
+    mid = s + (e - s) / 2;
+  }
+  return ans;
+}
+
+// Roti-Prata
+
+#include <iostream>
+
+using namespace std;
+
+bool isPossible(int p,int cook[],int n,int mid){
+
+    int cnt = 0;
+    for(int i=0;i<n;i++){
+        //for each cook count the pratas
+        int c = 0;
+        int time = mid;
+        int perpratas = cook[i]; // time taken to cook each pratas by ith cook
+        while(time > 0){
+            time = time - perpratas;
+            if( time >= 0){
+                c += 1;
+                perpratas  += cook[i];
+            }
+        }
+        cnt += c;
+        if(cnt >= p)
+            return true;
+    }
+
+    return false;
+}
+
+int minTime(int p,int cook[],int n){
+    int s = 0, e = 10000007;
+    int mid,ans=-1;
+
+    while(s<=e){
+        mid = (s+e)/2;
+        if(isPossible(p,cook,n,mid)){
+            ans = mid;
+            e = mid - 1;
+        }else{
+            s = mid + 1;
+        }
+    }
+
+    return ans;
+}
+
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+        int p;
+        cin>>p;
+        int n;
+        cin>>n;
+        int cook[n];
+        for(int i=0;i<n;i++)
+            cin>>cook[i];
+
+        cout<<minTime(p,cook,n)<<endl;
+    }
+
+    return 0;
+}
+
+// Double-Helix
+
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+int N[2],v[2][10000],jump[2][10000],memo[2][10000];
+bool done[2][10000];
+int solve(int seq, int pos){
+    if(pos == N[seq]) return 0;
+    int &ret = memo[seq][pos];
+    if(!done[seq][pos]){
+        done[seq][pos] = true;
+        ret = -100000000;
+        if(pos + 1 < N[seq]) ret = max(ret,solve(seq,pos+1));
+        else ret = 0;
+        if(jump[seq][pos] != -1) ret = max(ret,solve(1-seq,jump[seq][pos]));
+        ret += v[seq][pos];
+    } 
+    return ret;
+}
+int main(){
+    while(true){
+        scanf("%d",&N[0]);
+        if(N[0] == 0) break;
+        for(int i = 0;i < N[0];++i) scanf("%d",&v[0][i]);
+        scanf("%d",&N[1]);
+        for(int i = 0;i < N[1];++i) scanf("%d",&v[1][i]);
+        memset(jump,-1,sizeof(jump));
+        for(int i = 0,pos = 0;i < N[0];++i){
+            while(pos + 1 < N[1] && v[1][pos] < v[0][i]) ++pos;
+            if(v[1][pos] == v[0][i]) jump[0][i] = pos + 1;
+        }
+        for(int i = 0,pos = 0;i < N[1];++i){
+            while(pos + 1 < N[0] && v[0][pos] < v[1][i]) ++pos;
+            if(v[0][pos] == v[1][i]) jump[1][i] = pos + 1;
+        }   
+        memset(done,false,sizeof(done));
+        printf("%d\n",max(solve(0,0),solve(1,0)));
+    }
+    return 0;
+}
+
+// Subset sums
+
+class Solution{
+    public:
+    vector<int> subsetSums(vector<int> arr, int N)
+    {
+        vector<int> res;
+        for(int i=0; i<(1<<N); i++) {
+            int sum=0;
+            for(int j=0; j<N; j++) {
+                if(i&(1<<j)) sum+=arr[j];
+            }
+            res.push_back(sum);
+        }
+        return res;
+    }
+};
+
+// Find array given subset sums
+
+class Solution {
+public:
+    vector<int> recoverArray(int n, vector<int>& sums) {
+        sort(sums.begin(), sums.end()); 
+        vector<int> ans; 
+        while (n--) {
+            int diff = sums[1] - sums[0]; 
+            unordered_map<int, int> freq; 
+            vector<int> ss0, ss1; 
+            bool on = false; 
+            for (auto& x : sums) 
+                if (!freq[x]) {
+                    ss0.push_back(x); 
+                    freq[x+diff]++; 
+                    if (x == 0) on = true; 
+                } else {
+                    ss1.push_back(x); 
+                    freq[x]--; 
+                }
+            if (on) {
+                ans.push_back(diff); 
+                sums = ss0; 
+            } else {
+                ans.push_back(-diff); 
+                sums = ss1; 
+            }
+        }
+        return ans; 
+    }
+};
+
+// Find conversion count
+
+class Solution{
+     public:
+    // arr[]: Input Array
+    // N : Size of the Array arr[]
+    // Function to count inversions in the array.
+    long long merge(long long arr[],long long temp[],long long left,long long mid,long long right){
+        long long inv_count=0;
+        long long i = left;
+        long long j = mid;
+        long long k = left;
+        while((i <= mid-1) && (j <= right)){
+            if(arr[i] <= arr[j]){
+                temp[k++] = arr[i++];
+            }
+            else
+            {
+                temp[k++] = arr[j++];
+                inv_count = inv_count + (mid - i);
+            }
+        }
+        while(i <= mid - 1)
+            temp[k++] = arr[i++];
+        while(j <= right)
+            temp[k++] = arr[j++];
+        for(i = left ; i <= right ; i++)
+            arr[i] = temp[i];
+        return inv_count;
+    }
+    long long merge_Sort(long long arr[],long long temp[],long long left,long long right){
+        long long mid,inv_count = 0;
+        if(right > left)
+        {
+            mid = (left + right)/2;
+    
+            inv_count += merge_Sort(arr,temp,left,mid);
+            inv_count += merge_Sort(arr,temp,mid+1,right);
+    
+            inv_count += merge(arr,temp,left,mid+1,right);
+        }
+        return inv_count;
+    }
+    long long int inversionCount(long long arr[], long long n){
+        long long temp[n];
+        long long ans = merge_Sort(arr, temp, 0, n-1);
+        return ans;
+    } 
+};
+
+// Implement merge sort in place
+
+// Method-1
+#include <iostream>
+using namespace std;
+// Merges two subarrays of arr[].
+// First subarray is arr[l..m]
+// Second subarray is arr[m+1..r]
+// Inplace Implementation
+void merge(int arr[], int start, int mid, int end)
+{
+	int start2 = mid + 1;
+	// If the direct merge is already sorted
+	if (arr[mid] <= arr[start2]) {
+		return;
+	}
+	// Two pointers to maintain start of both arrays to merge
+	while (start <= mid && start2 <= end) {
+		// If element 1 is in right place
+		if (arr[start] <= arr[start2]) {
+			start++;
+		}
+		else {
+			int value = arr[start2];
+			int index = start2;
+			// Shift all the elements between element 1 element 2, right by 1.
+			while (index != start) {
+				arr[index] = arr[index - 1];
+				index--;
+			}
+			arr[start] = value;
+			// Update all the pointers
+			start++;
+			mid++;
+			start2++;
+		}
+	}
+}
+/* l is for left index and r is right index of the sub-array of arr to be sorted */
+void mergeSort(int arr[], int l, int r)
+{
+	if (l < r) {
+		// Same as (l + r) / 2, but avoids overflow
+		// for large l and r
+		int m = l + (r - l) / 2;
+		// Sort first and second halves
+		mergeSort(arr, l, m);
+		mergeSort(arr, m + 1, r);
+		merge(arr, l, m, r);
+	}
+}
+void printArray(int A[], int size)
+{
+	int i;
+	for (i = 0; i < size; i++)
+		cout <<" "<< A[i];
+	cout <<"\n";
+}
+int main()
+{
+	int arr[] = { 12, 11, 13, 5, 6, 7 };
+	int arr_size = sizeof(arr) / sizeof(arr[0]);
+	mergeSort(arr, 0, arr_size - 1);
+	printArray(arr, arr_size);
+	return 0;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+// Calculating next gap
+int nextGap(int gap)
+{
+	if (gap <= 1)
+		return 0;
+    return (int)ceil(gap / 2.0);
+}
+// Function for swapping
+void swap(int nums[], int i, int j)
+{
+	int temp = nums[i];
+	nums[i] = nums[j];
+	nums[j] = temp;
+}
+// Merging the subarrays using shell sorting
+// Time Complexity: O(nlog n)
+// Space Complexity: O(1)
+void inPlaceMerge(int nums[], int start, int end){
+	int gap = end - start + 1;
+	for(gap = nextGap(gap);
+		gap > 0; gap = nextGap(gap))
+	{
+		for(int i = start; i + gap <= end; i++)
+		{
+			int j = i + gap;
+			if (nums[i] > nums[j])
+				swap(nums, i, j);
+		}
+	}
+}
+// merge sort makes log n recursive calls and each time calls merge() which takes nlog n steps
+// Time Complexity: O(n*log n + 2((n/2)*log(n/2)) + 4((n/4)*log(n/4)) +.....+ 1)
+// Time Complexity: O(logn*(n*log n)) i.e. O(n*(logn)^2)
+// Space Complexity: O(1)
+void mergeSort(int nums[], int s, int e)
+{
+	if (s == e)
+		return;
+	// Calculating mid to slice the array in two halves
+	int mid = (s + e) / 2;
+	// Recursive calls to sort left and right subarrays
+	mergeSort(nums, s, mid);
+	mergeSort(nums, mid + 1, e);
+	inPlaceMerge(nums, s, e);
+}
+int main()
+{
+	int nums[] = { 12, 11, 13, 5, 6, 7 };
+	int nums_size = sizeof(nums) / sizeof(nums[0]);
+	mergeSort(nums, 0, nums_size-1);
+	for(int i = 0; i < nums_size; i++){
+		cout << nums[i] << " ";
+	}
+	return 0;
+}
+
+// Method-3
+#include <bits/stdc++.h>
+using namespace std;
+// Merges two subarrays of arr[].
+// First subarray is arr[l..m]
+// Second subarray is arr[m+1..r]
+// Inplace Implementation
+void mergeInPlace(int a[], int l, int m, int r){
+	// increment the maximum_element by one to avoid collision of 0 and maximum element of array in modulo operation
+	int mx = max(a[m], a[r]) + 1;
+	int i = l, j = m + 1, k = l;
+	while (i <= m && j <= r && k <= r) {
+		// recover back original element to compare
+		int e1 = a[i] % mx;
+		int e2 = a[j] % mx;
+		if (e1 <= e2) {
+			a[k] += (e1 * mx);
+			i++;
+			k++;
+		}
+		else {
+			a[k] += (e2 * mx);
+			j++;
+			k++;
+		}
+	}
+	// process those elements which are left in the array
+	while (i <= m) {
+		int el = a[i] % mx;
+		a[k] += (el * mx);
+		i++;
+		k++;
+	}
+	while (j <= r) {
+		int el = a[j] % mx;
+		a[k] += (el * mx);
+		j++;
+		k++;
+	}
+	// finally update elements by dividing with maximum element
+	for (int i = l; i <= r; i++)
+		a[i] /= mx;
+}
+
+/* l is for left index and r is right index of the sub-array of arr to be sorted */
+void mergeSort(int arr[], int l, int r)
+{
+	if (l < r) {
+		// Same as (l + r) / 2, but avoids overflow for large l and r
+		int m = l + (r - l) / 2;
+		// Sort first and second halves
+		mergeSort(arr, l, m);
+		mergeSort(arr, m + 1, r);
+		mergeInPlace(arr, l, m, r);
+	}
+}
+int main()
+{
+	int nums[] = { 12, 11, 13, 5, 6, 7 };
+	int nums_size = sizeof(nums) / sizeof(nums[0]);
+	mergeSort(nums, 0, nums_size - 1);
+	for (int i = 0; i < nums_size; i++) {
+		cout << nums[i] << " ";
+	}
+	return 0;
+}
+
+// Partitioning and Sorting Arrays with Many Repeated Entries
+
+#include<bits/stdc++.h>
+vector<int> sortArray(vector<int> &arr)
+{
+    if(arr.size()<2)
+        return arr;
+	priority_queue<int,vector<int>,greater<int>> q;
+    for(auto x:arr)
+        q.push(x);
+    int i=0;
+    while(!q.empty())
+    {
+        int x = q.top();
+        q.pop();
+        arr[i++] = x;
+    }
+    return arr;
+}
