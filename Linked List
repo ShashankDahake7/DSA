@@ -552,5 +552,432 @@ int main()
     return 0;
 }
 
-D] Circular Doubly Linked list
+// Reverse a Linked List(Iterative)
 
+class Solution
+{
+    public:
+    //Function to reverse a linked list.
+    struct Node* reverseList(struct Node *head)
+    {
+        Node *curr=head;
+        Node *prev=NULL;
+        Node *forward=NULL;
+        if(head==null || head->next==null){
+            return head;
+        }
+        while(curr!=NULL){
+            forward=curr->next;
+            curr->next=prev;
+            prev=curr;
+            curr=forward;
+        }
+        return prev;
+    }
+};
+
+// Reverse a Linked List(Recursion)
+
+class Solution
+{
+    public:
+    struct Node* reverseList(struct Node *head)
+    {
+        if(head==NULL || head->next==NULL){
+            return head;
+        }
+        Node *rev=reverseList(head->next);
+        head->next->next=head;
+        head->next=NULL;
+        return rev;
+    }
+};
+
+// Reverse a Linked List in groups of given size
+
+class Solution
+{
+    public:
+    struct node *reverse (struct node *head, int k)
+    { 
+        if(head==NULL){
+            return NULL;
+        }
+        //step1-we check that if k group is avaliable or not to reverse
+        int avaliable= k, cnt = 0;
+        node* temp = head;
+        while(avaliable > 0 && temp != NULL){
+            temp = temp -> next;
+            avaliable--;
+        }
+        if(avaliable==0){
+        //step2- we reverse for first k group
+        node* next=NULL;
+        node* curr=head;
+        node* prev=NULL;
+        while(curr!=NULL && cnt<k){
+            next=curr->next;
+            curr->next=prev;
+            prev =curr;
+            curr=next;
+            cnt++;
+        }
+        //step3-we recursively take care of the remaining cases that are left out
+        if(next!=NULL){
+            head->next=reverse(next,k);
+        }
+        //step4 return prev as at last it will be the new head
+        return prev;
+        }
+        //return head as the k group is not present to reverse
+        return head;
+    }
+};
+
+// Detect Loop in a linked list
+
+class Solution
+{
+    public:
+    bool detectLoop(Node* head)
+    {
+        if(head==NULL && head->next==NULL) return false;
+        Node *slow=head;
+        Node *fast=head;
+        while(fast!=NULL && fast->next!=NULL){
+            slow=slow->next;
+            fast=fast->next->next;
+            if(slow==fast){
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+// Delete loop in a linked list
+
+class Solution
+{
+    public:
+    //Function to remove a loop in the linked list.
+    void removeLoop(Node* head)
+    {
+        // code here
+        Node*slow=head;
+        Node*fast=head;
+        while(fast!=NULL && fast->next!=NULL){
+            slow=slow->next;
+            fast=fast->next->next;
+            
+            if(slow==fast){
+                break;
+            }
+            if(slow->next==head){
+                slow->next=NULL;
+                return ;
+            }
+        }
+        if(fast==NULL || fast->next==NULL){
+            return;
+        }
+        slow=head;
+        while(slow->next!=fast->next){
+            slow=slow->next;
+            fast=fast->next;
+        }
+        fast->next=NULL;
+    }
+};
+
+// Find the starting point of the loop in a linked list
+
+class Solution
+{
+    public:
+     //Function to find first node if the linked list has a loop.
+    Node* floydCycle(Node* head)
+    {
+        if(head == NULL){
+            return NULL;
+        }
+        Node* slow = head;
+        Node* fast = head;
+        while(slow!=NULL && fast!=NULL){
+            fast = fast->next;
+            if(fast!=NULL){
+                fast = fast->next;
+            }
+            slow = slow->next;
+            if(slow == fast){
+                return slow;
+            }
+        }
+        return NULL;
+    }
+    int findFirstNode(Node* head)
+    {
+        if(head == NULL){
+            return -1;
+        }
+        Node* meet = floydCycle(head);
+        if(meet == NULL){
+            return -1;
+        }
+        Node* slow = head;
+        while(slow!= meet){
+            slow = slow->next;
+            meet = meet->next;
+        }
+        return slow->data;
+    }
+};
+
+// Remove duplicates in a sorted Linked list
+
+Node * uniqueSortedList(Node * head) {
+    if(head==NULL) return NULL;
+    Node* curr=head;
+    while(curr!=NULL){
+        if(curr->next!=NULL && curr->data==curr->next->data){
+            Node* next_next=curr->next->next;
+            Node* nodeToDelete=curr->next;
+            delete(nodeToDelete);
+            curr->next= next_next;
+        }
+        else{
+            curr=curr->next; 
+        }
+    }
+    return head;
+}
+
+// Remove duplicates in an unsorted Linked List
+
+// Method-1[Brute Force(T.C --> O(n^2),S.C --> O(1))]
+Node *removeDuplicates(Node *head)
+{
+    if(head == NULL) return NULL;
+    Node* curr = head;
+    while(curr != NULL) {
+        Node* temp = curr;
+        while(temp -> next != NULL) {
+            if(curr -> data == temp -> next -> data){
+                Node* next_next = temp -> next -> next;
+                Node* nodeToDelete = temp -> next;
+                nodeToDelete -> next = NULL;
+                delete nodeToDelete;
+                temp -> next = next_next;
+            }
+            else
+                temp = temp -> next;
+        }
+        curr = curr -> next;
+    }
+    return head;
+}
+
+// Method-2
+Node *removeDuplicates(Node *head)
+{
+    if( head == NULL){
+        return NULL;
+    }
+    unordered_map< int, bool> visited;
+    Node *curr = head;
+    while( curr -> next != NULL){
+        visited[curr -> data ] = true;
+        if( visited[curr -> next -> data] == true){
+            curr -> next = curr -> next -> next;
+        }
+        else{
+            curr = curr -> next;
+        }
+    }
+    return head;
+}
+
+// Method-3(sort then use above question approach)
+
+// Move last element to front of a given Linked List
+
+#include <bits/stdc++.h>
+using namespace std;
+class Node {
+public:
+	int data;
+	Node* next;
+};
+/* We are using a double pointer head_ref here because we change head of the linked list inside this function.*/
+void moveToFront(Node** head_ref)
+{
+	/* If linked list is empty, or it contains only one node, then nothing needs to be done,simply return */
+	if (*head_ref == NULL || (*head_ref)->next == NULL)
+		return;
+	/* Initialize second last and last pointers */
+	Node* secLast = NULL;
+	Node* last = *head_ref;
+	/*After this loop secLast contains address of second last node and last contains address of last node in Linked List */
+	while (last->next != NULL) {
+		secLast = last;
+		last = last->next;
+	}
+	/* Set the next of second last as NULL */
+	secLast->next = NULL;
+	/* Set next of last as head node */
+	last->next = *head_ref;
+	/* Change the head pointer to point to last node now */
+	*head_ref = last;
+}
+/* Function to add a node at the beginning of Linked List */
+void push(Node** head_ref, int new_data)
+{
+	/* allocate node */
+	Node* new_node = new Node();
+	/* put in the data */
+	new_node->data = new_data;
+	/* link the old list of the new node */
+	new_node->next = (*head_ref);
+	/* move the head to point to the new node */
+	(*head_ref) = new_node;
+}
+/* Function to print nodes in a given linked list */
+void printList(Node* node)
+{
+	while (node != NULL) {
+		cout << node->data << " ";
+		node = node->next;
+	}
+}
+int main()
+{
+	Node* start = NULL;
+	/* The constructed linked list is: 1->2->3->4->5 */
+	push(&start, 5);
+	push(&start, 4);
+	push(&start, 3);
+	push(&start, 2);
+	push(&start, 1);
+	cout << "Linked list before moving last to front\n";
+	printList(start);
+	// Function call
+	moveToFront(&start);
+	cout << "\nLinked list after removing last to front\n";
+	printList(start);
+	return 0;
+}
+
+// Add 1 to a number represented as linked list
+
+class Solution
+{
+    public:
+    Node* reverse(Node* head)
+    {
+        if(!head || !head->next)
+            return head;
+        Node* curr = head;
+        Node* prev = NULL;
+        Node* Next = head->next;
+        while(curr->next!=NULL)
+        {
+            curr->next = prev;
+            prev = curr;
+            curr = Next;
+            Next = Next->next;
+        }
+        curr->next = prev;
+        return curr;
+    }
+    Node* addOne(Node *head) 
+    {
+        Node* newHead = reverse(head);
+        Node* temp = newHead;
+        while(temp->next != NULL && temp->data == 9)
+        {
+            temp->data = 0;
+            temp = temp->next;
+        }
+        if(temp->data != 9)
+            temp->data += 1;
+        else if(temp->next == NULL && temp->data == 9)
+        {
+            temp->data = 0;
+            temp->next = new Node(1);
+        }
+        return reverse(newHead);
+    }
+};
+
+// Add two numbers represented by Linked List
+
+class Solution
+{
+    public:
+    struct Node *reverse(Node *head){
+        Node *curr=head;
+        Node *prev=NULL;
+        Node *forward=NULL;
+        while(curr!=NULL){
+            forward=curr->next;
+            curr->next=prev;
+            prev=curr;
+            curr=forward;
+        }
+        return prev;
+    }
+    void insertAtTail(struct Node* &head, struct Node* &tail,int val){
+        Node *temp=new Node(val);
+        // empty list
+        if(head==NULL){
+            head=temp;
+            tail=temp;
+            return;
+        }
+        // non-empty list
+        else{
+            tail->next=temp;
+            tail=temp;
+        }
+    }
+    struct Node *add(struct Node* first, struct Node* second){
+        Node *ansHead=NULL;
+        Node *ansTail=NULL;
+        int carry=0;
+        while(first!=NULL || second!=NULL || carry!=0){
+            int val1=0;
+            if(first!=NULL){
+                val1=first->data;
+            }
+            int val2=0;
+            if(second!=NULL){
+                val2=second->data;
+            }
+            int sum=carry+val1+val2;
+            int digit=sum%10;
+            // create node and add in answer linked list
+            insertAtTail(ansHead,ansTail,digit);
+            carry=sum/10;
+            if(first!=NULL){
+                first=first->next;
+            }
+            if(second!=NULL){
+                second=second->next;
+            }
+        }
+        return ansHead;
+    }
+    struct Node* addTwoLists(struct Node* first, struct Node* second)
+    {
+        // reverse the linked lists which are to be added
+        first=reverse(first);
+        second=reverse(second);
+        // perform addition
+        Node *ans=add(first,second);
+        // reverse the answer linked list
+        ans=reverse(ans);
+        return ans;
+    }
+};
+
+// 
