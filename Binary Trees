@@ -1,0 +1,1918 @@
+// Level Order Traversal
+
+// Method-1
+class Solution
+{
+    public:
+    vector<int> levelOrder(Node* node)
+    {
+        vector<int> ans;
+        queue<Node*> q;
+        q.push(node);
+        q.push(NULL);
+        while (!q.empty())
+        {
+            Node* temp = q.front();
+            q.pop();
+            if (temp == NULL) { // purana level complete traverse ho chuka hai
+                if (!q.empty()) { // queue still has some child nodes
+                    q.push(NULL);
+                }
+            }
+            else{
+                ans.push_back(temp->data);
+                if (temp->left)
+                {
+                    q.push(temp->left);
+                }
+                if (temp->right)
+                {
+                    q.push(temp->right);
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+// A binary tree node has data, pointer to left child and a pointer to right child 
+class node {
+public:
+	int data;
+	node *left, *right;
+};
+void printCurrentLevel(node* root, int level);
+int height(node* node);
+node* newNode(int data);
+// Function to print level order traversal a tree
+void printLevelOrder(node* root)
+{
+	int h = height(root);
+	int i;
+	for (i = 1; i <= h; i++)
+		printCurrentLevel(root, i);
+}
+// Print nodes at a current level 
+void printCurrentLevel(node* root, int level)
+{
+	if (root == NULL)
+		return;
+	if (level == 1)
+		cout << root->data << " ";
+	else if (level > 1) {
+		printCurrentLevel(root->left, level - 1);
+		printCurrentLevel(root->right, level - 1);
+	}
+}
+// Compute the "height" of a tree -- the number of	nodes along the longest path from the root node	down to the farthest leaf node.
+int height(node* node)
+{
+	if (node == NULL)
+		return 0;
+	else {
+		// compute the height of each subtree 
+		int lheight = height(node->left);
+		int rheight = height(node->right);
+		// use the larger one 
+		if (lheight > rheight) {
+			return (lheight + 1);
+		}
+		else {
+			return (rheight + 1);
+		}
+	}
+}
+// Helper function that allocates a new node with the given data and NULL left and right pointers. 
+node* newNode(int data)
+{
+	node* Node = new node();
+	Node->data = data;
+	Node->left = NULL;
+	Node->right = NULL;
+	return (Node);
+}
+int main()
+{
+	node* root = newNode(1);
+	root->left = newNode(2);
+	root->right = newNode(3);
+	root->left->left = newNode(4);
+	root->left->right = newNode(5);
+	cout << "Level Order traversal of binary tree is \n";
+	printLevelOrder(root);
+  return 0;
+}
+
+// Reverse Level Order Travrersal
+
+// Method-1
+vector<int> reverseLevelOrder(Node *root)
+{
+    vector<int> ans;
+    if(!root){
+        return ans;
+    }
+    queue<Node *> q;
+    q.push(root);
+    while(!q.empty()){
+        Node *t = q.front();
+        ans.push_back(t->data);
+        if(t->right){
+            q.push(t -> right);
+        }
+        if(t->left){
+            q.push(t-> left);
+        }
+        q.pop();
+    }
+    reverse(ans.begin(),ans.end());
+    return ans;
+}
+
+// Method-2
+vector<int> reverseLevelOrder(Node *root)
+{
+    queue<Node*> q;
+    q.push(root);
+    stack<int> s;
+    vector<int> ans;
+    while(!q.empty())
+    {
+        Node* temp = q.front();
+        q.pop();
+        s.push(temp->data);
+        if(temp->right)
+        {
+            q.push(temp->right);
+        }
+        if(temp->left)
+        {
+            q.push(temp->left);
+        }
+    }
+    while(!s.empty())
+    {
+        int num = s.top();
+        s.pop();
+        ans.push_back(num);
+    }
+    return ans;
+}
+
+// Method-3
+vector<int> reverseLevelOrder(Node *root)
+{
+    map<int,vector<int>>m;
+    vector<int>temp,ans;
+    queue<Node*>q;
+    int level=0;
+    q.push(root);
+    m[0].push_back(root->data);
+    while(!q.empty()){
+        int size=q.size();
+        while(size--){
+            Node*ele=q.front();
+            q.pop();
+            if(ele->left) {q.push(ele->left);temp.push_back(ele->left->data);}
+            if(ele->right) {q.push(ele->right);temp.push_back(ele->right->data);}
+        }
+        level++;
+        for(auto it:temp)
+        m[level].push_back(it);
+        temp.clear();
+    }
+    for (auto it = m.rbegin(); it != m.rend(); ++it) {
+        for (auto val : it->second) {
+            ans.push_back(val);
+        }
+    }
+    return ans;   
+}
+
+// Height of Binary Tree
+
+// Method-1
+class Solution{
+    public:
+    int height(struct Node* node){
+        //base case
+        if(node==NULL){
+            return 0;
+        }
+        int left=height(node->left);
+        int right=height(node->right);
+        int ans=max(left,right)+1;
+        return ans;
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+    //Function to find the height of a binary tree.
+    int height(struct Node* node){
+        // code here 
+        int count=0;
+        queue<Node*>q;
+        q.push(node);
+        q.push(NULL);
+        
+        while(!q.empty()){
+            Node* temp=q.front();
+            q.pop();
+            
+            if(temp==NULL){
+                count++;
+                if(!q.empty()){
+                    q.push(NULL);
+                }
+            }
+            
+            else{
+                if(temp->left) q.push(temp->left);
+                if(temp->right) q.push(temp->right);
+            }
+            
+        }
+        return count;
+    }
+};
+
+// Diameter of a Binary tree
+
+class Solution
+{
+public:
+    pair<int,int> diameterFast(Node *root){
+        if(root == NULL){
+            pair<int,int>p = make_pair(0,0);
+            return p;
+        }
+        pair<int,int> left = diameterFast(root->left);
+        pair<int,int> right = diameterFast(root->right);
+        
+        int op1 = left.first;
+        int op2 = right.first;
+        int op3 = left.second + right.second + 1;
+        
+        pair<int,int>ans;
+        ans.first = max(op1,max(op2,op3));
+        ans.second = max(left.second, right.second)+1;
+        return ans;
+    }
+    int diameter(Node* root) {
+        
+        return diameterFast(root).first;
+    }
+};
+
+// Create a Mirror tree from a given binary tree
+
+
+#include <iostream>
+using namespace std;
+// A binary tree node has data, pointer to left child and a pointer to right child
+typedef struct treenode {
+	int val;
+	struct treenode* left;
+	struct treenode* right;
+} node;
+// Helper function that allocates a new node with the given data and NULL left and right pointers
+node* createNode(int val)
+{
+	node* newNode = (node*)malloc(sizeof(node));
+	newNode->val = val;
+	newNode->left = NULL;
+	newNode->right = NULL;
+	return newNode;
+}
+// Helper function to print Inorder traversal
+void inorder(node* root)
+{
+	if (root == NULL)
+		return;
+	inorder(root->left);
+	cout <<" "<< root->val;
+	inorder(root->right);
+}
+// Mirrorify function takes two trees, original tree and a mirror tree, it recurses on both the trees, but when original tree recurses on left, mirror tree recurses on right and vice-versa
+void mirrorify(node* root, node** mirror)
+{
+	if (root == NULL) {
+		mirror = NULL;
+		return;
+	}
+	// Create new mirror node from original tree node
+	*mirror = createNode(root->val);
+	mirrorify(root->left, &((*mirror)->right));
+	mirrorify(root->right, &((*mirror)->left));
+}
+int main()
+{
+	node* tree = createNode(5);
+	tree->left = createNode(3);
+	tree->right = createNode(6);
+	tree->left->left = createNode(2);
+	tree->left->right = createNode(4);
+	// Print inorder traversal of the input tree
+	cout <<"Inorder of original tree: ";
+	inorder(tree);
+	node* mirror = NULL;
+	mirrorify(tree, &mirror);
+	// Print inorder traversal of the mirror tree
+	cout <<"\nInorder of mirror tree: ";
+	inorder(mirror);
+	return 0;
+}
+
+// Inorder Level Traversal in Binary Tree (Left Node Right [LNR] )
+
+// Method-1 ( Recursively )
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+class node
+{
+public:
+    int data;
+    node *left;
+    node *right;
+    node(int d)
+    {
+        this->data = d;
+        this->left = NULL;
+        this->right = NULL;
+    }
+};
+node *buildTree(node *root)
+{
+    int data;
+    cout << "Enter the data:" << endl;
+    cin >> data;
+    root = new node(data);
+    if (data == -1)
+    {
+        return NULL;
+    }
+    cout << "Enter the data for inserting in left of " << data << endl;
+    root->left = buildTree(root->left);
+    cout << "Enter the data for inserting in right of " << data << endl;
+    root->right = buildTree(root->right);
+    return root;
+}
+void inOrderTraversal(node *root){
+    if(root==NULL){
+        return;
+    }
+    inOrderTraversal(root->left);
+    cout<<root->data<<" ";
+    inOrderTraversal(root->right);
+}
+int main()
+{
+    node *root = NULL;
+    // creating a tree
+    root = buildTree(root);
+    // inorder traversal
+    inOrderTraversal(root);
+    return 0;
+}
+
+// Method-2 ( Iteratively )
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+class node
+{
+public:
+    int data;
+    node *left;
+    node *right;
+    node(int d)
+    {
+        this->data = d;
+        this->left = NULL;
+        this->right = NULL;
+    }
+};
+node *buildTree(node *root)
+{
+    int data;
+    cout << "Enter the data:" << endl;
+    cin >> data;
+    root = new node(data);
+    if (data == -1)
+    {
+        return NULL;
+    }
+    cout << "Enter the data for inserting in left of " << data << endl;
+    root->left = buildTree(root->left);
+    cout << "Enter the data for inserting in right of " << data << endl;
+    root->right = buildTree(root->right);
+    return root;
+}
+void inOrderTraversal(node *root)
+{
+    stack<node *> s;
+    node *curr = root;
+    while (curr != NULL || s.empty() == false)
+    {
+        // Reach the leftmost node of the curr node
+        while (curr != NULL)
+        {
+            // place pointer to a tree node on the stack before traversing the node's left subtree
+            s.push(curr);
+            curr = curr->left;
+        }
+        // curr must be NULL at this point
+        curr = s.top();
+        s.pop();
+        cout << curr->data << " ";
+        // we have visited the node and ist left subtree. Now, its right subtree turn
+        curr = curr->right;
+    }
+}
+int main()
+{
+    node *root = NULL;
+    // creating a tree
+    root = buildTree(root);
+    // inorder traversal
+    inOrderTraversal(root);
+    return 0;
+}
+
+// Preorder Level Traversal in Binary Tree ( Node Left Right [NLR] )
+
+// Method-1 ( Recursively )
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+class node
+{
+public:
+    int data;
+    node *left;
+    node *right;
+    node(int d)
+    {
+        this->data = d;
+        this->left = NULL;
+        this->right = NULL;
+    }
+};
+node *buildTree(node *root)
+{
+    int data;
+    cout << "Enter the data:" << endl;
+    cin >> data;
+    root = new node(data);
+    if (data == -1)
+    {
+        return NULL;
+    }
+    cout << "Enter the data for inserting in left of " << data << endl;
+    root->left = buildTree(root->left);
+    cout << "Enter the data for inserting in right of " << data << endl;
+    root->right = buildTree(root->right);
+    return root;
+}
+void PreOrderTraversal(node *root){
+    if(root==NULL){
+        return;
+    }
+    cout<<root->data<<" ";
+    PreOrderTraversal(root->left);
+    PreOrderTraversal(root->right);
+}
+int main()
+{
+    node *root = NULL;
+    // creating a tree
+    root = buildTree(root);
+    // preorder traversal
+    PreOrderTraversal(root);
+    return 0;
+}
+
+// Method-2 ( Iteratively )
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+class node
+{
+public:
+    int data;
+    node *left;
+    node *right;
+    node(int d)
+    {
+        this->data = d;
+        this->left = NULL;
+        this->right = NULL;
+    }
+};
+node *buildTree(node *root)
+{
+    int data;
+    cout << "Enter the data:" << endl;
+    cin >> data;
+    root = new node(data);
+    if (data == -1)
+    {
+        return NULL;
+    }
+    cout << "Enter the data for inserting in left of " << data << endl;
+    root->left = buildTree(root->left);
+    cout << "Enter the data for inserting in right of " << data << endl;
+    root->right = buildTree(root->right);
+    return root;
+}
+void PreOrderTraversal(node *root)
+{
+    if (root == NULL)
+        return;
+    stack<node *> st;
+    // start from root node (set current node to root node)
+    node *curr = root;
+    // run till stack is not empty or current is not NULL
+    while (!st.empty() || curr != NULL)
+    {
+        // Print left children while exist and keep pushing right into the stack.
+        while (curr != NULL)
+        {
+            cout << curr->data << " ";
+
+            if (curr->right)
+            {
+                st.push(curr->right);
+            }
+            curr = curr->left;
+        }
+        // We reach when curr is NULL, so We take out a right child from stack
+        if (st.empty() == false)
+        {
+            curr = st.top();
+            st.pop();
+        }
+    }
+}
+int main()
+{
+    node *root = NULL;
+    // creating a tree
+    root = buildTree(root);
+    // preorder traversal
+    PreOrderTraversal(root);
+    return 0;
+}
+
+// Postorder Level Traversal in Binary Tree ( Left Right Node [LRN] )
+
+// Method-1 ( Recursively )
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+class node
+{
+public:
+    int data;
+    node *left;
+    node *right;
+    node(int d)
+    {
+        this->data = d;
+        this->left = NULL;
+        this->right = NULL;
+    }
+};
+node *buildTree(node *root)
+{
+    int data;
+    cout << "Enter the data:" << endl;
+    cin >> data;
+    root = new node(data);
+    if (data == -1)
+    {
+        return NULL;
+    }
+    cout << "Enter the data for inserting in left of " << data << endl;
+    root->left = buildTree(root->left);
+    cout << "Enter the data for inserting in right of " << data << endl;
+    root->right = buildTree(root->right);
+    return root;
+}
+void PostOrderTraversal(node *root){
+    if(root==NULL){
+        return;
+    }
+    PostOrderTraversal(root->left);
+    PostOrderTraversal(root->right);
+    cout<<root->data<<" ";
+}
+int main()
+{
+    node *root = NULL;
+    // creating a tree
+    root = buildTree(root);
+    // postorder traversal
+    PostOrderTraversal(root);
+    return 0;
+}
+
+// Method-2 ( Iteratively )
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+class node
+{
+public:
+    int data;
+    node *left;
+    node *right;
+    node(int d)
+    {
+        this->data = d;
+        this->left = NULL;
+        this->right = NULL;
+    }
+};
+node *buildTree(node *root)
+{
+    int data;
+    cout << "Enter the data:" << endl;
+    cin >> data;
+    root = new node(data);
+    if (data == -1)
+    {
+        return NULL;
+    }
+    cout << "Enter the data for inserting in left of " << data << endl;
+    root->left = buildTree(root->left);
+    cout << "Enter the data for inserting in right of " << data << endl;
+    root->right = buildTree(root->right);
+    return root;
+}
+void PostOrderTraversal(node *root)
+{
+    if (root == NULL)
+        return;
+    // Create two stacks
+    stack<node *> s1, s2;
+    // push root to first stack
+    s1.push(root);
+    node *curr;
+    // Run while first stack is not empty
+    while (!s1.empty())
+    {
+        // Pop an item from s1 and push it to s2
+        curr = s1.top();
+        s1.pop();
+        s2.push(curr);
+        // Push left and right children of removed item to s1
+        if (curr->left)
+            s1.push(curr->left);
+        if (curr->right)
+            s1.push(curr->right);
+    }
+    // Print all elements of second stack
+    while (!s2.empty())
+    {
+        curr = s2.top();
+        s2.pop();
+        cout << curr->data << " ";
+    }
+}
+int main()
+{
+    node *root = NULL;
+    // creating a tree
+    root = buildTree(root);
+    // postorder traversal
+    PostOrderTraversal(root);
+    return 0;
+}
+
+// Left View of a binary tree
+
+void solve(Node *root, vector<int> &ans, int level){
+    // base case
+    if (root == NULL){
+        return;
+    }
+    // we entered into a new level
+    if (level == ans.size()){
+        ans.push_back(root->data);
+    }
+    solve(root->left, ans, level + 1);
+    solve(root->right, ans, level + 1);
+}
+vector<int> leftView(Node *root){
+    vector<int> ans;
+    solve(root, ans, 0);
+    return ans;
+}
+
+// Right View of a binary tree
+
+class Solution
+{
+    public:
+    void solve(Node *root, vector<int> &ans, int level)
+    {
+        // base case
+        if (root == NULL)
+        {
+            return;
+        }
+        // we entered into a new level
+        if (level == ans.size())
+        {
+            ans.push_back(root->data);
+        }
+        solve(root->right, ans, level + 1);
+        solve(root->left, ans, level + 1);
+    }
+    vector<int> rightView(Node *root)
+    {
+        vector<int> ans;
+        solve(root, ans, 0);
+        return ans;
+    }
+};
+
+// Top View of a binary tree
+
+class Solution
+{
+    public:
+    vector<int> topView(Node *root)
+    {
+        vector<int> ans;
+        if(root == NULL) 
+        {
+            return ans;
+        }
+        
+        map<int,int> topNode;
+        queue<pair<Node*, int> > q;
+        
+        q.push(make_pair(root, 0));
+        
+        while(!q.empty()) {
+            pair<Node*, int> temp = q.front();
+            q.pop();
+            Node* frontNode = temp.first;
+            int hd = temp.second;
+            
+            //if one value is present for a HD, then do nothing
+            if(topNode.find(hd) == topNode.end())
+                topNode[hd] = frontNode -> data;
+                
+            if(frontNode->left)
+                q.push(make_pair(frontNode->left, hd-1));
+            if(frontNode->right)
+                q.push(make_pair(frontNode->right, hd+1));
+        }
+        
+        for(auto i:topNode) 
+        {
+            ans.push_back(i.second);
+        }
+        return ans;
+    }
+};
+
+// Bottom View of a binary tree
+
+class Solution {
+  public:
+    vector <int> bottomView(Node *root) {
+         vector<int> ans;
+        if(root == NULL) 
+        {
+            return ans;
+        }
+        
+        map<int,int> topNode;
+        queue<pair<Node*, int> > q;
+        
+        q.push(make_pair(root, 0));
+        
+        while(!q.empty()) {
+            pair<Node*, int> temp = q.front();
+            q.pop();
+            Node* frontNode = temp.first;
+            int hd = temp.second;
+            
+            topNode[hd] = frontNode -> data;
+                
+            if(frontNode->left)
+                q.push(make_pair(frontNode->left, hd-1));
+            if(frontNode->right)
+                q.push(make_pair(frontNode->right, hd+1));
+        }
+        
+        for(auto i:topNode) 
+        {
+            ans.push_back(i.second);
+        }
+        return ans;
+    }
+};
+
+// ZigZag Traversal
+
+class Solution
+{
+public:
+    vector<int> zigZagTraversal(Node *root)
+    {
+        vector<int> result;
+        if (root == NULL)
+        {
+            return result;
+        }
+        queue<Node *> q;
+        q.push(root);
+        bool leftToRight = true;
+        while (!q.empty())
+        {
+            int size = q.size();
+            vector<int> ans(size);
+            // level process
+            for (int i = 0; i < size; i++)
+            {
+                Node *frontNode = q.front();
+                q.pop();
+                // normal insert or revrse insert
+                int index = leftToRight ? i : size - i - 1;
+                ans[index] = frontNode->data;
+                if (frontNode->left)
+                {
+                    q.push(frontNode->left);
+                }
+                if (frontNode->right)
+                {
+                    q.push(frontNode->right);
+                }
+            }
+            // direction change karni hai
+            leftToRight = !leftToRight;
+            for (auto i : ans)
+            {
+                result.push_back(i);
+            }
+        }
+        return result;
+    }
+};
+
+// Check for Balanced Tree
+
+class Solution {
+public:
+    pair<bool,int> isBalancedFast(Node *root){
+        if(root == NULL){
+            pair<bool,int> p = make_pair(true,0);
+            return p;
+        }
+        pair<int,int> left = isBalancedFast(root->left);
+        pair<int,int> right = isBalancedFast(root->right);
+        
+        bool leftAns=left.first;
+        bool rightAns=right.first;
+        
+        bool diff = abs(left.second - right.second) <= 1;
+        
+        pair<bool,int> ans;
+        ans.second=max(left.second,right.second)+1;
+        
+        if (leftAns && rightAns && diff)
+        {
+            ans.first=1;
+        }
+        else
+        {
+            ans.first=0;
+        }
+        
+        return ans;
+    }
+    bool isBalanced(Node* root) {
+        return isBalancedFast(root).first;
+    }
+};
+
+// Diagonal Traversal of Binary Tree
+
+vector<int> diagonal(Node *root)
+{
+   vector<int>ans;
+   if(root==NULL)
+   {
+       return ans;
+   }  
+   queue<Node*>q;
+   q.push(root);
+   while(!q.empty())
+   {
+       Node* temp=q.front();
+       q.pop();
+       ans.push_back(temp->data);
+       if(temp->left)
+       {
+           q.push(temp->left);
+       }
+       while(temp->right!=NULL)
+       {
+           temp=temp->right;
+           ans.push_back(temp->data);
+           if(temp->left)
+           {
+               q.push(temp->left);
+           }
+       }
+   }
+   return ans;
+}
+
+// Boundary Traversal of binary tree
+
+class Solution {
+public:
+    void traverseLeft(Node* root, vector<int> &ans) {
+        //base case
+        if( (root == NULL) || (root->left == NULL && root->right == NULL) )
+            return ;
+            
+        ans.push_back(root->data);
+        if(root->left)
+            traverseLeft(root->left, ans);
+        else
+            traverseLeft(root->right, ans);
+            
+    }
+    
+    void traverseLeaf(Node* root, vector<int> &ans) {
+        //base case
+        if(root == NULL)
+            return ;
+            
+        if(root->left == NULL && root->right == NULL) {
+            ans.push_back(root->data);
+            return;
+        }
+        
+        traverseLeaf(root->left, ans);
+        traverseLeaf(root->right, ans);
+        
+    }
+    
+    void traverseRight(Node* root, vector<int> &ans) {
+        //base case
+        if( (root == NULL) || (root->left == NULL && root->right == NULL) )
+            return ;
+        
+        if(root->right)
+            traverseRight(root->right, ans);
+        else
+            traverseRight(root->left, ans);
+            
+        //wapas aagye
+        ans.push_back(root->data);
+            
+    }
+    
+    vector <int> boundary(Node *root)
+    {
+        vector<int> ans;
+        if(root == NULL)
+            return ans;
+            
+        ans.push_back(root->data);
+        
+        //left part print/store
+        traverseLeft(root->left, ans);
+        
+        //traverse Leaf Nodes
+        
+        //left subtree
+        traverseLeaf(root->left, ans);
+        //right subtree
+        traverseLeaf(root->right, ans);
+        
+        //traverse right part
+        traverseRight(root->right, ans);
+        
+        return ans;
+    }
+};
+
+// Construct Binary Tree from String with bracket representation
+
+#include <bits/stdc++.h>
+using namespace std;
+// A binary tree node has data, pointer to left child and a pointer to right child 
+struct Node {
+	int data;
+	Node *left, *right;
+};
+// Helper function that allocates a new node 
+Node* newNode(int data)
+{
+	Node* node = (Node*)malloc(sizeof(Node));
+	node->data = data;
+	node->left = node->right = NULL;
+	return (node);
+}
+// This function is here just to test 
+void preOrder(Node* node)
+{
+	if (node == NULL){
+		return;
+    }
+    printf("%d ", node->data);
+	preOrder(node->left);
+	preOrder(node->right);
+}
+// function to return the index of close parenthesis
+int findIndex(string str, int si, int ei)
+{
+	if (si > ei){
+		return -1;
+    }
+	// Inbuilt stack
+	stack<char> s;
+	for (int i = si; i <= ei; i++) {
+		// if open parenthesis, push it
+		if (str[i] == '('){
+			s.push(str[i]);
+        }
+		// if close parenthesis
+		else if (str[i] == ')') {
+			if (s.top() == '(') {
+				s.pop();
+				// if stack is empty, this is the required index
+				if (s.empty())
+					return i;
+			}
+		}
+	}
+	// if not found return -1
+	return -1;
+}
+// function to construct tree from string
+Node* treeFromString(string str, int si, int ei)
+{
+	// Base case
+	if (si > ei){
+		return NULL;
+    }
+	int num = 0;
+	// In case the number is having more than 1 digit
+	while(si <= ei && str[si] >= '0' && str[si] <= '9')
+	{
+        num *= 10;
+        num += (str[si] - '0');
+        si++;
+	}
+	// new root
+	Node* root = newNode(num);
+	int index = -1;
+	// if next char is '(' find the index of its complement ')'
+	if (si <= ei && str[si] == '('){
+		index = findIndex(str, si, ei);
+    }
+	// if index found
+	if (index != -1) {
+		// call for left subtree
+		root->left = treeFromString(str, si + 1, index - 1);
+		// call for right subtree
+		root->right
+			= treeFromString(str, index + 2, ei - 1);
+	}
+	return root;
+}
+int main()
+{
+	string str = "4(2(3)(1))(6(5))";
+	Node* root = treeFromString(str, 0, str.length() - 1);
+	preOrder(root);
+}
+
+// Binary Tree to DLL
+
+class Solution
+{
+    public: 
+    void solve(Node* root, Node* &prev, Node* head){
+        if(root == NULL){
+            return;
+        }
+        solve(root->left, prev, head);
+        prev->right = root;
+        root->left = prev;
+        prev = root;   
+        solve(root->right, prev, head);
+    }
+    Node * bToDLL(Node *root)
+    {
+       Node* head = new Node(-1);
+       Node* prev = head;
+       solve(root, prev, head);
+       Node* temp = head->right;
+       temp->left = NULL;
+       head->right = NULL;
+       delete head;
+       return temp;
+    }
+};
+
+// Transform to Sum Tree
+
+class Solution {
+  public:
+    int sum(Node* node){
+        if(node==NULL){
+            return 0;
+        }
+        if(node->left==NULL && node->right==NULL){
+            int k=node->data;
+            node->data=0;
+            return k;
+        }
+        int l=sum(node->left);
+        int r=sum(node->right);
+        int k= node->data;
+        node->data=l+r;
+        return node->data + k;
+    }
+    void toSumTree(Node* node)
+    {
+        int left=sum(node->left);
+        int right=sum(node->right);
+        node->data=left+ right;
+    }
+};
+
+// Construct Tree from Inorder & Preorder
+
+class Solution{
+    public:
+    Node* solve(int in[], int pre[], int n, int &index, int s, int e, unordered_map<int, vector<int>> &m){
+        if(index>=n || s>e)
+            return NULL;
+            
+            int element = pre[index++];
+            Node* root = new Node(element);
+            int pos = -1;
+            if(m[element][0] == INT_MIN){
+                 pos = m[element][1];
+                m[element][1] = INT_MIN;
+            }
+            else{
+                pos = m[element][0];
+                m[element][0] = INT_MIN;
+            }
+                
+            root->left = solve(in, pre, n, index, s, pos-1, m);
+            root->right = solve(in, pre, n, index, pos+1, e, m);
+            
+            return root;
+    }  
+    Node* buildTree(int in[],int pre[], int n)
+    {
+        unordered_map<int, vector<int>>index;
+        for(int i= 0; i<n; i++)
+            index[in[i]].push_back(i);
+            
+            int preindex = 0;
+            return solve(in, pre, n, preindex, 0, n-1, index);
+    }
+};
+
+// Minimum swap required to convert binary tree to binary search tree 
+
+#include<bits/stdc++.h>
+using namespace std;
+// Inorder Traversal of Binary Tree
+void inorder(int a[], std::vector<int> &v, int n, int index)
+{
+	// if index is greater or equal to vector size
+	if(index >= n){
+		return;
+    }
+	inorder(a, v, n, 2 * index + 1);	
+	// push elements in vector
+	v.push_back(a[index]);
+	inorder(a, v, n, 2 * index + 2);
+}
+// Function to find minimum swaps to sort an array
+int minSwaps(std::vector<int> &v)
+{
+	std::vector<pair<int,int> > t(v.size());
+	int ans = 0;
+	for(int i = 0; i < v.size(); i++){
+		t[i].first = v[i], t[i].second = i;
+    }
+	sort(t.begin(), t.end());
+	for(int i = 0; i < t.size(); i++)
+	{
+		// second element is equal to i
+		if(i == t[i].second){
+			continue;
+        }
+		else
+		{
+			// swapping of elements
+			swap(t[i].first, t[t[i].second].first);
+			swap(t[i].second, t[t[i].second].second);
+		}		
+		// Second is not equal to i
+		if(i != t[i].second){
+			--i;
+        }
+		ans++;
+	}
+	return ans;
+}
+int main()
+{
+	int a[] = { 5, 6, 7, 8, 9, 10, 11 };
+	int n = sizeof(a) / sizeof(a[0]);
+	std::vector<int> v;
+	inorder(a, v, n, 0);
+	cout << minSwaps(v) << endl;
+}
+
+// Sum Tree
+
+class Solution
+{
+    public:
+    pair<bool,int> solve(Node* root){
+        if(root==NULL){
+            pair<bool,int>p=make_pair(true,0);
+            return p;
+        }
+        if(root->left==NULL && root->right==NULL){
+        pair<bool,int>p=make_pair(true,root->data);
+        return p;
+        }
+        pair<bool,int> leftans=solve(root->left);
+        pair<bool,int> rightans=solve(root->right);
+        bool l=leftans.first;
+        bool r=rightans.first;
+        bool condn=root->data==leftans.second+ rightans.second;
+        pair<bool,int> ans;
+        if(l&&r&&condn){
+            ans.first=true;
+            ans.second=2*root->data;
+        }
+        else{
+            ans.first=false;
+        }
+        return ans;   
+    }
+    bool isSumTree(Node* root)
+    {
+         return solve(root).first;
+    }
+};
+
+// Leaf at same level
+
+class Solution{
+public:
+    vector<int>v;
+    void find(Node * root, int h){
+        if(!root){
+            return;
+        }
+        if(!root->left and !root->right){
+            v.push_back(h);
+        }
+        find(root->left,h+1);
+        find(root->right,h+1);
+    }
+    bool check(Node *root)
+    {
+        find(root,0);
+        for(int i=0;i<v.size()-1;i++){
+            if(v[i]!=v[i+1])
+            return 0;
+        }
+        return 1;
+    }
+};
+
+// Duplicate subtree in Binary Tree
+
+class Solution {
+    public:
+    int checkForSubTree(Node* root1, Node* root2){
+        if(root1 == NULL && root2 == NULL){
+            return 1;
+        }
+        if(root1 != NULL && root2 == NULL){
+            return 0;
+        }
+        if(root1 == NULL && root2 != NULL){
+            return 0;
+        }
+        int left = checkForSubTree(root1->left,root2->left);
+        int right = checkForSubTree(root1->right,root2->right);
+        if(root1 -> data == root2 -> data && left && right){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+    void createMap(Node* root,multimap<int,Node*> &m){
+        if(root == NULL){
+            return;
+        }
+        m.insert({root->data,root});
+        createMap(root->left,m);
+        createMap(root->right,m);
+    }
+    void findSubTree(Node* root,int &ans,multimap<int,Node*> &m){
+        if(root == NULL){
+            return;
+        }
+        int data = root -> data;
+        auto it = m.find(data);
+        if(it->second == root){
+            m.erase(it);
+        }
+        it = m.find(data);
+        if(it != m.end()){
+            if(!(root->left == NULL && root -> right == NULL)){
+                ans = checkForSubTree(root,it -> second);
+            }
+        }
+        if(ans == 0){
+            findSubTree(root->left,ans,m);
+            findSubTree(root -> right,ans,m);
+        }
+    }
+    int dupSub(Node *root) {
+         multimap<int ,Node*> m;
+         createMap(root,m);
+         int ans = 0;
+         findSubTree(root,ans,m);
+         return ans;
+    }
+};
+
+// Check Mirror in N-ary tree
+
+class Solution {
+  public:
+    int checkMirrorTree(int n, int e, int A[], int B[]) {
+        unordered_map<int,stack<int>>m;
+        for(int i=0;i<2*e;i+=2){
+            m[A[i]].push(A[i+1]);
+        }
+        for(int i=0;i<2*e;i+=2){
+            if(m[B[i]].top() != B[i+1]){
+                return 0;
+            }
+            else{
+                m[B[i]].pop();
+            }
+        }
+        return 1;
+    }
+};
+
+// Sum of the Longest Bloodline of a Tree (Sum of nodes on the longest path from root to leaf node)
+
+class Solution{
+public:
+    void solve(Node *root,int sum,int &maxSum,int len,int &maxLen){
+        // base case
+        if(root==NULL){
+            if(len>maxLen){
+                maxLen=len;
+                maxSum=sum;
+            }
+            else if(len==maxLen){
+                maxSum=max(sum,maxSum);
+            }
+            return;
+        }
+        sum=sum+root->data;
+        solve(root->left,sum,maxSum,len+1,maxLen);
+        solve(root->right,sum,maxSum,len+1,maxLen);
+    }
+    int sumOfLongRootToLeafPath(Node *root)
+    {
+        int len=0,maxLen=0,sum=0,maxSum=INT_MIN;
+        solve(root,sum,maxSum,len,maxLen);
+        return maxSum;
+    }
+};
+
+// Check if a given graph is tree or not
+
+#include<iostream>
+#include <list>
+#include <limits.h>
+using namespace std;
+class Graph{
+	int V; // No. of vertices
+	list<int> *adj; // Pointer to an array for adjacency lists
+	bool isCyclicUtil(int v, bool visited[], int parent);
+public:
+	Graph(int V); // Constructor
+	void addEdge(int v, int w); // to add an edge to graph
+	bool isTree(); // returns true if graph is tree
+};
+Graph::Graph(int V){
+	this->V = V;
+	adj = new list<int>[V];
+}
+void Graph::addEdge(int v, int w){
+	adj[v].push_back(w); // Add w to v’s list.
+	adj[w].push_back(v); // Add v to w’s list.
+}
+// A recursive function that uses visited[] and parent to detect cycle in subgraph reachable from vertex v.
+bool Graph::isCyclicUtil(int v, bool visited[], int parent)
+{
+	// Mark the current node as visited
+	visited[v] = true;
+	// Recur for all the vertices adjacent to this vertex
+	list<int>::iterator i;
+	for (i = adj[v].begin(); i != adj[v].end(); ++i){
+		// If an adjacent is not visited, then recur for that adjacent
+		if (!visited[*i]){
+            if (isCyclicUtil(*i, visited, v)){
+                return true;
+            }
+		}
+		// If an adjacent is visited and not parent of current vertex, then there is a cycle.
+		else if (*i != parent){
+    		return true;
+        }
+	}
+	return false;
+}
+// Returns true if the graph is a tree, else false.
+bool Graph::isTree(){
+	// Mark all the vertices as not visited and not part of recursion stack
+	bool *visited = new bool[V];
+	for (int i = 0; i < V; i++){
+		visited[i] = false;
+    }
+	// The call to isCyclicUtil serves multiple purposes. It returns true if graph reachable from vertex 0 is cyclic. It also marks all vertices reachable from 0.
+	if (isCyclicUtil(0, visited, -1)){
+			return false;
+    }
+	// If we find a vertex which is not reachable from 0 (not marked by isCyclicUtil(), then we return false
+	for (int u = 0; u < V; u++){
+		if (!visited[u]){
+		    return false;
+        }
+    }
+	return true;
+}
+int main(){
+	Graph g1(5);
+	g1.addEdge(1, 0);
+	g1.addEdge(0, 2);
+	g1.addEdge(0, 3);
+	g1.addEdge(3, 4);
+	g1.isTree()? cout << "Graph is Tree\n": cout << "Graph is not Tree\n";
+	Graph g2(5);
+	g2.addEdge(1, 0);
+	g2.addEdge(0, 2);
+	g2.addEdge(2, 1);
+	g2.addEdge(0, 3);
+	g2.addEdge(3, 4);
+	g2.isTree()? cout << "Graph is Tree\n": cout << "Graph is not Tree\n";
+	return 0;
+}
+
+// Find largest subtree sum in a tree
+
+
+#include <bits/stdc++.h>
+using namespace std;
+// Structure of a tree node.
+struct Node {
+	int key;
+	Node *left, *right;
+};
+// Function to create new tree node.
+Node* newNode(int key)
+{
+	Node* temp = new Node;
+	temp->key = key;
+	temp->left = temp->right = NULL;
+	return temp;
+}
+// Helper function to find largest subtree sum recursively.
+int findLargestSubtreeSumUtil(Node* root, int& ans)
+{
+	// If current node is null then return 0 to parent node.
+	if (root == NULL){	
+		return 0;
+    }
+	// Subtree sum rooted at current node.
+	int currSum = root->key +
+	findLargestSubtreeSumUtil(root->left, ans) + findLargestSubtreeSumUtil(root->right, ans);
+	// Update answer if current subtree sum is greater than answer so far.
+	ans = max(ans, currSum);
+	// Return current subtree sum to its parent node.
+	return currSum;
+}
+// Function to find largest subtree sum.
+int findLargestSubtreeSum(Node* root)
+{
+	// If tree does not exist, then answer is 0.
+	if (root == NULL)	
+		return 0;
+	// Variable to store maximum subtree sum.
+	int ans = INT_MIN;
+	// Call to recursive function to find maximum subtree sum.
+	findLargestSubtreeSumUtil(root, ans);
+	return ans;
+}
+int main(){
+	/*
+			1
+			/ \
+			/	 \
+		-2	 3
+		/ \	 / \
+		/ \ / \
+		4	 5 -6	 2
+	*/
+	Node* root = newNode(1);
+	root->left = newNode(-2);
+	root->right = newNode(3);
+	root->left->left = newNode(4);
+	root->left->right = newNode(5);
+	root->right->left = newNode(-6);
+	root->right->right = newNode(2);
+	cout << findLargestSubtreeSum(root);
+	return 0;
+}
+
+// Maximum sum of nodes in Binary tree such that no two are adjacent
+
+// Method-1
+#include <bits/stdc++.h>
+using namespace std;
+// A binary tree node structure 
+struct node {
+	int data;
+	struct node *left, *right;
+};
+// Utility function to create a new Binary Tree node
+struct node* newNode(int data)
+{
+	struct node* temp = new struct node;
+	temp->data = data;
+	temp->left = temp->right = NULL;
+	return temp;
+}
+// Declaration of methods
+int sumOfGrandChildren(node* node,map<struct node*, int>& mp);
+int getMaxSum(node* node);
+int getMaxSumUtil(node* node, map<struct node*, int>& mp);
+// method returns maximum sum possible from subtrees rooted at grandChildrens of node 'node'
+int sumOfGrandChildren(node* node,map<struct node*, int>& mp)
+{
+	int sum = 0;
+	// call for children of left child only if it is not NULL
+	if (node->left)
+		sum += getMaxSumUtil(node->left->left, mp) + getMaxSumUtil(node->left->right, mp);
+	// call for children of right child only if it is not NULL
+	if (node->right)
+		sum += getMaxSumUtil(node->right->left, mp)	+ getMaxSumUtil(node->right->right, mp);
+
+	return sum;
+}
+// Utility method to return maximum sum rooted at node 'node'
+int getMaxSumUtil(node* node, map<struct node*, int>& mp)
+{
+	if (node == NULL)
+		return 0;
+	// If node is already processed then return calculated value from map
+	if (mp.find(node) != mp.end())
+		return mp[node];
+	// take current node value and call for all grand children
+	int incl = node->data + sumOfGrandChildren(node, mp);
+	// don't take current node value and call for all children
+	int excl = getMaxSumUtil(node->left, mp) + getMaxSumUtil(node->right, mp);
+	// choose maximum from both above calls and store that in map
+	mp[node] = max(incl, excl);
+	return mp[node];
+}
+// Returns maximum sum from subset of nodes of binary tree under given constraints
+int getMaxSum(node* node)
+{
+	if (node == NULL)
+		return 0;
+	map<struct node*, int> mp;
+	return getMaxSumUtil(node, mp);
+}
+int main()
+{
+	node* root = newNode(1);
+	root->left = newNode(2);
+	root->right = newNode(3);
+	root->right->left = newNode(4);
+	root->right->right = newNode(5);
+	root->left->left = newNode(1);
+	cout << getMaxSum(root) << endl;
+	return 0;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+class Node {
+public:
+	int data;
+	Node *left, *right;
+	Node(int data)
+	{
+		this->data = data;
+		left = NULL;
+		right = NULL;
+	}
+};
+// declare map /dp array as global
+unordered_map<Node*, int> umap;
+int maxSum(Node* root)
+{
+	// base case
+	if (!root){
+		return 0;
+    }
+	// if the max sum from the node is already in map,return the value
+	if (umap[root]){
+		return umap[root];
+    }
+	// if the current node(root) is included in result then find maximum sum
+	int inc = root->data;
+	// if left of node exists, add their grandchildren
+	if (root->left) {
+		inc += maxSum(root->left->left)
+			+ maxSum(root->left->right);
+	}
+	// if right of node exist,add their grandchildren
+	if (root->right) {
+		inc += maxSum(root->right->left)
+			+ maxSum(root->right->right);
+	}
+	// if the current node(root) is excluded, find the maximum sum
+	int ex = maxSum(root->left) + maxSum(root->right);
+	// store the maximum of including & excluding the node in map
+	umap[root] = max(inc, ex);
+	return max(inc, ex);
+}
+int main()
+{
+	Node* root = new Node(10);
+	root->left = new Node(1);
+	root->left->left = new Node(2);
+	root->left->left->left = new Node(1);
+	root->left->right = new Node(3);
+	root->left->right->left = new Node(4);
+	root->left->right->right = new Node(5);
+	cout << maxSum(root);
+	return 0;
+}
+
+// Print all k-sum paths in a binary tree
+
+class Solution{
+    public:
+    void check(Node *root, int k, int &count, int sum, unordered_map<int, int> &mp) {
+        if(root == NULL) 
+            return;
+        sum += root->data;
+        count += mp[sum-k];
+        if(sum == k)
+            count++;
+        mp[sum]++;
+        check(root->left, k, count, sum, mp);
+        check(root->right, k, count, sum, mp);   
+        mp[sum]--;
+    }
+    int sumK(Node *root,int k)
+    { 
+        int count = 0;
+        unordered_map<int, int> mp;
+        check(root, k, count, 0, mp);
+        return count;
+    }
+};
+
+// Lowest Common Ancestor in a Binary Tree
+
+class Solution{
+    public:
+    Node* lca(Node* root ,int n1 ,int n2 )
+    {
+        // base case
+        if(root==NULL){
+            return NULL;
+        }
+        if(root->data==n1 || root->data==n2){
+            return root;
+        }
+        Node *leftAns=lca(root->left,n1,n2);
+        Node *rightAns=lca(root->right,n1,n2);
+        if(leftAns!=NULL && rightAns!=NULL){
+            return root;
+        }
+        else if(leftAns!=NULL && rightAns==NULL){
+            return leftAns;
+        }
+        else if(leftAns==NULL && rightAns!=NULL){
+            return rightAns;
+        }
+        else{
+            return NULL;
+        }
+    }
+};
+
+// Min distance between two given nodes of a Binary Tree
+
+class Solution{
+    public:
+    Node* lca(Node* root, int a, int b) {
+        if(root == NULL || root->data == a || root->data == b){
+            return root;
+        }
+        Node* leftLca = lca(root->left, a, b);
+        Node* rightLca = lca(root->right, a, b);
+        if(rightLca == NULL){
+            return leftLca;
+        }
+        if(leftLca == NULL){
+            return rightLca;
+        }
+        return root;
+    }
+    int lcaDist(Node* root, int n) {
+        if(root == NULL){
+            return -1;
+        }
+        if(root->data == n){
+            return 0;
+        }
+        int leftDist = lcaDist(root->left, n);
+        int rightDist = lcaDist(root->right, n);
+        if(leftDist == -1 && rightDist == -1){
+            return -1;
+        }
+        else if(leftDist == -1){
+            return rightDist + 1;
+        }
+        else{
+            return leftDist + 1;
+        }
+    }
+    int findDist(Node* root, int a, int b) {
+        Node* ans = lca(root, a, b);
+        return lcaDist(ans, a) + lcaDist(ans, b);
+    }
+};
+
+// Kth ancestor in a binary tree 
+
+// Method-1
+bool solve(Node *root,int &k, int node,int &ans){
+    if(root == NULL) return false;
+    
+    if(root->data == node) return true;
+    bool left = solve(root->left,k,node,ans);
+    bool right = solve(root->right, k,node,ans);
+    
+    if(left||right){
+        k--;
+        if(k==0) ans = root->data;
+        return true;
+    }
+    return false;
+}
+int kthAncestor(Node *root, int k, int node)
+{
+    int ans;
+    solve(root,k,node,ans);
+    if(k>0) return -1;         // If k is greater than required distance b/w nodes.
+    return ans;
+}
+
+// Method-2
+Node* solve(Node* root,int &k,int node){
+    if(root==NULL){
+        return NULL;
+    }
+    if(root->data==node){
+        return root;
+    }
+    Node *leftAns=solve(root->left,k,node);
+    Node *rightAns=solve(root->right,k,node);
+    if(leftAns!=NULL && rightAns==NULL){
+        k--;
+        if(k==0){
+            k=INT_MAX;
+            return root;
+        }
+        return leftAns;
+    }
+    if(leftAns==NULL && rightAns!=NULL){
+        k--;
+        if(k==0){
+            k=INT_MAX;
+            return root;
+        }
+        return rightAns;
+    }
+    return NULL;
+}
+int kthAncestor(Node *root, int k, int node)
+{
+    Node* ans=solve(root,k,node);
+    if((ans==NULL) || (ans->data==node)){
+        return -1;   
+    }
+    else{
+        return ans->data;
+    }
+}
+
+// Duplicate Subtrees
+
+vector<int> find(Node* root,map<vector<int>,pair<int,Node*>>& mp){
+    if(root==NULL){
+        vector<int> vc;
+        return vc;
+    }
+    vector<int> lv = find(root->left,mp);
+    vector<int> rv = find(root->right,mp);
+    vector<int> ans;
+    for(auto i:lv){
+        ans.push_back(i);
+    }
+    ans.push_back(root->data);
+    for(auto i:rv){
+        ans.push_back(i);
+    }
+    mp[ans].first++;
+    mp[ans].second = root;
+    return ans;
+}
+vector<Node*> printAllDups(Node* root)
+{
+   map<vector<int>,pair<int,Node*>> mp;
+   find(root,mp);
+   vector<Node*> vc;
+   for(auto t:mp){
+       if(t.second.first>=2){
+           vc.push_back(t.second.second);
+       }
+   }
+   return vc;
+}
+
+// Check if Tree is Isomorphic
+
+class Solution{
+  public:
+    bool isIsomorphic(Node *root1,Node *root2)
+    {
+        if(root1==NULL && root2==NULL){
+            return true;
+        }
+        if(root1==NULL || root2==NULL){
+            return false;
+        }
+        if(root1->data == root2->data){
+            return ((isIsomorphic(root1->left, root2->right) && isIsomorphic(root1->right, root2->left)) ||
+                    (isIsomorphic(root1->left, root2->left) && isIsomorphic(root1->right, root2->right)));
+        }
+        else{ 
+            return false;
+        }
+    }
+};
