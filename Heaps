@@ -1,0 +1,850 @@
+// Building Heap From Array
+
+#include <bits/stdc++.h>
+using namespace std;
+// To heapify a subtree rooted with node i which is an index in arr[]. N is size of heap
+void heapify(int arr[], int N, int i)
+{
+	int largest = i; // Initialize largest as root
+	int l = 2 * i + 1; // left = 2*i + 1
+	int r = 2 * i + 2; // right = 2*i + 2
+	// If left child is larger than root
+	if (l < N && arr[l] > arr[largest])
+		largest = l;
+	// If right child is larger than largest so far
+	if (r < N && arr[r] > arr[largest])
+		largest = r;
+	// If largest is not root
+	if (largest != i) {
+		swap(arr[i], arr[largest]);
+		// Recursively heapify the affected sub-tree
+		heapify(arr, N, largest);
+	}
+}
+// Function to build a Max-Heap from the given array
+void buildHeap(int arr[], int N)
+{
+	// Index of last non-leaf node
+	int startIdx = (N / 2) - 1;
+	// Perform reverse level order traversal from last non-leaf node and heapify each node
+	for (int i = startIdx; i >= 0; i--) {
+		heapify(arr, N, i);
+	}
+}
+// A utility function to print the array representation of Heap
+void printHeap(int arr[], int N)
+{
+	cout << "Array representation of Heap is:\n";
+	for (int i = 0; i < N; ++i)
+		cout << arr[i] << " ";
+	cout << "\n";
+}
+int main()
+{
+	// Binary Tree Representation of input array
+	//			 1
+	//		 / \
+	//		 3	 5
+	//	 / \	 / \
+	//	 4	 6 13 10
+	// / \ / \
+	// 9 8 15 17
+	int arr[] = {1, 3, 5, 4, 6, 13, 10, 9, 8, 15, 17};
+	int N = sizeof(arr) / sizeof(arr[0]);
+	// Function call
+	buildHeap(arr, N);
+	printHeap(arr, N);
+	// Final Heap:
+	//			 17
+	//		 / \
+	//		 15	 13
+	//		 / \	 / \
+	//	 9	 6 5 10
+	//	 / \ / \
+	//	 4 8 3 1
+	return 0;
+}
+
+
+// Heap Sort
+
+class Solution
+{
+    public:
+    void heapify(int arr[], int n, int i)  
+    {
+        int largest = i;
+        int leftChild = 2 * i + 1;
+        int rightChild = 2 * i + 2;
+        if (leftChild < n && arr[largest] < arr[leftChild]) {
+            largest = leftChild;
+        }
+        if (rightChild < n && arr[largest] < arr[rightChild]) {
+            largest = rightChild;
+        }
+        if (largest != i) {
+            swap(arr[largest], arr[i]);
+            heapify(arr, n, largest);
+        }
+    }
+    void buildHeap(int arr[], int n)  
+    { 
+        for (int i = (n / 2) - 1; i >= 0; i--) {
+            heapify(arr, n, i);
+        }
+    }
+    void heapSort(int arr[], int n)
+    {
+        buildHeap(arr,n);
+        for(int i=n-1;i>=0;i--){
+        //swap
+        swap(arr[0],arr[i]);
+        heapify(arr,i,0);
+    }
+};
+
+// Sliding Window Maximum (Maximum of all subarrays of size K)
+
+// Method-1
+class Solution {
+  public:
+    void insert(stack<int> &stk,int &k)
+    {
+        //base
+        if(stk.empty())
+        {
+            stk.push(k);
+            return;
+        }
+        if(stk.top()<k)
+        {
+            while(!stk.empty()) stk.pop();
+            stk.push(k);
+            return;
+        }
+        int temp=stk.top();
+        stk.pop();
+        insert(stk,k);
+        stk.push(temp);
+    }
+    vector<int> max_of_subarrays(vector<int> arr, int n, int k) {
+        vector<int> ans;
+        stack<int> stk;
+        for(int i=0;i<k;i++)
+        {
+            insert(stk,arr[i]);
+        }
+        ans.push_back(stk.top());
+        for(int i=k;i<n;i++)
+        {
+            if(!stk.empty() && stk.top()==arr[i-k]) stk.pop();
+            insert(stk,arr[i]);
+            ans.push_back(stk.top());
+        }
+        return ans;
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+    vector<int> max_of_subarrays(vector<int> arr, int n, int k) {
+        vector<int> ans;
+        deque<int> q;
+        int i =0;
+        int j =0;
+        for(int i=0; i<n; i++){
+            while( q.size()>0 &&q.back()<arr[i] ){
+                q.pop_back();
+            }
+            q.push_back(arr[i]);
+            if(i<k-1){
+                continue;
+            }
+            else if(i==k-1){
+                ans.push_back(q.front());
+            }
+            else{
+                if(arr[i-k] == q.front()){
+                    q.pop_front();
+                }
+                ans.push_back(q.front());
+            }
+        }
+        return ans;
+    }
+};
+
+// kth largest element
+
+class Solution{
+public:	
+	vector<int> kLargest(int arr[], int n, int k) {
+	   vector<int>v; 
+       priority_queue<int>mheap;
+       for(int i=0;i<n;i++){
+           mheap.push(arr[i]);
+       }
+       for(int i=0;i<k;i++){
+           v.push_back(mheap.top());
+           mheap.pop();
+       }
+     return v;
+    }
+};
+
+// kth smallest element
+
+class Solution{
+    public:
+    // arr : given array
+    // l : starting index of the array i.e 0
+    // r : ending index of the array i.e size-1
+    // k : find kth smallest element and return using this function
+    int kthSmallest(int arr[], int l, int r, int k) {
+        priority_queue<int> pq;
+        for(int i=0;i<k;i++){
+            pq.push(arr[i]);
+        }
+        for(int i=k;i<=r;i++){
+            if(arr[i]<pq.top()){
+                pq.pop();
+                pq.push(arr[i]);
+            }
+        }
+        int ans=pq.top();
+        return ans;
+    }
+};
+
+// Merge k Sorted Arrays
+
+// Method-1
+class Solution
+{
+    public:
+    vector<int> mergeKArrays(vector<vector<int>> arr, int K)
+    {
+        vector<int>v;
+        for(int i=0;i<K;i++){
+            for(int j=0;j<K;j++){
+                v.push_back(arr[i][j]);
+            }
+        }
+        sort(v.begin(),v.end());
+        return v;
+    }
+};
+
+// Method-2
+class Solution
+{
+    public:
+    vector<int> mergeKArrays(vector<vector<int>> a, int k)
+    {
+        vector<int> ans;
+        priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> pq;
+        for(int i=0;i<k;i++) {
+            pq.push({a[i][0], {i,0}});
+        }
+        while(!pq.empty()) {
+            auto t = pq.top();
+            ans.push_back(t.first);
+            pq.pop();
+            int arrayIndex = t.second.first;
+            int elementIndex = t.second.second;
+            if(elementIndex < k-1)
+                pq.push({a[arrayIndex][elementIndex+1], {arrayIndex, elementIndex+1}});
+       }
+       return ans;
+    }
+};
+
+// Merge two binary Max heaps
+
+class Solution{
+    public:
+    vector<int> mergeHeaps(vector<int> &a, vector<int> &b, int n, int m) {
+        priority_queue<int>pq;
+        for(auto i:a){
+            pq.push(i);
+        }
+        for(auto i:b){
+            pq.push(i);
+        }
+        vector<int>ans;
+        while(!pq.empty()){
+            ans.push_back(pq.top());
+            pq.pop();
+        }
+        return ans;
+    }
+};
+
+// K-th Largest Sum Contiguous Subarray
+
+// Method-1
+class Solution{
+public:
+    int kthLargest(vector<int> &Arr,int N,int K){
+        vector<int>sum;
+        for(int i=0; i<N; i++){
+            int add=0;
+            for(int j= i; j<N; j++){
+                add= add+Arr[j];
+                sum.push_back(add);
+                
+            }
+        }
+        sort(sum.begin(), sum.end());
+        return sum[sum.size()-K];
+    }
+};
+
+// Method-2
+class Solution{
+public:
+    int kthLargest(vector<int> &arr,int N,int K){
+        priority_queue<int>pq;
+        for(int i=0;i<N;i++){
+            int sum=0;
+            for(int j=i;j<N;j++){
+                sum=sum+arr[j];
+                pq.push(sum);
+            }
+        }
+       while(K-1>0){
+           pq.pop();
+           K--;
+       }
+       int ans=pq.top();
+       return  ans;
+    }
+};
+
+// Reorganize String
+
+class Solution {
+public:
+    string reorganizeString(string S) {
+        string res="";
+        unordered_map<char,int> mp;
+        priority_queue<pair<int,char>>pq;
+        for(auto s: S){
+            mp[s]+=1;  // count frequency
+        }  
+        for(auto m: mp){
+            pq.push(make_pair(m.second,m.first)); // store in pair, frequencies with chars
+        }
+        while(pq.size() > 1)
+        {
+            auto top1 = pq.top(); 
+            pq.pop(); // pick the top most frequency element and pop it
+            auto top2 = pq.top(); 
+            pq.pop(); // pick the top most frequency element and pop it
+            res += top1.second; // add both chars into our resultant string
+            res += top2.second;
+            top1.first -= 1; // reduce their frequencies by 1
+            top2.first -= 1;
+            if(top1.first > 0){ 
+                pq.push(top1); // if their frequency is still positive push to the priority queue
+            }
+            if(top2.first > 0){
+                pq.push(top2);
+            }
+        }
+        if(!pq.empty())
+        {
+            if(pq.top().first > 1){
+                return ""; // if the top chars frequency is still greater than 1, it's impossible to create
+            }
+            else{ 
+                res += pq.top().second; // else add to the resultant string
+            }
+        }
+        return res;
+    }
+};  
+
+// Merge K sorted linked lists
+
+// Method-1
+class Solution{
+  public:
+    Node * mergeKLists(Node *arr[], int K)
+    {
+        vector<int>v;
+        Node* curr=NULL;
+        for(int i=0; i<K; i++){
+        Node* curr=arr[i];
+            while(curr){
+                v.push_back(curr->data);
+                curr=curr->next;
+            }
+        }
+        sort(v.begin(),v.end());
+        Node*temp=new Node(-1);
+        Node*head=temp;
+        for(auto it:v){
+            Node*t=new Node(it);
+            temp->next=t;
+            temp=t;
+        }
+        return head->next;
+    }
+};
+
+// Method-2
+class Solution
+{
+    //Function to merge K sorted linked list.
+    Node mergeKList(Node[]arr,int K) {
+        //Add your code here.
+        if(arr == null || arr.length == 0)
+            return null;
+        return helper(arr, 0, arr.length-1);
+    }
+    
+    Node merge(Node left, Node right) {
+        Node head = new Node(-1);
+        Node temp = head;
+        while(left != null && right != null) {
+            if(left.data < right.data) {
+                temp.next = left;
+                left = left.next;
+            }
+            else {
+                temp.next = right;
+                right = right.next;
+            }
+            temp = temp.next;
+        }
+        while(left != null) {
+            temp.next = left;
+            left = left.next;
+            temp = temp.next;
+        }
+        while(right != null) {
+            temp.next = right;
+            right = right.next;
+            temp = temp.next;
+        }
+        return head.next;
+    }
+
+    Node helper(Node[] lists, int st, int end) {
+        if(st == end)
+            return lists[st];
+        int mid = (st+end)/2;
+        Node left = helper(lists, st, mid);
+        Node right = helper(lists, mid+1, end);
+        return merge(left, right);
+    }
+}
+
+// Smallest range in K lists
+
+class Solution{
+    public:
+    class Node{
+        public:
+        int data,row,col;
+        Node(int a,int b,int c){
+            data=a;
+            row=b;
+            col=c;
+        }
+    };
+    class cmp{
+        public:
+        bool operator()(Node *a,Node *b){ 
+        return a->data>b->data;
+        }
+    };
+    pair<int,int> findSmallestRange(int arr[][N], int n, int k)
+    {
+        priority_queue<Node*,vector<Node*>,cmp>q;
+        int start=INT_MAX,end=INT_MIN;
+        for(int i=0;i<k;i++){
+            q.push(new Node(arr[i][0],i,0));
+            start=min(start,arr[i][0]);
+            end=max(end,arr[i][0]);
+        }
+        int mini=start,maxi=end;
+        while(!q.empty()){
+            Node *top=q.top();
+            q.pop();
+            mini=top->data;
+            int i=top->row;
+            int j=top->col;
+            if(maxi-mini<end-start){
+                start=mini;
+                end=maxi;
+            }
+            if(j+1<n) {
+                q.push(new Node(arr[i][j+1],i,j+1));
+                maxi=max(maxi,arr[i][j+1]);
+            }else break;
+        }
+    return make_pair(start,end);    
+    }
+};
+
+// Find median in a stream
+
+// 1. Create Two Heaps - Min Heap and Max Heap.
+// 2. Max Heap will take first half and give the middle element at top.
+// 3. Min Heap will take the second Half and will give the middle element
+//   at top.
+// 4. balanceHeaps() - will take care that size diff. will not exceed 1.
+// 5. Thus, all small elements are in first Max Heap and all big Elements
+//   are in second i.e. small elements. 
+//   (This is important statement read it carefully try to think
+//     how to implement above functionality)
+// 5. For Odd Size: Max Heap top will be the median
+// 6. For Even Size: (Max Heap top + Min Heap top) / 2
+
+class Solution
+{   
+    priority_queue<double> first;
+    priority_queue<double, vector<double>, greater<double>> second;
+    public:
+    void insertHeap(int &x) {
+        // make sure that first will take only small elements 
+        // and if this will create unbalanced sizes then balanceHeaps() will
+        // take care of this and send the smallest element from second heap to 
+        // first and thus both heaps will have equal/mid elements and there 
+        // top will give the medians :)
+        if(first.size() == 0 || first.top() > x) first.push(x);
+        else second.push(x);   
+        balanceHeaps();
+    }
+    void balanceHeaps() {
+        if(first.size() > second.size() + 1) {
+            second.push(first.top()); 
+            first.pop();       
+        } 
+        else if(second.size() > first.size()) {
+            first.push(second.top()); 
+            second.pop();
+        }
+    }
+    //Function to return Median.
+    double getMedian() {
+        double median;
+        if(first.size() == second.size()) {
+            median = (first.top() + second.top()) / 2.0;
+        }
+        else {
+            median = first.top();
+        }
+        return median;
+    }
+};
+
+// Is Binary Tree Heap
+
+class Solution {
+  public:
+      int countNodes(struct Node* root){
+          if(root == NULL)
+          return 0;
+          int ans = 1 + countNodes(root->left) + countNodes(root->right);
+          return ans;
+      }
+      bool isCBT(struct Node* root, int i, int cnt){
+          if(root == NULL){
+              return true;
+          }
+          if(i >= cnt){
+              return false;
+          }
+          else{
+              bool left = isCBT(root->left, 2*i+1, cnt);
+              bool right = isCBT(root->right, 2*i+2, cnt);
+              return (left && right);
+          }
+      }
+      bool isMaxOrder(struct Node* root){
+          if(root->left == NULL && root->right == NULL){
+              return true;
+          }
+          if(root->right == NULL){
+              return root->data > root->left->data;
+          }
+          else{
+              bool left = isMaxOrder(root->left);
+              bool right = isMaxOrder(root->right);
+              return (left && right && root->data > root->left->data && root->data > root->right->data);
+          }
+      }
+    bool isHeap(struct Node* tree) {
+        int index = 0;
+        int countNode = countNodes(tree);
+        if(isCBT(tree, index, countNode) && isMaxOrder(tree)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+};
+
+// Minimum Cost of ropes
+
+class Solution
+{
+    public:
+    long long minCost(long long arr[], long long n) {
+        long long cost=0;
+        priority_queue<long long,vector<long long>,greater<long long>> pq;
+        for(int i=0;i<n;i++){
+            pq.push(arr[i]);
+        }
+        while(pq.size()>1){
+            long long a=pq.top();
+            pq.pop();
+            long long b=pq.top();
+            pq.pop();
+            long long sum=a+b;
+            cost+=sum;
+            pq.push(sum);   
+        }
+        return cost;
+    }
+};
+
+// Convert BST to Min Heap
+
+#include <bits/stdc++.h>
+using namespace std;
+// Structure of a node of BST
+struct Node {
+	int data;
+	Node *left, *right;
+};
+// Helper function that allocates a new node with the given data and NULL left and right pointers. 
+struct Node* getNode(int data)
+{
+	struct Node* newNode = new Node;
+	newNode->data = data;
+	newNode->left = newNode->right = NULL;
+	return newNode;
+}
+// function prototype for preorder traversal of the given tree
+void preorderTraversal(Node*);
+// function for the inorder traversal of the tree so as to store the node values in 'arr' in sorted order
+void inorderTraversal(Node* root, vector<int>& arr)
+{
+	if (root == NULL)
+		return;
+	// first recur on left subtree
+	inorderTraversal(root->left, arr);
+	// then copy the data of the node
+	arr.push_back(root->data);
+	// now recur for right subtree
+	inorderTraversal(root->right, arr);
+}
+// function to convert the given BST to MIN HEAP performs preorder traversal of the tree
+void BSTToMinHeap(Node* root, vector<int> arr, int* i)
+{
+	if (root == NULL)
+		return;
+	// first copy data at index 'i' of 'arr' to the node
+	root->data = arr[++*i];
+	// then recur on left subtree
+	BSTToMinHeap(root->left, arr, i);
+	// now recur on right subtree
+	BSTToMinHeap(root->right, arr, i);
+}
+// utility function to convert the given BST to MIN HEAP
+void convertToMinHeapUtil(Node* root)
+{
+	// vector to store the data of all the nodes of the BST
+	vector<int> arr;
+	int i = -1;
+	// inorder traversal to populate 'arr'
+	inorderTraversal(root, arr);
+	// BST to MIN HEAP conversion
+	BSTToMinHeap(root, arr, &i);
+}
+// function for the preorder traversal of the tree
+void preorderTraversal(Node* root)
+{
+	if (!root)
+		return;
+	// first print the root's data
+	cout << root->data << " ";
+	// then recur on left subtree
+	preorderTraversal(root->left);
+	// now recur on right subtree
+	preorderTraversal(root->right);
+}
+int main()
+{
+	// BST formation
+	struct Node* root = getNode(4);
+	root->left = getNode(2);
+	root->right = getNode(6);
+	root->left->left = getNode(1);
+	root->left->right = getNode(3);
+	root->right->left = getNode(5);
+	root->right->right = getNode(7);
+	// Function call
+	convertToMinHeapUtil(root);
+	cout << "Preorder Traversal:" << endl;
+	preorderTraversal(root);
+	return 0;
+}
+
+// Convert Min Heap to Max Heap
+
+#include <bits/stdc++.h>
+using namespace std;
+// to heapify a subtree with root at given index
+void MaxHeapify(int arr[], int i, int N)
+{
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+    int largest = i;
+    if (l < N && arr[l] > arr[i])
+        largest = l;
+    if (r < N && arr[r] > arr[largest])
+        largest = r;
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+        MaxHeapify(arr, largest, N);
+    }
+}
+// This function basically builds max heap
+void convertMaxHeap(int arr[], int N)
+{
+    // Start from bottommost and rightmost internal node and heapify all internal nodes in bottom up way
+    for (int i = (N - 2) / 2; i >= 0; --i)
+        MaxHeapify(arr, i, N);
+}
+// A utility function to print a given array of given size
+void printArray(int* arr, int size)
+{
+    for (int i = 0; i < size; ++i)
+        cout << arr[i] << " ";
+}
+int main()
+{
+    // array representing Min Heap
+    int arr[] = { 3, 5, 9, 6, 8, 20, 10, 12, 18, 9 };
+    int N = sizeof(arr) / sizeof(arr[0]);
+    printf("Min Heap array : ");
+    printArray(arr, N);
+    // Function call
+    convertMaxHeap(arr, N);
+    printf("\nMax Heap array : ");
+    printArray(arr, N);
+    return 0;
+}
+
+// Rearrange characters in a string tha no two adjacent are same
+
+// Method-1
+class Solution
+{
+    public:
+    string rearrangeString(string str)
+    {
+        int n=str.size();
+        int i=0,j=i+1,flag=0;
+        while(i<n and j<n){
+            if((str[i]!=str[j]) and flag==0){
+                i++,j++;
+            }
+            else if(str[i]==str[j]){
+                flag=1;
+                j++;
+            }
+            else if((str[i]!=str[j]) and flag==1){
+                swap(str[i+1],str[j]);
+                i++,j=i+1;
+                flag=0;
+            }
+        }
+        if(str[n-2]==str[n-1]){
+            i=n-1,j=n-2,flag=0;
+            while(i>=0 and j>=0){
+                if((str[i]!=str[j]) and flag==0){
+                    i--,j--;
+                }
+                else if(str[i]==str[j]){
+                    flag=1;
+                    j--;
+                }
+                else if((str[i]!=str[j]) and flag==1){
+                    swap(str[i-1],str[j]);
+                    i--,j=i-1;
+                    flag=0;
+                }
+            }
+        }
+        for(int i=0;i<n-1;i++){
+            if(str[i]==str[i+1]){
+                return "-1";
+            }
+        }
+        return str;
+    }
+};
+
+// Method-1
+class Solution
+{
+    public:
+    string rearrangeString(string str)
+    {
+        string res = "";
+        priority_queue<pair<int, char>> pq; //max heap
+        int freq[26] = {0};
+        for(int i=0; i<str.size(); i++){
+            freq[str[i] - 'a']++;
+        }
+        for(int i=0; i<26; i++){
+            if(freq[i]){
+                pq.push({freq[i], 'a' + i});
+            }
+        }
+        pair<int,char> dummy(-1,'&');
+        while(!pq.empty()){
+            auto top = pq.top();
+            pq.pop();
+            res += top.second;
+            top.first--;
+            if(dummy.first > 0){
+                pq.push(dummy);
+            }
+            dummy = top;
+        }
+        int n = res.size(), m = str.size();
+        return (n == m) ? res : "-1";
+    }
+};
+
+// Minimum sum
+
+class Solution{   
+public:
+    string solve(int arr[], int n) {
+        sort(arr,arr+n);
+        string ans;
+        int carry=0,sum=0;
+        for(int i=n-1;i>=0;i-=2){
+            sum=arr[i]+arr[i-1]+carry;
+            ans+=to_string(sum%10);
+            carry=sum/10;
+        }
+        if(carry) ans+=to_string(carry);
+        reverse(ans.begin(),ans.end());
+        while(ans[0]=='0' && !ans.empty()){
+            ans.erase(ans.begin());
+            
+        }
+        return ans;
+    }
+};
