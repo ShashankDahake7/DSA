@@ -1,0 +1,1833 @@
+// Insertion in Binary Search Tree ( LevelOrder, ReverseLevelOrder, Inorder, Preorder, Postorder Traversals )
+
+#include<iostream>
+#include<queue>
+#include<stack>
+using namespace std;
+class Node{
+    public:
+        int data;
+        Node* left;
+        Node* right;
+    Node(int d){
+        this->data=d;
+        this->left=NULL;
+        this->right=NULL;
+    }
+};
+Node* levelOrderTraversal(Node *root)
+{
+    queue<Node *> q;
+    q.push(root);
+    q.push(NULL);
+    while (!q.empty())
+    {
+        Node *temp = q.front();
+        q.pop();
+        if (temp == NULL)
+        { // purana level complete traverse ho chuka hai
+            cout << endl;
+            if (!q.empty())
+            { // queue still has some child nodes
+                q.push(NULL);
+            }
+        }
+        else
+        {
+            cout << temp->data << " ";
+            if (temp->left)
+            {
+                q.push(temp->left);
+            }
+            if (temp->right)
+            {
+                q.push(temp->right);
+            }
+        }
+    }
+}
+void reverseLevelTraversal(Node *root)
+{
+    queue<Node*> q;
+    q.push(root);
+    q.push(NULL);
+    // q.push(NULL);
+    stack<Node *> s;
+    while (!q.empty())
+    {
+        Node *temp = q.front();
+        s.push(temp);
+        q.pop();
+        if (temp == NULL)
+        {
+            if (!q.empty())
+            {
+                q.push(NULL);
+            }
+        }
+        else
+        {
+            if (temp->right)
+            {
+                q.push(temp->right);
+            }
+            if (temp->left)
+            {
+                q.push(temp->left);
+            }
+        }
+    }
+    while (!s.empty())
+    {
+        Node *temp = s.top();
+        s.pop();
+        if (temp == NULL)
+        {
+            cout << endl;
+        }
+        else
+        {
+            cout << temp->data << " ";
+        }
+    }
+}
+void inOrderTraversal(Node *root){
+    if(root==NULL){
+        return;
+    }
+    inOrderTraversal(root->left);
+    cout<<root->data<<" ";
+    inOrderTraversal(root->right);
+}
+void PreOrderTraversal(Node *root){
+    if(root==NULL){
+        return;
+    }
+    cout<<root->data<<" ";
+    PreOrderTraversal(root->left);
+    PreOrderTraversal(root->right);
+}
+void PostOrderTraversal(Node *root){
+    if(root==NULL){
+        return;
+    }
+    PostOrderTraversal(root->left);
+    PostOrderTraversal(root->right);
+    cout<<root->data<<" ";
+}
+Node* insertIntoBST(Node* root,int d){
+    if(root==NULL){
+        root=new Node(d);
+        return root;
+    }
+    if(d>root->data){
+        // right part me insert karna hai
+        root->right=insertIntoBST(root->right,d);
+    }
+    else{
+        // left part me insert karna hai
+        root->left=insertIntoBST(root->left,d);
+    }
+    return root;
+}
+void takeInput(Node* &root){
+    int data;
+    cin>>data;
+    while(data!=-1){
+        root=insertIntoBST(root,data);
+        cin>>data;
+    }
+}
+int main(){
+    Node* root=NULL;
+    cout<<"Enter data to create BST"<<endl;
+    takeInput(root);
+    cout<<"Level Order Traversal"<<endl;
+    levelOrderTraversal(root);
+    cout<<"Reverse Level Order Traversal "<<endl;
+    reverseLevelTraversal(root);
+    cout<<endl;
+    cout<<"InOrder Traversal ";
+    inOrderTraversal(root);
+    cout<<endl;
+    cout<<"PreOrder Traversal ";
+    PreOrderTraversal(root);
+    cout<<endl;
+    cout<<"PostOrder Traversal ";
+    PostOrderTraversal(root);
+    cout<<endl;
+    return 0;
+}
+
+// Search In BST
+
+// Method-1
+bool searchInBST(BinaryTreeNode<int> *root, int x) {
+    if(root==NULL){
+    	return false;
+    }
+    if(root->data==x){
+    	return true;
+    }
+    if(root->data < x){
+    	return searchInBST(root->right,x);
+    }
+    else{
+    	return searchInBST(root->left,x);
+    }
+}
+
+// Method-2
+bool searchInBST(BinaryTreeNode<int> *root, int x) {
+    BinaryTreeNode<int> *temp=root;
+    while(temp!=NULL){
+        if(temp->data==x){
+            return true;
+        }
+        if(x > temp->data){
+            temp=temp->right;
+        } 
+        else {
+            temp=temp->left;
+        }
+    }
+    return false;
+}
+
+// Delete Node in a BST
+
+class Solution {
+public:
+    TreeNode* minVal(TreeNode* root){
+        TreeNode* temp=root;
+        while(temp->left!=NULL){
+            temp=temp->left;
+        }
+        return temp;
+    }
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if(root==NULL){
+            return root;
+        }
+        if(root->val==key){
+            // 0 child
+            if(root->right==NULL && root->left==NULL){
+                delete root;
+                return NULL;
+            }
+            //1 child
+
+            // left child
+            if(root->left!=NULL && root->right==NULL){
+                TreeNode* temp=root->left;
+                delete root;
+                return temp;
+            }
+            // right child
+            if(root->left==NULL && root->right!=NULL){
+                TreeNode* temp=root->right;
+                delete root;
+                return temp;
+            }
+            // 2 child
+            if(root->left!=NULL && root->right!=NULL){
+                int mini=minVal(root->right)->val;
+                root->val=mini;
+                root->right=deleteNode(root->right,mini);
+                return root;
+            }
+        }
+        else if(root->val > key){
+            // left part me jana hai
+            root->left=deleteNode(root->left,key);
+        }
+        else{
+            // right part me jana hai
+            root->right=deleteNode(root->right,key);
+        }
+        return root;
+    }
+};
+
+// Maximum and Minimum element
+
+#include<iostream>
+#include<queue>
+#include<stack>
+using namespace std;
+class Node{
+    public:
+        int data;
+        Node* left;
+        Node* right;
+    Node(int d){
+        this->data=d;
+        this->left=NULL;
+        this->right=NULL;
+    }
+};
+Node* levelOrderTraversal(Node *root)
+{
+    queue<Node *> q;
+    q.push(root);
+    q.push(NULL);
+    while (!q.empty())
+    {
+        Node *temp = q.front();
+        q.pop();
+        if (temp == NULL)
+        { // purana level complete traverse ho chuka hai
+            cout << endl;
+            if (!q.empty())
+            { // queue still has some child nodes
+                q.push(NULL);
+            }
+        }
+        else
+        {
+            cout << temp->data << " ";
+            if (temp->left)
+            {
+                q.push(temp->left);
+            }
+            if (temp->right)
+            {
+                q.push(temp->right);
+            }
+        }
+    }
+}
+void reverseLevelTraversal(Node *root)
+{
+    queue<Node*> q;
+    q.push(root);
+    q.push(NULL);
+    // q.push(NULL);
+    stack<Node *> s;
+    while (!q.empty())
+    {
+        Node *temp = q.front();
+        s.push(temp);
+        q.pop();
+        if (temp == NULL)
+        {
+            if (!q.empty())
+            {
+                q.push(NULL);
+            }
+        }
+        else
+        {
+            if (temp->right)
+            {
+                q.push(temp->right);
+            }
+            if (temp->left)
+            {
+                q.push(temp->left);
+            }
+        }
+    }
+    while (!s.empty())
+    {
+        Node *temp = s.top();
+        s.pop();
+        if (temp == NULL)
+        {
+            cout << endl;
+        }
+        else
+        {
+            cout << temp->data << " ";
+        }
+    }
+}
+void inOrderTraversal(Node *root){
+    if(root==NULL){
+        return;
+    }
+    inOrderTraversal(root->left);
+    cout<<root->data<<" ";
+    inOrderTraversal(root->right);
+}
+void PreOrderTraversal(Node *root){
+    if(root==NULL){
+        return;
+    }
+    cout<<root->data<<" ";
+    PreOrderTraversal(root->left);
+    PreOrderTraversal(root->right);
+}
+void PostOrderTraversal(Node *root){
+    if(root==NULL){
+        return;
+    }
+    PostOrderTraversal(root->left);
+    PostOrderTraversal(root->right);
+    cout<<root->data<<" ";
+}
+Node* minVal(Node* root){
+    Node* temp=root;
+    while(temp->left!=NULL){
+        temp=temp->left;
+    }
+    return temp;
+}
+Node* maxVal(Node* root){
+    Node* temp=root;
+    while(temp->right!=NULL){
+        temp=temp->right;
+    }
+    return temp;
+}
+Node* insertIntoBST(Node* root,int d){
+    if(root==NULL){
+        root=new Node(d);
+        return root;
+    }
+    if(d>root->data){
+        // right part me insert karna hai
+        root->right=insertIntoBST(root->right,d);
+    }
+    else{
+        // left part me insert karna hai
+        root->left=insertIntoBST(root->left,d);
+    }
+    return root;
+}
+void takeInput(Node* &root){
+    int data;
+    cin>>data;
+    while(data!=-1){
+        root=insertIntoBST(root,data);
+        cin>>data;
+    }
+}
+int main(){
+    Node* root=NULL;
+    cout<<"Enter data to create BST"<<endl;
+    takeInput(root);
+    cout<<"Level Order Traversal"<<endl;
+    levelOrderTraversal(root);
+    cout<<"Reverse Level Order Traversal "<<endl;
+    reverseLevelTraversal(root);
+    cout<<endl;
+    cout<<"InOrder Traversal ";
+    inOrderTraversal(root);
+    cout<<endl;
+    cout<<"PreOrder Traversal ";
+    PreOrderTraversal(root);
+    cout<<endl;
+    cout<<"PostOrder Traversal ";
+    PostOrderTraversal(root);
+    cout<<endl;
+    cout<<"Maximum Element: " << maxVal(root)->data <<endl;
+    cout<<"Minimum Element: " << minVal(root)->data <<endl;
+    return 0;
+}
+
+// Predecessor and Successor
+
+Node *successor(Node *root, int key){
+    Node *suc = NULL;
+    while(root != NULL){
+        if(key >= root->key){
+            root = root->right;
+        }
+        else{
+            suc = root;
+            root = root->left;
+        }
+    }
+    return suc;
+ }
+ Node *precessor(Node *root, int key){
+    Node *pre = NULL;
+    while(root != NULL){
+        if(key <= root->key){
+            root = root->left;
+        }
+        else{
+            pre = root;
+            root = root->right;
+        }
+    }
+    return pre;
+ }
+// It sets pre and suc as predecessor and successor respectively
+void findPreSuc(Node* root, Node*& pre, Node*& suc, int key)
+{
+    suc = successor(root,key);
+    pre = precessor(root,key);
+}
+
+// Check for BST
+
+class Solution
+{
+    public:
+    bool IsBST(Node* root, int max, int min)
+    {
+        if(!root)
+          return true;
+        
+        if(root->data <= min || root->data >= max)
+          return false;
+          
+        return (IsBST(root->left, root->data, min) and IsBST(root->right, max, root->data));
+    }
+    bool isBST(Node* root) 
+    {
+        return IsBST(root, INT_MAX, INT_MIN);
+    }
+};
+
+// Populate Inorder Successor for all nodes
+
+class Solution
+{
+public:
+    vector<Node *> v;
+    void inorder(Node *root) {
+        if(root) {
+            inorder(root->left);
+            v.push_back(root);
+            inorder(root->right);
+        }
+    }
+    void populateNext(Node *root)
+    {
+        inorder(root);
+        int n = v.size();
+        for(int i=0; i<n-1; i++) {
+            v[i]->next = v[i+1];
+        }
+        v[n-1] = new Node(-1);
+        return ;
+    }
+};
+
+// Lowest Common Ancestor in a BST
+
+Node* LCA(Node *root, int n1, int n2)
+{
+    if(root==NULL){
+        return NULL;
+    }
+    if(root->data< n1 && root->data < n2){
+        return LCA(root->right,n1,n2);
+    }
+    if(root->data> n1 && root->data > n2){
+        return LCA(root->left,n1,n2);
+    }
+    return root;    
+}
+
+// Construct BST from given preorder traversal 
+
+// Method-1
+// C++ program for the above approach
+#include <bits/stdc++.h>
+using namespace std;
+
+/* A binary tree node has data, pointer to left child
+and a pointer to right child */
+class node {
+public:
+	int data;
+	node* left;
+	node* right;
+};
+
+// A utility function to create a node
+node* newNode(int data)
+{
+	node* temp = new node();
+
+	temp->data = data;
+	temp->left = temp->right = NULL;
+
+	return temp;
+}
+
+// A recursive function to construct Full from pre[].
+// preIndex is used to keep track of index in pre[].
+node* constructTreeUtil(int pre[], int* preIndex, int low,
+						int high, int size)
+{
+	// Base case
+	if (*preIndex >= size || low > high)
+		return NULL;
+
+	// The first node in preorder traversal is root. So take
+	// the node at preIndex from pre[] and make it root, and
+	// increment preIndex
+	node* root = newNode(pre[*preIndex]);
+	*preIndex = *preIndex + 1;
+
+	// If the current subarray has only one element, no need
+	// to recur
+	if (low == high)
+		return root;
+
+	// Search for the first element greater than root
+	int i;
+	for (i = low; i <= high; ++i)
+		if (pre[i] > root->data)
+			break;
+
+	// Use the index of element found in preorder to divide
+	// preorder array in two parts. Left subtree and right
+	// subtree
+	root->left = constructTreeUtil(pre, preIndex, *preIndex,
+								i - 1, size);
+	root->right
+		= constructTreeUtil(pre, preIndex, i, high, size);
+
+	return root;
+}
+
+// The main function to construct BST from given preorder
+// traversal. This function mainly uses constructTreeUtil()
+node* constructTree(int pre[], int size)
+{
+	int preIndex = 0;
+	return constructTreeUtil(pre, &preIndex, 0, size - 1,
+							size);
+}
+
+// A utility function to print inorder traversal of a Binary
+// Tree
+void printInorder(node* node)
+{
+	if (node == NULL)
+		return;
+	printInorder(node->left);
+	cout << node->data << " ";
+	printInorder(node->right);
+}
+
+// Driver code
+int main()
+{
+	int pre[] = { 10, 5, 1, 7, 40, 50 };
+	int size = sizeof(pre) / sizeof(pre[0]);
+
+	// Function call
+	node* root = constructTree(pre, size);
+
+	printInorder(root);
+
+	return 0;
+}
+
+// Method-2
+// C++ Program for the same approach
+#include <bits/stdc++.h>
+using namespace std;
+
+/*Construct a BST from given pre-order traversal
+for example if the given traversal is {10, 5, 1, 7, 40, 50},
+then the output should be the root of the following tree.
+	10
+/ \
+5	 40
+/ \	 \
+1 7	 50 */
+
+class Node {
+public:
+	int data;
+	Node* left;
+	Node* right;
+	Node(int data)
+	{
+		this->data = data;
+		this->left = this->right = NULL;
+	}
+};
+
+static Node* node;
+
+// This will create the BST
+Node* createNode(Node* node, int data)
+{
+	if (node == NULL)
+		node = new Node(data);
+
+	if (node->data > data)
+		node->left = createNode(node->left, data);
+	if (node->data < data)
+		node->right = createNode(node->right, data);
+
+	return node;
+}
+
+// A wrapper function of createNode
+void create(int data) { node = createNode(node, data); }
+// A function to print BST in inorder
+void inorderRec(Node* root)
+{
+	if (root != NULL) {
+		inorderRec(root->left);
+		cout << root->data << " ";
+		inorderRec(root->right);
+	}
+}
+
+// Driver code
+int main()
+{
+	vector<int> nodeData = { 10, 5, 1, 7, 40, 50 };
+
+	for (int i = 0; i < nodeData.size(); i++) {
+		create(nodeData[i]);
+	}
+	inorderRec(node);
+}
+
+// Methos-3
+// C++ program for the above approach
+#include <bits/stdc++.h>
+using namespace std;
+
+/* A binary tree node has data, pointer to left child
+and a pointer to right child */
+class node {
+public:
+	int data;
+	node* left;
+	node* right;
+};
+
+// A utility function to create a node
+node* newNode(int data)
+{
+	node* temp = new node();
+
+	temp->data = data;
+	temp->left = temp->right = NULL;
+
+	return temp;
+}
+
+// A recursive function to construct
+// BST from pre[]. preIndex is used
+// to keep track of index in pre[].
+node* constructTreeUtil(int pre[], int* preIndex, int key,
+						int min, int max, int size)
+{
+	// Base case
+	if (*preIndex >= size)
+		return NULL;
+
+	node* root = NULL;
+
+	// If current element of pre[] is in range, then
+	// only it is part of current subtree
+	if (key > min && key < max) {
+		// Allocate memory for root of this
+		// subtree and increment *preIndex
+		root = newNode(key);
+		*preIndex = *preIndex + 1;
+
+		if (*preIndex < size) {
+			// Construct the subtree under root
+			// All nodes which are in range
+			// {min .. key} will go in left
+			// subtree, and first such node
+			// will be root of left subtree.
+			root->left = constructTreeUtil(pre, preIndex,
+										pre[*preIndex],
+										min, key, size);
+		}
+		if (*preIndex < size) {
+			// All nodes which are in range
+			// {key..max} will go in right
+			// subtree, and first such node
+			// will be root of right subtree.
+			root->right = constructTreeUtil(pre, preIndex,
+											pre[*preIndex],
+											key, max, size);
+		}
+	}
+
+	return root;
+}
+
+// The main function to construct BST
+// from given preorder traversal.
+// This function mainly uses constructTreeUtil()
+node* constructTree(int pre[], int size)
+{
+	int preIndex = 0;
+	return constructTreeUtil(pre, &preIndex, pre[0],
+							INT_MIN, INT_MAX, size);
+}
+
+// A utility function to print inorder
+// traversal of a Binary Tree
+void printInorder(node* node)
+{
+	if (node == NULL)
+		return;
+	printInorder(node->left);
+	cout << node->data << " ";
+	printInorder(node->right);
+}
+
+// Driver code
+int main()
+{
+	int pre[] = { 10, 5, 1, 7, 40, 50 };
+	int size = sizeof(pre) / sizeof(pre[0]);
+
+	// Function call
+	node* root = constructTree(pre, size);
+
+	printInorder(root);
+
+	return 0;
+}
+
+// Binary Tree to BST
+
+class Solution{
+  public:
+    void inorder(Node* root, vector<int> &Inorder)
+    {
+        if(!root)
+          return;
+          
+        inorder(root->left, Inorder);
+        Inorder.push_back(root->data);
+        inorder(root->right, Inorder);
+    }
+    
+    void FormBST(vector<int> v, Node* root, int* indx)
+    {
+        if(!root)
+          return;
+          
+        FormBST(v, root->left, indx);
+        
+        root->data = v[*indx];
+        (*indx)++;
+        
+        FormBST(v, root->right, indx);
+    }
+    Node *binaryTreeToBST (Node *root)
+    {
+        vector<int> Inorder;
+        inorder(root, Inorder);
+        
+        int i = 0;
+        sort(Inorder.begin(), Inorder.end());
+        FormBST(Inorder, root, &i);
+        
+        return root;
+    }
+};
+
+// Convert a normal BST to Balanced BST
+
+void inorder(Node *root, vector<int> &v) {
+    if(root) {
+        inorder(root->left, v);
+        v.push_back(root->data);
+        inorder(root->right, v);
+    }
+}
+Node *makeBST (vector<int> &v, int i, int j) {
+    if(i>j) return NULL;
+    
+    int mid = (i+j)/2;
+    Node * root = new Node(v[mid]);
+    root->left = makeBST(v, i, mid-1);
+    root->right = makeBST(v, mid+1, j);
+}
+Node* buildBalancedTree(Node* root)
+{
+    vector<int> v;
+    inorder(root, v);
+    return makeBST(v, 0, v.size()-1);
+}
+
+// Merge Two Balanced Binary Search Tree
+
+// Method-1
+void inorder(TreeNode<int>*root,vector<TreeNode<int>*>&v) {
+    if(!root) {
+        return;
+    }
+    inorder(root->left,v);
+    v.push_back(root);
+    inorder(root->right,v);
+}
+
+// The following function merges the inorder traversal of two trees
+void merge(vector<TreeNode<int>*>&v1,vector<TreeNode<int>*>&v2,vector<TreeNode<int>*>&ans) {
+    int i=0,j=0,k=0;
+    while(i<v1.size() && j<v2.size()) {
+        if(v1[i]->data<v2[j]->data) {
+            ans[k]=v1[i++];
+        }
+        else {
+            ans[k]=v2[j++];
+        }
+        ans[k]->left=NULL;
+        ans[k]->right=NULL;
+        k++;
+    }
+    while(i<v1.size()) {
+        ans[k]=v1[i++];
+        ans[k]->left=NULL;
+        ans[k]->right=NULL;
+        k++;
+    }
+    while(j<v2.size()) {
+        ans[k]=v2[j++];
+        ans[k]->left=NULL;
+        ans[k]->right=NULL;
+        k++;
+    }
+}
+// The following function builds the merged tree from the merged inorder traversal 
+TreeNode<int>*helper(vector<TreeNode<int>*>&ans,int start,int end) {
+    if(start>end) {
+        return NULL;
+    }
+    int mid=start+(end-start)/2;
+    TreeNode<int> *root= ans[mid];
+    if(start==end) {
+        return root;
+    }
+    root->left=helper(ans,start,mid-1);
+    root->right=helper(ans,mid+1,end);
+    return root;
+}
+TreeNode<int> *mergeBST(TreeNode<int> *root1, TreeNode<int> *root2) {
+    vector<TreeNode<int>*>v1,v2;
+    inorder(root1,v1);
+    inorder(root2,v2);
+    vector<TreeNode<int>*>ans(v1.size()+v2.size());
+    merge(v1,v2,ans);
+    return helper(ans,0,ans.size()-1);
+}
+
+// Method-2
+// function to convert BST to Doubly Linked List
+void convertTOList(TreeNode<int>*root, TreeNode<int>*&head){
+    if(!root)
+        return;
+    convertTOList(root->right, head);
+    root->right=head;
+    if(head){
+        head->left=root;
+    }
+    head=root;
+    convertTOList(root->left, head);
+}
+// merge two sorted Linked lists
+TreeNode<int>* mergedList(TreeNode<int>*head1,TreeNode<int>*head2){
+    TreeNode<int>* head=NULL;
+    TreeNode<int>* tail =NULL;
+    while(head1 && head2){
+        if(head1->data<head2->data){
+            if(head==NULL){
+                head=head1;
+                tail=head1;
+                head1=head1->right;
+            }
+            else{
+                tail->right=head1;
+                head1->left=tail;
+                tail=head1;
+                head1=head1->right;
+            }
+        }
+        else{
+            if(head==NULL){
+                head=head2;
+                tail=head2;
+                head2=head2->right;
+            }
+            else{
+                tail->right=head2;
+                head2->left=tail;
+                tail=head2;
+                head2=head2->right;
+            }
+        }
+    }
+    while(head1){
+        tail->right=head1;
+        head1->left=tail;
+        tail=head1;
+        head1=head1->right;
+    }
+    while(head2){
+        tail->right=head2;
+        head2->left=tail;
+        tail=head2;
+        head2=head2->right;
+    }
+    return head;
+}
+int count_nodes(TreeNode<int>*head){
+    TreeNode<int>*temp=head;
+    int count=0;
+    while(temp){
+        count++;
+        temp=temp->right;
+    }
+    return count;
+}
+TreeNode<int>*lltoBST(TreeNode<int>*&head,int n){
+    if(n<=0  || head==NULL)
+        return NULL;
+    TreeNode<int>*left =lltoBST(head,  n/2);
+    TreeNode<int>*root =head;
+    root->left=left;
+    head=head->right;
+    root->right =lltoBST(head, n-n/2-1);
+    return root;
+}
+TreeNode<int> *mergeBST(TreeNode<int> *root1, TreeNode<int> *root2){
+    // Convert BST TO Doubly
+    TreeNode<int>* head1=NULL;
+    convertTOList(root1, head1);
+    head1->left=NULL;
+    TreeNode<int>* head2=NULL;
+    convertTOList(root2, head2);
+    head2->left=NULL;
+    // Merge the two Linked Lists
+    TreeNode<int>*mergedHead = mergedList(head1, head2);
+    // merge the two BST's
+    return lltoBST(mergedHead, count_nodes(mergedHead)); 
+}
+
+// Kth largest element in BST
+
+class Solution
+{
+    public:
+    int solve(Node* root, int &i, int k){
+        //base case
+        if(root == NULL){
+            return -1;
+        }//Inorder - LNR since it is sorted, we increment i when a node is found
+        // Right
+        int right = solve(root->right, i,k);
+        if(right != -1){
+            return right;
+        }
+        // Node
+        i++;
+        if (i == k) {
+            return root->data;
+        }
+        // Left
+        return solve(root->left, i,k);    
+    }
+    int kthLargest(Node *root, int K)
+    {
+        int i =0;
+        int ans = solve(root, i, K);
+        return ans;
+    }
+};
+
+// kth smallest element in BST
+
+class Solution {
+  public:
+    int solve(Node* root, int &i, int k){
+        //base case
+        if(root == NULL){
+            return -1;
+        }//Inorder - LNR since it is sorted, we increment i when a node is found
+        // Left
+        int left = solve(root->left, i,k);
+        if(left != -1){
+            return left;
+        }
+        // Node
+        i++;
+        if (i == k) {
+            return root->data;
+        }
+        // Right
+        return solve(root->right, i,k);    
+    }
+    int KthSmallestElement(Node *root, int K) {
+        int i=0;
+        int ans=solve(root,i,K);
+        return ans;
+    }
+};
+
+// Find median of BST
+
+// Method-1
+float findMedian(struct Node *root)
+{
+    //Morris Traversal Inorder
+    Node* pr=NULL;
+    Node* curr=root;
+    //modify root
+    while(root->left!=NULL){
+        root=root->left;
+    }
+    //Morris Traversal
+    while(curr!=NULL){
+        if(curr->left==NULL){
+            if(pr!=NULL){
+                pr->right=curr;
+                pr=curr;
+            }
+            else{
+                pr=curr;
+            }
+            curr=curr->right;
+        }
+        else{
+            Node* prev=curr->left;
+            while(prev->right!=NULL and prev->right!=curr){
+                prev=prev->right;
+            }
+            if(prev->right==NULL){
+                prev->right=curr;
+                curr=curr->left;
+            }
+            else{
+                prev->right=NULL;
+                if(pr!=NULL){
+                    pr->right=curr;
+                    pr=curr;
+                }
+                else{
+                    pr=curr;
+                }
+                curr=curr->right;
+            }
+        }
+    }
+    //caluclate total element
+    Node* temp1=root;
+    int no_element=0;
+    while(temp1){
+        no_element++;
+        temp1=temp1->right;
+    }
+    //calculate median
+    temp1=root;
+    //even length
+    if(no_element%2==0){
+        int k=(no_element-1)/2;
+        while(k>0){
+            k--;
+            temp1=temp1->right;
+        }
+        float val1=temp1->data;
+        float val2=temp1->right->data;
+        float res= (val1+val2)/2.0;
+        return res;
+    }
+    //odd length
+    else{
+        int k=(no_element)/2;
+        while(k>0){
+            k--;
+            temp1=temp1->right;
+        }
+        float res= (temp1->data );
+        return res;
+    }
+}
+
+// Method-2
+void inorder(struct Node *root, vector<float>&v)
+{
+    if(root==NULL)
+        return;
+    inorder(root->left, v);
+    v.push_back(root->data);
+    inorder(root->right, v);
+}
+float findMedian(struct Node *root)
+{
+    vector<float>v;
+    inorder(root, v);
+    int i, j, len= v.size();
+    //cout<<len<<" ";
+    if(len%2!=0)
+    {
+        float ans = v[len/2];
+        return ans;
+    }
+    else
+    {
+        float ans = ((v[(len/2)-1]+v[len/2])/2);
+        return ans;
+    }
+}
+
+// Count BST nodes that lie in a given range
+
+// Method-1
+class Solution{
+public:
+    int getCount(Node *root, int l, int h)
+    {
+         if(!root)
+        return -1;
+        
+      int ans = 0;
+      Node* curr, *pre;
+      
+      curr = root;
+      
+      while(curr)
+      {
+          if(curr->left == NULL)
+          {
+              if(curr->data >= l and curr->data <= h)
+                  ans++;     
+                
+              curr = curr->right;    
+          }
+          
+          else
+          {
+              pre = curr->left;
+              
+              while(pre->right and pre->right != curr)
+                    pre = pre->right;
+                   
+              if(pre->right == NULL)
+              {
+                  pre->right = curr;
+                  
+                  curr = curr->left;
+              }
+              
+              else
+              {
+                  pre->right = NULL;
+                  
+                  if(curr->data >= l and curr->data <= h)
+                     ans++;  
+                  curr = curr->right;    
+              }
+          }
+      }
+      
+      return ans; 
+    }
+};
+
+// Method-2
+class Solution{
+public:
+    int getCount(Node *root, int l, int h)
+    {
+      if(root==NULL) return 0;
+      int count = getCount(root->left,l,h) + getCount(root->right,l,h);
+      if(root->data>=l and root->data<=h) count++;
+      return count;
+    }
+};
+
+// Replace every element with the least greater element on its right
+
+// Method-1
+vector<int> findLeastGreater(vector<int>& arr, int n) {
+        
+        for(int i=0;i<n;i++){
+            
+            int min = INT_MAX;
+            
+            for(int j=i+1;j<n;j++){
+                if(arr[j]>arr[i] && arr[j]<min)
+                    min = arr[j];
+            }
+            
+            if(min==INT_MAX) arr[i] = -1;
+            else arr[i]=min;
+        }
+        
+        return arr;
+}
+
+// Method-2
+class Solution{
+    public:
+    
+    class Node{
+        
+        public : 
+        int data;
+        Node * left;
+        Node * right;
+    
+        
+        Node(int val){
+            data = val;
+            left = NULL;
+            right = NULL;
+        }
+        
+    };
+    
+    Node * insertNodeIntoBST_and_findItsSuccessorSimultaneously(Node * root , int key , Node * &suc){
+        
+        if(root==NULL) return  new Node(key);
+        
+        if( key < root->data){
+            suc = root;
+            root->left = insertNodeIntoBST_and_findItsSuccessorSimultaneously(root->left , key , suc);
+        }
+        else{
+            root->right = insertNodeIntoBST_and_findItsSuccessorSimultaneously(root->right , key , suc);
+        }
+        
+        return root;
+        
+    }
+    
+    vector<int> findLeastGreater(vector<int>& arr, int n) {
+        
+        Node * root = NULL;
+        
+        for(int i=n-1 ; i>=0 ; i--){
+            Node * suc = NULL;
+            root = insertNodeIntoBST_and_findItsSuccessorSimultaneously(root , arr[i] , suc);
+            if(suc)
+                arr[i] = suc->data;
+            else
+                arr[i] = -1;
+        }
+        
+        return arr;
+        
+    }
+};
+
+// Method-3
+class Solution{
+    public:
+    vector<int> findLeastGreater(vector<int>& arr, int n) {
+        set<int>st;
+        vector<int>vec;
+        for(int i=n-1;i>=0;i--){
+            
+            auto itr=st.upper_bound(arr[i]);
+            if(itr==st.end())
+                vec.push_back(-1);
+            else
+                vec.push_back(*itr);
+                
+                
+            st.insert(arr[i]);
+        }
+        reverse(vec.begin(),vec.end());
+        return vec;
+    }
+};
+
+// Given n appointments, find all conflicting appointments
+
+// Method-1
+#include <bits/stdc++.h>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	// Given Appointments.
+	vector<vector<int> > v{
+		{ 1, 5 }, { 3, 7 }, { 2, 6 },
+		{ 10, 15 }, { 5, 6 }, { 4, 100 }
+	};
+	// sort according to start time of meet/appointment.
+	// sort(v.begin(), v.end());
+	// number of pair or appointments.
+	int n = v.size();
+	// for stoping the overlapping
+	// vector<bool>vis(n,0);
+	// traverse over and check for it.
+	vector<pair<pair<int, int>, pair<int, int> > > result;
+	for (int i = 0; i < n; i++) {
+		for (int j = i - 1; j >= 0; j--) {
+			// to reduce extra/unwanted comparisons.
+			// if(v[j][0]>v[i][1])break;
+			// else{
+			if (v[j][0] < v[i][1]) {
+				result.push_back({ { v[i][0], v[i][1] },
+								{ v[j][1], v[j][0] } });
+			}
+			// }
+		}
+	}
+	// final output.
+	for (auto it : result) {
+		cout << "[" << it.first.first << ","
+			<< it.first.second
+			<< "] having Conflict with [";
+		cout << it.second.first << "," << it.second.second
+			<< "]" << endl;
+	}
+	// code by Sanket Gode.
+	return 0;
+}
+
+// Method-2
+// C++ program to print all conflicting appointments in a
+// given set of appointments
+#include <bits/stdc++.h>
+using namespace std;
+
+// Structure to represent an interval
+struct Interval
+{
+	int low, high;
+};
+
+// Structure to represent a node in Interval Search Tree
+struct ITNode
+{
+	Interval *i; // 'i' could also be a normal variable
+	int max;
+	ITNode *left, *right;
+};
+
+// A utility function to create a new Interval Search Tree Node
+ITNode * newNode(Interval i)
+{
+	ITNode *temp = new ITNode;
+	temp->i = new Interval(i);
+	temp->max = i.high;
+	temp->left = temp->right = NULL;
+	return temp;
+};
+
+// A utility function to insert a new Interval Search Tree
+// Node. This is similar to BST Insert. Here the low value
+// of interval is used tomaintain BST property
+ITNode *insert(ITNode *root, Interval i)
+{
+	// Base case: Tree is empty, new node becomes root
+	if (root == NULL)
+		return newNode(i);
+
+	// Get low value of interval at root
+	int l = root->i->low;
+
+	// If root's low value is smaller, then new interval
+	// goes to left subtree
+	if (i.low < l)
+		root->left = insert(root->left, i);
+
+	// Else, new node goes to right subtree.
+	else
+		root->right = insert(root->right, i);
+
+	// Update the max value of this ancestor if needed
+	if (root->max < i.high)
+		root->max = i.high;
+
+	return root;
+}
+
+// A utility function to check if given two intervals overlap
+bool doOVerlap(Interval i1, Interval i2)
+{
+	if (i1.low < i2.high && i2.low < i1.high)
+		return true;
+	return false;
+}
+
+// The main function that searches a given interval i
+// in a given Interval Tree.
+Interval *overlapSearch(ITNode *root, Interval i)
+{
+	// Base Case, tree is empty
+	if (root == NULL) return NULL;
+
+	// If given interval overlaps with root
+	if (doOVerlap(*(root->i), i))
+		return root->i;
+
+	// If left child of root is present and max of left child
+	// is greater than or equal to given interval, then i may
+	// overlap with an interval is left subtree
+	if (root->left != NULL && root->left->max >= i.low)
+		return overlapSearch(root->left, i);
+
+	// Else interval can only overlap with right subtree
+	return overlapSearch(root->right, i);
+}
+
+// This function prints all conflicting appointments in a given
+// array of appointments.
+void printConflicting(Interval appt[], int n)
+{
+	// Create an empty Interval Search Tree, add first
+	// appointment
+	ITNode *root = NULL;
+	root = insert(root, appt[0]);
+
+	// Process rest of the intervals
+	for (int i=1; i<n; i++)
+	{
+		// If current appointment conflicts with any of the
+		// existing intervals, print it
+		Interval *res = overlapSearch(root, appt[i]);
+		if (res != NULL)
+			cout << "[" << appt[i].low << "," << appt[i].high
+				<< "] Conflicts with [" << res->low << ","
+				<< res->high << "]\n";
+
+		// Insert this appointment
+		root = insert(root, appt[i]);
+	}
+}
+// Driver program to test above functions
+int main()
+{
+	// Let us create interval tree shown in above figure
+	Interval appt[] = { {1, 5}, {3, 7}, {2, 6}, {10, 15},
+						{5, 6}, {4, 100}};
+	int n = sizeof(appt)/sizeof(appt[0]);
+	cout << "Following are conflicting intervals\n";
+	printConflicting(appt, n);
+	return 0;
+}
+
+// Preorder to PostOrder
+
+// Method-1
+class Solution{
+public:
+    Node* bst(int a,Node* root){
+        if(root==NULL)
+            root=newNode(a);
+        else if(root->data >a)
+            root->left=bst(a,root->left);
+        else if(root->data<a)
+            root->right=bst(a,root->right);
+        return root;
+    }
+    Node* post_order(int pre[], int size)
+    {
+        Node*root;
+        for(int i=0;i<size;i++){
+            root=bst(pre[i],root);
+        }
+        return root;
+    }
+};
+
+// Method-2
+class Solution{
+public:
+    //Function that constructs BST from its preorder traversal.
+    Node* f(int i, int j, vector <int> &right, int arr[]){
+        int n = right.size();
+        if(i>j) return NULL;
+        Node* root = newNode(arr[i]);
+        root->left = f(i+1, right[i]-1, right, arr);
+        root->right = f(right[i], j, right, arr);
+        return root;
+    }
+    
+    Node* post_order(int arr[], int size)
+    {
+        //code here
+        stack <int> st;
+        int j=size-1;
+        vector <int> right(size);
+        while(j>=0){
+            while(!st.empty() and arr[st.top()]<=arr[j]) st.pop();
+            if(st.empty()) right[j] = size;
+            else right[j] = st.top();
+            st.push(j);
+            j--;
+        }
+        return f(0, size-1, right, arr);
+    }
+};
+
+// Check whether BST contains Dead End
+
+// Method-1
+bool dead(Node *root, int  mn, int  mx){
+    if(!root) return false;
+    
+    if(mx==mn) return true;
+    return dead(root->left, mn, root->data-1) || dead(root->right,  root->data+1, mx);
+}
+
+bool isDeadEnd(Node *root)
+{
+    dead(root, 1, INT_MAX);
+}
+
+// Method-2
+void inorder(unordered_set<int>&s1,unordered_set<int>&s2,Node*root)
+{
+    if(!root)
+    {
+        return;
+    }
+    inorder(s1,s2,root->left);
+    s1.insert(root->data);
+    if(!root->left && !root->right)
+    {
+        s2.insert(root->data);
+    }
+    inorder(s1,s2,root->right);
+    return;
+}
+bool isDeadEnd(Node *root)
+{
+    unordered_set<int>s1;
+    s1.insert(0);
+    unordered_set<int>s2;
+    inorder(s1,s2,root);
+    for(auto x:s2)
+    {
+        if(s1.find(x-1)!=s1.end() && s1.find(x+1)!=s1.end())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Largest BST
+
+class Solution{
+    public:
+    void func(Node* root,int &size,int &max_num, int &min_num){
+        if(root == NULL){
+            size = 0;
+            max_num = -100000;
+            min_num = 100000;
+            return;
+        }
+        if(root->left == NULL&&root->right == NULL){
+            size = 1;
+            max_num = root->data;
+            min_num = root->data;
+            return;
+        }
+        int size1,max_num1,min_num1,size2,max_num2,min_num2;
+        func(root->left,size1,max_num1,min_num1);
+        func(root->right,size2,max_num2,min_num2);
+        if(root->data>max_num1&&root->data<min_num2){
+            size = 1 + size1 + size2;
+            max_num = max(root->data,max_num2);
+            min_num = min(root->data,min_num1);
+            return;
+        }
+        else{
+            size = max(size1,size2);
+            max_num = 100000;
+            min_num = -100000;
+            return;
+        }
+    }
+    int largestBst(Node* root) 
+    {
+        if(root == NULL)return -1;
+        int size = 0;
+        int max_num,min_num;
+        func(root,size,max_num,min_num);
+        return size;
+    }
+};
+
+// Flatten BST to sorted list | Increasing order
+
+// Method-1
+// C++ implementation of the approach
+#include <bits/stdc++.h>
+using namespace std;
+
+// Node of the binary tree
+struct node {
+	int data;
+	node* left;
+	node* right;
+	node(int data)
+	{
+		this->data = data;
+		left = NULL;
+		right = NULL;
+	}
+};
+
+// Function to print flattened
+// binary Tree
+void print(node* parent)
+{
+	node* curr = parent;
+	while (curr != NULL)
+		cout << curr->data << " ", curr = curr->right;
+}
+
+// Function to perform in-order traversal
+// recursively
+void inorder(vector<int>& traversal, node* parent)
+{
+	// Base Case
+	if (parent == NULL)
+		return;
+
+	inorder(traversal, parent->left);
+	// Storing the values in the vector
+	traversal.push_back(parent->data);
+
+	inorder(traversal, parent->right);
+}
+
+void form(int pos, vector<int> traversal, node*& prev)
+{
+	// Base Case
+	if (pos == traversal.size())
+		return;
+
+	prev->right = new node(traversal[pos]);
+	prev->left = NULL;
+
+	prev = prev->right;
+
+	// calling for the next element of the vector
+	form(pos + 1, traversal, prev);
+}
+// Function to flatten binary tree using
+// level order traversal
+node* flatten(node* parent)
+{
+
+	// Dummy node
+	node* dummy = new node(-1);
+
+	// Pointer to previous element
+	node* prev = dummy;
+
+	// vector to store the inorder traversal of the binary
+	// tree
+	vector<int> traversal;
+	inorder(traversal, parent);
+
+	// forming the sorted list from the vector obtained
+	form(0, traversal, prev);
+
+	prev->left = NULL;
+	prev->right = NULL;
+	node* ret = dummy->right;
+
+	// Delete dummy node
+	delete dummy;
+	return ret;
+}
+
+int main()
+{
+
+	node* root = new node(5);
+	root->left = new node(3);
+	root->right = new node(7);
+	root->left->left = new node(2);
+	root->left->right = new node(4);
+	root->right->left = new node(6);
+	root->right->right = new node(8);
+
+	// Calling required function
+	print(flatten(root));
+
+	return 0;
+}
+
+// Method-2
+// C++ implementation of the approach
+#include <bits/stdc++.h>
+using namespace std;
+
+// Node of the binary tree
+struct node {
+	int data;
+	node* left;
+	node* right;
+	node(int data)
+	{
+		this->data = data;
+		left = NULL;
+		right = NULL;
+	}
+};
+
+// Function to print flattened
+// binary Tree
+void print(node* parent)
+{
+	node* curr = parent;
+	while (curr != NULL)
+		cout << curr->data << " ", curr = curr->right;
+}
+
+// Function to perform in-order traversal
+// recursively
+void inorder(node* curr, node*& prev)
+{
+	// Base case
+	if (curr == NULL)
+		return;
+	inorder(curr->left, prev);
+	prev->left = NULL;
+	prev->right = curr;
+	prev = curr;
+	inorder(curr->right, prev);
+}
+
+// Function to flatten binary tree using
+// level order traversal
+node* flatten(node* parent)
+{
+	// Dummy node
+	node* dummy = new node(-1);
+
+	// Pointer to previous element
+	node* prev = dummy;
+
+	// Calling in-order traversal
+	inorder(parent, prev);
+
+	prev->left = NULL;
+	prev->right = NULL;
+	node* ret = dummy->right;
+
+	// Delete dummy node
+	delete dummy;
+	return ret;
+}
+
+// Driver code
+int main()
+{
+	node* root = new node(5);
+	root->left = new node(3);
+	root->right = new node(7);
+	root->left->left = new node(2);
+	root->left->right = new node(4);
+	root->right->left = new node(6);
+	root->right->right = new node(8);
+
+	// Calling required function
+	print(flatten(root));
+
+	return 0;
+}
