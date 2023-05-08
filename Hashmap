@@ -1,0 +1,995 @@
+// Find similarities between two arrays.
+
+// Method-1
+#include <bits/stdc++.h> 
+pair < int , int > findSimilarity(vector < int > arr1, vector < int > arr2, int n, int m) 
+{
+    int count=0, l=arr1.size()+ arr2.size();
+    for(int i=0; i<arr1.size(); i++){
+        for(int j=0; j<arr2.size(); j++){
+            if(arr1[i]==arr2[j]){
+                count++;
+            }
+        }
+    }
+    pair < int , int >p(count, l-count);
+    return p;       
+}
+
+// Method-2
+#include <bits/stdc++.h> 
+pair < int , int > findSimilarity(vector < int > arr1, vector < int > arr2, int n, int m) 
+{
+	pair<int, int> p;
+	unordered_map<int, int> a;
+	int c = 0;
+	for (int i = 0; i < n; i++) {
+		a[arr1[i]]++;
+	}
+	for (int i = 0; i < m; i++) {
+		if (a[arr2[i]] >= 1) {
+			c++;
+		}
+		a[arr2[i]]++;
+	}
+	return {c, a.size()};
+}
+
+// Majority Element lll
+
+#include <bits/stdc++.h> 
+vector<int> countTheNumber(vector<int> &arr, int n, int k) {
+	unordered_map<int,int>mp;
+     for(auto it:arr)
+     {
+         mp[it]++;
+	 }
+     vector<int>v;
+     for(auto it:mp)
+     {
+         if(it.second>=(n/k))
+         {
+             v.push_back(it.first);
+         }
+     }
+     return v;
+}
+
+// Check Subset
+
+// Method-1
+#include <bits/stdc++.h> 
+bool checkSubset(vector < int > & arr1, vector < int > & arr2, int n, int m) {
+    sort(arr1.begin(), arr1.end());
+    sort(arr2.begin(), arr2.end());
+    int i = 0;
+    int count =0;
+    int j = 0;
+    while(i<n ){
+        if(j<m && arr1[i]==arr2[j]){
+            count++;
+            j++;
+            i++;
+        }
+        else
+            i++;
+    }
+    if(count == arr2.size())
+        return true;
+    return false;
+}
+
+// Method-2
+#include <bits/stdc++.h> 
+bool checkSubset(vector < int > & arr1, vector < int > & arr2, int n, int m) {
+    unordered_map<int,int> mpp;
+    for (auto it : arr1) {
+      mpp[it]++;
+    }
+    for(int i = 0 ; i < m ; i++){
+        if(mpp[arr2[i]] > 0){
+            mpp[arr2[i]]--;
+        }
+        else{
+            return false;
+        }
+    }
+    return true;
+}
+
+// Median in matrix
+
+// Method-1
+#include <bits/stdc++.h> 
+int findMedian(vector<vector<int> > &arr, int n, int m){
+    vector<int>v;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            v.push_back(arr[i][j]);
+        }
+    }
+    sort(v.begin(),v.end());
+    return v[(0+v.size()-1)/2];
+}
+
+// Method-2
+#include<bits/stdc++.h>
+int findMedian(vector<vector<int> > &arr, int n, int m){
+	// Ordered map to store all the elements of input matrix
+	map<int, int> hash;
+	// Push all the values of the input matrix in the map
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < m; j++){
+			hash[arr[i][j]]++;		
+		}
+	}
+	// Iterator for map
+	map<int,int> :: iterator it;
+	int count = 0;
+	// Traverse the map
+	for(it = hash.begin(); it != hash.end(); it++){
+		count += it->second;
+		if(count >= (n*m + 1)/2){
+			break;
+		}		
+	}
+	return it->first;
+}
+
+// Common Elements Present In All Rows Of Matrix
+
+#include <bits/stdc++.h>
+
+vector<int> findCommonElements(vector<vector<int>> &mat) {
+  if (mat.size() == 1)
+    return mat[0];
+  map<int, set<int>> m;
+  for (int i = 0; i < mat.size(); i++) {
+    for (int j = 0; j < mat[i].size(); j++) {
+      m[mat[i][j]].insert(i);
+    }
+  }
+  vector<int> ans;
+  for (auto it : m) {
+    if (it.second.size() == mat.size()) {
+      ans.push_back(it.first);
+    }
+  }
+  return ans;
+}
+
+// Robin Carp
+
+vector<int> stringMatch(string &str, string &pat) {
+    vector<int>result;
+    int n = str.size(), m = pat.size();
+    for(int i=0;i<n;i++){
+        if(str[i]==pat[0]){
+            if(str.substr(i,m)==pat){
+                result.push_back(i);
+            }
+        }
+    }
+    return result;
+}
+
+// Roman numeral to integer
+
+#include<unordered_map>
+int romanToInt(string s) {
+    int sum = 0;
+    unordered_map<char, int> mp = {
+        {'I', 1}, {'V', 5}, {'X', 10}, {'L', 50}, {'C', 100}, {'D', 500}, {'M', 1000}
+    };
+    for(int i = 0; i < s.length(); i++)
+        mp[s[i]] < mp[s[i+1]] ? sum -= mp[s[i]] : sum += mp[s[i]];
+    return sum;
+}
+
+// Second most repeated word
+
+#include <bits/stdc++.h> 
+string second_repeat(vector<string> &arr, int n){
+    unordered_map<string,int> ind;
+    for(auto i:arr){
+        ind[i]++;
+    }
+    int max = 0;
+    string temp;
+    for(auto i: ind){
+        if(i.second > max){
+            temp = i.first;
+            max = i.second;
+        }
+    }
+    ind.erase(temp);
+    max =0;
+    temp = "";
+      for(auto i: ind){
+        if(i.second > max){
+            temp = i.first;
+            max = i.second;
+        }
+    }
+    return temp;
+}
+
+// Day 6 : Majority element
+
+// Method-1 ( Bayer-Moore Vooting Algorithm )
+#include <bits/stdc++.h>
+int findMajorityElement(int arr[], int n) {
+    int res=0;
+    int count=1;
+    for(int i=1;i<n;i++){
+		if(arr[res]==arr[i])
+		{
+			count++;
+		}
+		else
+		{
+			count--;
+		}
+		if(count==0){
+			res=i;
+			count=1;
+		}
+    }
+    // now we are about to find the majority element...
+    count=0;
+    for(int i=0;i<n;i++)
+    {
+        if(arr[res]==arr[i])
+        {
+            count++;
+        }
+	}
+    if(count>n/2)
+    {
+        return arr[res];
+    }
+    else return -1;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+int findMajorityElement(int arr[], int n) {
+	unordered_map<int, int> mpp;
+	for (int i = 0; i < n; i++) {
+		mpp[arr[i]]++;
+	}
+	for (auto it : mpp) {
+		if (it.second > n / 2)
+		return it.first;
+	}
+	return -1;
+}
+
+// Pair Difference K
+
+// Method-1
+string isPairDifferenceK(vector<int>arr, int n, int k) {
+    string str1="Yes";
+    string str2="No";
+    int i=0;
+    int j=i+1;
+    while(i<n-1 && j<n) {
+        if(arr[j]-arr[i]==k) {
+            return str1;
+        }
+        if(arr[j]-arr[i]>k) {
+            i++;
+        }
+        if(arr[j]-arr[i]<k) {
+            j++;
+        }
+     }
+    return str2;
+}
+
+// Method-2
+string isPairDifferenceK(vector<int> arr, int n, int k) {
+    unordered_map<int, bool> isPresent;
+    // Iterating through all elements of the array.
+    for (int i = 0; i < n; i++) {
+        // Checking if arr[i] - k is already present in the array or not.
+        if (isPresent.count(arr[i] - k) != 0) {
+            return "Yes";
+        }
+        // If arr[i]-K is not present in the array. Mark the current element to be present in the array.
+        isPresent[arr[i]] = true;
+    }
+    // Returning "No", if no pair found that satisfied the required condition.
+    return "No";
+}
+
+// Find Four Elements That Sums To A Given Value
+
+// Method-1
+#include <bits/stdc++.h> 
+string fourSum(vector<int> arr, int target, int n) {
+    sort(arr.begin(), arr.end());
+    for(int i = 0; i < n-3; i++){
+        for(int j = i+1; j < n-2; j++){
+            int k = j+1;
+            int z = n-1;
+
+            while(z > k){
+                if(arr[i]+arr[j]+arr[k]+arr[z] == target){
+                    return "Yes";
+                }
+                else if(arr[i]+arr[j]+arr[k]+arr[z] > target){
+                    z--;
+                }
+                else{
+                    k++;
+                }
+            }
+        }
+    }
+    return "No";
+}
+
+// Method-2
+#include <bits/stdc++.h> 
+bool commonIdx(pair < int, int > p1, pair < int, int > p2) {
+    return p1.first == p2.first || p1.first == p2.second || p1.second == p2.first || p1.second == p2.second;
+}
+
+string fourSum(vector < int > arr, int target, int n) {
+    unordered_map < int, pair < int, int >> mp;
+    
+    /* 
+        Preparing a HashMap which will store sum of 
+        two elements of array arr[] as key and their 
+        indexes as value.
+    */
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            mp[arr[i] + arr[j]] = {
+                i,
+                j
+            };
+        }
+    }
+
+    // Check on all possible pair sum which can be found in HashMap.
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            int requiredSum = target - (arr[i] + arr[j]);
+            /* 
+                If HashMap contains required sum then we must 
+                ensure that both pairs does not contain common indexes.
+            */
+            if (mp.find(requiredSum) != mp.end() && !commonIdx(mp[requiredSum], {
+                    i,
+                    j
+                })) {
+                return "Yes";
+            }
+        }
+    }
+    // If we can not found the target sum then we return No.
+    return "No";
+}
+
+// Subarrays with zero sum
+
+// Method-1
+int countSubarrays(int n, vector<int> &arr){
+    // Write your code here.
+    int count = 0;
+    int sum = 0;
+    for(int i=0; i<n; i++){
+        sum = arr[i];
+        if(sum==0)count++;
+        for(int j=i+1; j<n; j++){
+            sum+=arr[j];
+            if(sum==0)count++;
+        }
+    }
+    return count;
+}
+
+// Method-2
+#include<bits/stdc++.h>
+int countSubarrays(int n, vector<int> &arr){
+    int sum=0;
+    unordered_map<int,int>ans;
+    int cnt=0;
+    for(int i=0;i<n;i++){
+        sum+=arr[i];
+        if(sum==0)
+            cnt++;
+        if(ans.find(sum)!=ans.end()){
+            cnt+=ans[sum];
+        }
+        ans[sum]++;
+    }
+    return cnt;
+}
+
+// Minimum swaps to sort array
+
+#include<bits/stdc++.h>
+int minSwaps(vector<int> &arr) {
+	int ans=0;
+	vector<int>sorted=arr;
+	sort(sorted.begin(),sorted.end());
+	unordered_map<int,int>m;
+	for(int i=0;i<sorted.size();i++) {
+		m[sorted[i]]=i;
+	}
+	for(int i=0;i<arr.size();i++) {
+		while(arr[i]!=sorted[i]) {
+			int target=m[arr[i]];
+			swap(arr[i],arr[target]);
+			ans++;
+		}
+	}
+	return ans;
+}
+
+// Kth smallest integer in range
+
+#include <bits/stdc++.h>
+vector < int > kthSmallest(vector < vector < int >> & ranges, vector < int > & queries) {
+    vector < int > sequence;
+    unordered_set < int > hashMap;
+
+    // Find all distinct integers present in ranges and insert them in list sequence.
+    for (int i = 0; i < ranges.size(); i++) {
+        for (int j = ranges[i][0]; j <= ranges[i][1]; j++) {
+            if (hashMap.count(j) == 0) {
+                sequence.push_back(j);
+                hashMap.insert(j);
+            }
+        }
+    }
+
+    // Sort the 'sequence' in ascending order.
+    sort(sequence.begin(), sequence.end());
+    vector < int > result(queries.size());
+
+    // Finding answer of each query.
+    for (int i = 0; i < queries.size(); i++) {
+        if (queries[i] > sequence.size()) {
+            result[i] = -1;
+        } else {
+            result[i] = sequence[queries[i] - 1];
+        }
+    }
+
+    return result;
+}
+
+// Find pair with a given sum in a doubly linked list
+
+// Method-1
+#include <bits/stdc++.h>
+/****************************************************************
+
+    Following is the class structure of the Node class:
+
+    class Node
+    {
+    public:
+        int data;
+        Node *next;
+        Node *prev;
+        Node(int data)
+        {
+            this->data = data;
+            this->next = NULL;
+            this->prev = NULL;
+        }
+    };
+
+*****************************************************************/
+bool findPair(Node *head, int k) {
+    Node *prev = head;
+    while (prev->next != NULL) {
+        Node *curr = prev->next;
+        while (curr != NULL) {
+        if (curr->data + prev->data == k)
+            return true;
+        else
+            curr = curr->next;
+        }
+        prev = prev->next;
+    }
+    return false;
+}
+
+// Method-2
+bool findPair(Node* head, int k)
+{
+    Node * ptr1 = head;
+    unordered_map<int, int>myMap;
+
+    // Traverse the linked list to the end.
+    while (ptr1 != NULL)
+    {
+        int val = ptr1->data;
+        if (myMap.find(k - val) != myMap.end())
+        {
+            return true;
+        }
+
+        myMap[val] = 1;
+        ptr1 = ptr1->next;
+    }
+
+    return false;
+}
+
+// First Non-Repeating Character In A String
+
+#include <bits/stdc++.h> 
+vector<char> firstNonRepeating(string stream) 
+{ 
+    // We will store the non repeating characters queue
+    queue<char> q;
+    // store the answer
+    vector<char> ans;
+    // Using map we can check element is repeating or not
+    unordered_map<char,int> mp;
+    
+    for(int i=0;i<stream.size();i++){
+        if(mp.count(stream[i])>0){
+            // Add Element into map
+            mp[stream[i]]++;
+            // If any repeating element present at the front of the queue remove it
+             while(!q.empty() && mp[q.front()]>1){
+                q.pop();
+             }
+            //if queue is not empty get the front element
+            if(!q.empty() && mp[q.front()]<=1){
+              ans.push_back(q.front());
+            }
+           
+        }else{
+            mp[stream[i]]++;
+            // Push the non repeating element into queue
+            q.push(stream[i]);
+            //if queue is not empty get the front element
+            if(!q.empty()){
+                ans.push_back(q.front());
+            }
+            
+        }
+    }
+     return ans;
+}
+
+// Count Couples
+
+// Method-1
+// Check if 't' is in subtree of 'node'
+bool search(Node *node, int t)
+{
+    // If NULL, return False
+    if (!node)
+        return 0;
+
+    // If found, return True
+    if (node->data == t)
+        return 1;
+
+    // If 't' lesser, search in left subtree
+    if ((node->data) > t)
+        return search(node->left, t);
+    else
+        // Else search in right subtree
+        return search(node->right, t);
+}
+
+// Count number of couples in subtree of root1
+int countCouples(Node *root1, Node *root2, int x)
+{
+    if (!root1)
+        return 0;
+
+    int ans = 0;
+
+    // If complement present in second BST
+    if (search(root2, x - (root1->data)))
+        ans++;
+
+    // Left subtree
+    ans += countCouples(root1->left, root2, x);
+    // Right Subtree
+    ans += countCouples(root1->right, root2, x);
+
+    return ans;
+}
+
+// Method-2
+#include <bits/stdc++.h> 
+void trav(Node *node, unordered_set<int> &st)
+{
+    if (!node)
+        return;
+
+    // Insert data in set
+    st.insert(node->data);
+
+    // Traverse left subtree
+    trav(node->left, st);
+    // Traverse right subtree
+    trav(node->right, st);
+}
+
+void count(Node *node, int &ans, unordered_set<int> &st, int x)
+{
+    if (!node)
+        return;
+
+    // If complement found in subtree
+    if (st.find(x - (node->data)) != st.end())
+        ans++;
+
+    // Count in left subtree
+    count(node->left, ans, st, x);
+    // Count in right subtree
+    count(node->right, ans, st, x);
+}
+
+int countCouples(Node *root1, Node *root2, int x)
+{
+    unordered_set<int> st;
+    int ans = 0;
+
+    // Traverse second BST and insert all values in set
+    trav(root2, st);
+
+    // Count nodes in first BST which have complement
+    count(root1, ans, st, x);
+
+    return ans;
+}
+
+// LRU Cache Implementation
+
+#include <unordered_map>
+class LRUCache {
+public:
+    class node {
+        public:
+            int key;
+            int val;
+            node *next;
+            node *prev;
+            node(int key1, int val1) {
+            key = key1;
+            val = val1;
+            }
+    };
+    node *head = new node(-1, -1);
+    node *tail = new node(-1, -1);
+    int cap;
+    unordered_map<int, node *> temp;
+    LRUCache(int capacity) {
+        cap = capacity;
+        head->next = tail;
+        tail->prev = head;
+    }
+    void deleteNode(node *t) {
+        node *teP = t->prev;
+        node *teN = t->next;
+        teP->next = teN;
+        teN->prev = teP;
+    }
+    void addNode(node *t) {
+        t->next = head->next;
+        t->next->prev = t;
+        t->prev = head;
+        head->next = t;
+    }
+    int get(int key) {
+        if (temp.find(key) == temp.end())
+            return -1;
+        node *t = temp[key];
+        int d = t->val;
+        temp.erase(key);
+        deleteNode(t);
+        addNode(t);
+        temp[key] = head->next;
+        return d;
+    }
+
+    void put(int key, int value) {
+        if (temp.find(key) != temp.end()) {
+            deleteNode(temp[key]);
+            temp.erase(key);
+        }
+        if (temp.size() == cap) {
+            temp.erase(tail->prev->key);
+            deleteNode(tail->prev);
+        }
+        node *newNode = new node(key, value);
+        addNode(newNode);
+        temp[key] = head->next;
+    }
+};
+
+// First unique character in a string
+
+#include <bits/stdc++.h>
+int firstUniqueCharacter(string s, int n) {
+	map<char, int> m;
+	for (int i = 0; i < n; i++) {
+		m[s[i]]++;
+	}
+	for (int i = 0; i < n; i++) {
+		if (m[s[i]] == 1)
+		return i + 1;
+	}
+	return -1;
+}
+
+// Rearrange the arrays
+
+#include <bits/stdc++.h> 
+vector<int> rearrange(vector<int>& num)
+{
+    //  Return a valid rearrangement
+    //  Return {-2147483648}, if there is no valid rearrangement
+    vector<int>v;
+    priority_queue<pair<int,int> >pq;
+    unordered_map<int,int>mp;
+    for(auto i:num){
+        mp[i]++;
+    }
+    for(auto i:mp){
+        pq.push({i.second,i.first});
+    }
+    while(pq.size()>1){
+        auto top1= pq.top();
+        pq.pop();
+        auto top2= pq.top();
+        pq.pop();
+        v.push_back(top1.second);
+        v.push_back(top2.second);
+        if(--top1.first>0){
+            pq.push(top1);
+        }
+        if(--top2.first>0){
+            pq.push(top2);
+        }
+        
+    }
+    if(pq.size()){
+        if(pq.top().first==1){
+            v.push_back(pq.top().second);
+        }
+        else return {-2147483648};
+    }
+    return v;
+}
+
+// Group Anagrams
+
+#include<bits/stdc++.h>
+vector<vector<string>> getGroupedAnagrams(vector<string> &inputStr, int n)
+{
+    unordered_map<string,vector<string> > mymap;
+    string temp;
+    for(int i =0;i<n;++i)
+    {
+        temp = inputStr[i];
+        sort(inputStr[i].begin(),inputStr[i].end());
+        mymap[inputStr[i]].push_back(temp);
+    }
+    vector<vector<string> > result;
+    for(auto it=mymap.begin();it!=mymap.end();++it){
+        result.push_back(it->second);
+    }
+    return result;
+}
+
+// Implement a phone directory
+
+#include <bits/stdc++.h> 
+struct Node{
+    Node *links[26];
+    bool end = false;
+    bool ifExists(char c){
+        return links[c-'a']!=NULL;
+    }
+    //insert
+    void put(char ch , Node *node){
+        links[ch-'a'] = node;
+    }
+    //if exist return node
+    Node *getNextNode(char ch){
+      return  links[ch-'a'];
+    }
+    bool isNode(int i){
+        return links[i]!=NULL;
+    }
+    bool End() { return end; }
+    void setEnd() { 
+        end = true; 
+    }
+};
+class Trie{
+       Node* root;
+public:
+    Trie() {
+        root = new Node();
+    }
+    void insert(string& word) {
+        Node* node = root;
+        for (char ch : word) {
+            if (!node->ifExists(ch)) {
+                node->put(ch, new Node());
+            }
+            node = node->getNextNode(ch);
+        }
+        node->setEnd();
+    }
+    vector<string> getContactsDFS(string prefix) {
+        vector<string> result;
+        Node* node = root;
+        for (char ch : prefix) {
+            if (node->ifExists(ch)) {
+                node = node->getNextNode(ch);
+            } else {
+                return result;
+            }
+        }
+        dfsHelper(node, result, prefix);
+        return result;
+    }
+    void dfsHelper(Node* node, vector<string>& result, string prefix) {
+        if (node->End()) {
+            result.push_back(prefix);
+        }
+        for (int i=0;i<26;i++) {
+            if (node->isNode(i)) {
+                char c = 'a' + i;
+                dfsHelper(node->getNextNode(c), result, prefix + c);
+            }
+        }
+    }
+};
+vector<vector<string>> phoneDirectory(vector<string>& arr, string &qStr)
+{
+    vector<vector<string>> ans;
+    Trie t;
+    for(string &str : arr) t.insert(str);
+    for(int i=0;i<qStr.length();i++){
+        vector<string> temp=t.getContactsDFS(qStr.substr(0,i+1));
+        if(temp.size()) 
+            ans.push_back(temp);
+    }
+    if(ans.size()==0) 
+        return {{"No suggestions found"}} ;
+    return ans;
+}
+
+// Unique matrix
+
+#include <bits/stdc++.h>
+using namespace std;
+class TrieNode
+{
+      public:
+      int data;
+      TrieNode* child[2];
+      bool isTerminal;
+      TrieNode(int data)
+      {
+           this->data = data;
+           for(int i = 0; i < 2; i++)
+           {
+                 child[i] = NULL;
+           }
+           isTerminal = false;
+      }
+};
+class Trie
+{
+      public:
+      TrieNode* root;
+      Trie()
+      {
+            root = new TrieNode(-1);
+      }
+      void insert_trie(vector<int> arr, TrieNode* root, int i, int m)
+      {
+            if(i == m)
+            {
+                  root->isTerminal = true;
+                  return;
+            }
+            int index = arr[i];
+            if(root->child[index] == NULL)
+            {
+                  root->child[index] = new TrieNode(arr[i]);
+            }
+            root = root->child[index];
+            insert_trie(arr, root, i + 1, m);
+      }
+      void insert(vector<int> arr, int m)
+      {
+            insert_trie(arr, root, 0, m);
+      }
+      bool search_trie(vector<int> arr, TrieNode* root, int i, int m)
+      {
+            if(i == m)
+            {
+                  return root->isTerminal;
+            }
+            int index = arr[i];
+            if(root->child[index] == NULL)
+            {
+                  return false;
+            }
+            return search_trie(arr, root->child[index], i+1, m);
+      }
+      bool search(vector<int> arr, int m)
+      {
+            return search_trie(arr, root, 0, m);
+      }
+};
+vector<vector<int>> uniqueRow(vector<vector<int>> &matrix, int n, int m)
+{
+      vector<vector<int>> ans;
+      Trie *obj = new Trie();
+      for(int i = 0; i < n; i++)
+      {
+            vector<int> temp = matrix[i];
+            if(!obj->search(temp, m))
+            {
+                  ans.push_back(temp);
+                  obj->insert(temp, m);
+            }
+      }
+      return ans;
+}
+
+// Longest Subsequence With Difference One
+
+// Method-1
+#include <bits/stdc++.h>
+
+int solveTab(vector<int> &nums) {
+	int n=nums.size();
+	vector<vector<int>>dp(n+1,vector<int>(n+2,0));
+	for(int index=n-1;index>=0;index--){
+		for(int prev=n-2;prev>=-1;prev--){
+			int include=0;
+			if(prev==-1 || abs(nums[prev]-nums[index])==1)
+				include=max(include,1+dp[index+1][index+1]);
+			int exclude=dp[index+1][prev+1];
+			dp[index][prev+1]=max(include,exclude);
+		}
+	}
+	return dp[0][0];
+}
+int longestSubsequence(vector<int> &nums){
+	int n=nums.size();	
+	return solveTab(nums);
+}
+
+// Method-2
+#include <bits/stdc++.h>
+int solve(int index,vector<int> &nums,int prev,vector<vector<int>>&dp) {
+	if(index>=nums.size())
+		return 0;
+	if(dp[index][prev+1]!=-1)
+		return dp[index][prev+1];
+	int include=0;
+	if(prev==-1 || abs(nums[prev]-nums[index])==1)
+		include=max(include,1+solve(index+1,nums,index,dp));
+	int exclude=solve(index+1,nums,prev,dp);
+	return dp[index][prev+1]=max(include,exclude);
+	
+}
+int longestSubsequence(vector<int> &nums){
+	int n=nums.size();
+	vector<vector<int>>dp(n+1,vector<int>(n+2,-1));
+	return solve(0,nums,-1,dp);
+}
