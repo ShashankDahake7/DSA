@@ -1,0 +1,1432 @@
+// Rat in a maze problem
+
+class Solution{
+    private:
+    bool safe(int x ,int y , int n , vector<vector<int>> visited ,vector<vector<int>> &m ){
+        if( ( x >= 0 && x < n ) && ( y >= 0 && y < n ) && visited[x][y] == 0 && m[x][y] == 1){
+            return true; 
+        }
+        else{
+            return false;
+        }
+    }
+    void solve(vector<vector<int>> &m , int n ,vector<string>& ans , int x , int y ,vector<vector<int>> visited , string path){
+        //base case
+        if( x == n - 1 && y == n - 1 ){
+            ans.push_back(path);
+            return ;
+        }
+        //when you cover that index
+        visited[x][y] = 1;
+        // their are  choices     
+        // 1st is Down
+        int newx = x + 1;
+        int newy = y;
+        if( safe( newx , newy , n ,visited , m)){
+            path.push_back('D');
+            solve( m , n , ans , newx , newy , visited , path);
+            path.pop_back();
+        }
+        // 1st is Left
+         newx = x;
+         newy = y - 1;
+        if( safe( newx , newy , n ,visited , m)){
+            path.push_back('L');
+            solve( m , n , ans , newx , newy , visited , path);
+            path.pop_back();
+        }
+        // 1st is Right
+        newx = x;
+        newy = y + 1;
+        if( safe( newx , newy , n ,visited , m)){
+            path.push_back('R');
+            solve( m , n , ans , newx , newy , visited , path);
+            path.pop_back();
+        }
+        // 1st is Up
+         newx = x - 1;
+         newy = y;
+        if( safe( newx , newy , n ,visited , m)){
+            path.push_back('U');
+            solve( m , n , ans , newx , newy , visited , path);
+            path.pop_back();
+        }
+        visited[x][y] = 0;
+    }
+    public:
+    vector<string> findPath(vector<vector<int>> &m, int n) {
+        vector<string>ans ;
+        if( m [0][0] == 0){
+            return ans;
+        }
+        int srcx = 0;
+        int srcy = 0;
+        // Make a visited 2D vector
+        vector<vector<int>> visited = m;
+        // make it default by all indeces by 0
+        for( int i = 0; i < n; i++){
+            for( int j = 0; j < n; j++){
+                visited [i][j] = 0;
+            }
+        }
+        string path = "";
+        solve( m , n , ans , srcx , srcy , visited , path);
+        sort(ans.begin() , ans.end());
+        return ans;
+    }
+};
+
+// N-Queen Problem
+
+class Solution{
+public:
+    bool isSafe(vector<vector<int>>& board,int row,int col, int n){
+        // checking
+        for(int i=0;i<col;i++){
+            if(board[row][i]){
+                return false;
+            }
+        }
+        // checking upper diagonal
+        for(int i=row,j=col;j>=0 && i>=0;j--,i--){
+            if(board[i][j]){
+                return false;
+            }
+        }
+        // checking lower diagonal
+        for(int i=row,j=col; j>=0 && i<n; j--,i++){
+            if(board[i][j]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void solveQueens(vector<vector<int>>& board, int col, int n, vector<vector<int>>& res){
+        if(col==n){
+            vector<int> temp;
+            for(int col=0;col<n;col++){
+                for(int row=0;row<n;row++){
+                    if(board[row][col]==1){
+                        temp.push_back(row+1);
+                    }
+                }
+            }
+            res.push_back(temp);
+            return;
+        }
+        for(int i=0;i<n;i++){
+            if(isSafe(board,i,col,n)){
+                //place a queen
+                board[i][col] =1;
+                // recusively do it for all queens 
+                solveQueens(board, col+1, n, res);
+                //backtrack if it didn't provide a solution
+                board[i][col] =0;
+            }
+        }
+    }
+    vector<vector<int>> nQueen(int n) {
+       vector<vector<int>> board(n,vector<int>(n,0));
+       vector<vector<int>> res;
+       solveQueens(board,0,n,res);
+       return res;
+    }
+};
+
+// Word Break - Part 2
+
+class Solution{
+public:
+    void solve(unordered_map<string,int> mp, string s,vector<string>& ans,string temp,string temp2,int index){
+        if(index==s.size()){
+            if(mp.find(temp)!=mp.end()){
+            temp2+=temp;
+            ans.push_back(temp2);
+            }
+            return;
+        }
+        // exclude
+        solve(mp,s,ans,temp+s[index],temp2,index+1);
+        if(mp.find(temp)!=mp.end()){
+            temp2+=temp;
+            temp2+=" ";
+            temp="";
+            solve(mp,s,ans,temp,temp2,index);
+        }
+    }
+    vector<string> wordBreak(int n, vector<string>& dict, string s)
+    {
+        unordered_map<string,int> mp;
+        for(int i=0;i<n;i++){
+            mp[dict[i]]++;
+        }
+        vector<string> ans;
+        string temp="";
+        string temp2="";
+        solve(mp,s,ans,temp,temp2,0);
+        return ans;
+    }
+};
+
+// Remove Invalid Parentheses
+
+class Solution {
+public:
+    // For storing output
+    vector <string> output; 
+    // To check if string is valid
+    bool isValid(string &s){ 
+        int pair = 0;
+        for(int i=0; i<s.size(); i++){
+            if(s[i] == '('){
+                pair++;
+            }
+            else if(s[i] == ')'){
+                pair--;
+                if(pair < 0)
+                    return false;
+            } 
+        }
+        // Check if string is valid
+        return pair == 0;
+    }
+    void removeHelper(string input, int index, int left, int right){
+        // When removal of extra brackets is done
+        if(left == 0 && right == 0){
+            // Pushing the valid string only
+            if(isValid(input)){
+                output.push_back(input);
+            }
+            return;
+        }
+        for(int i=index; i<input.size(); i++){
+            // For avoiding same valid string 
+            if(i > index && input[i] == input[i-1]) continue;
+            string tmp = input;
+           // Remove brackets based on left and right count
+            if(right == 0 && left > 0 && input[i] == '(') {
+                 tmp.erase(i, 1);
+                 removeHelper(tmp, i, left-1, right);
+            }
+            else if(right > 0 && input[i] == ')') {
+                tmp.erase(i, 1);
+                removeHelper(tmp, i, left, right-1);
+            }
+        }
+    }
+    // Driver Function 
+    vector<string> removeInvalidParentheses(string s) {
+        if(s.size() == 0) return output;
+        // Count '('  &  ')' due to which string is invalid 
+        int left = 0;
+        int right = 0;
+        for(int i=0; i<s.size(); i++){
+            if(s[i] == '('){
+                left++;
+            }
+            else if(s[i] == ')'){
+                if(left > 0){
+                    left--;
+                }
+                else{
+                    right++;
+                }
+            }   
+        }
+        // Helper to remove those extra brackets
+        removeHelper(s, 0, left, right);
+        return output;
+    }
+};
+
+// Solve the Sudoku
+
+class Solution 
+{
+    public:
+    //Function to find a solved Sudoku. 
+    bool isSafe(int row,int col,int board[N][N],int val){
+    
+       for(int i=0;i<N;++i){
+           //row
+        if(board[row][i]==val)return false;
+           //col
+        if(board[i][col]==val)return false;
+           //3*3 Matrix
+        if(board[3*(row/3)+i/3][3*(col/3)+i%3]==val)return false;  
+       }
+       return true;
+} 
+    bool SolveSudoku(int board[N][N])  
+    { 
+        for(int row=0;row<N;++row){
+            for(int col=0;col<N;++col){
+                if(board[row][col]==0){
+                    for(int val=1;val<=9;++val){
+                        if(isSafe(row,col,board,val)){
+                              board[row][col]=val;
+                         bool nextSol=SolveSudoku(board);
+                         if(nextSol)
+                             return true;
+                             else
+                             {
+                        board[row][col]=0; 
+                             }
+                        }
+                    }
+                 return false;
+                    
+                }
+            }
+        }
+        return true;
+    }
+    
+    //Function to print grids of the Sudoku.
+    void printGrid (int grid[N][N]) 
+    {
+        SolveSudoku(grid);
+        for(int i=0;i<N;++i){
+            for(int j=0;j<N;++j){
+                cout<<grid[i][j]<<" ";
+            }
+        }
+    }
+};
+
+// M-Coloring Problem
+
+class Solution{
+public:
+    // Function to determine if graph can be coloured with at most M colours such
+    // that no two adjacent vertices of graph are coloured with same colour.
+    bool isSafe(int node, int currCol, bool graph[101][101], int m, int n
+            ,int color[]) {
+        for(int i=0; i<n; i++) {
+            if(i!=node && graph[i][node]==true && color[i]==currCol) {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool solve(int node, bool graph[101][101], int m, int n, int color[]) {
+        if(node == n) {
+            return true;
+        }
+        for(int i=1; i<=m; i++) {
+            if(isSafe(node, i, graph, m, n, color)) {
+                color[node] = i;
+                if(solve(node+1, graph, m, n, color)) {
+                    return true;
+                }
+                color[node] = 0;
+            }
+        }
+        return false;
+    }
+    bool graphColoring(bool graph[101][101], int m, int n) {
+        int color[n] = {0};
+        if(solve(0, graph, m, n, color))   return true;
+        return false;
+    }
+};
+
+// Given a string, print all possible palindromic partitions
+
+class Solution {
+  public:
+  void solve(int index,string s, vector<string>&path,vector<vector<string>>&ans){
+      if(index>=s.size()){
+          ans.push_back(path);
+          return;
+      }
+        
+    for(int i=index;i<s.size();i++){
+        if(isPalind(s,index,i)){
+            path.push_back(s.substr(index,i-index+1));
+            solve(i+1,s,path,ans);
+            //backtrack
+            path.pop_back();
+        }
+    }
+  }
+  bool isPalind(string s,int start,int end){
+      while(start<=end){
+          if(s[start++]!=s[end--]){
+              return false;
+          }
+      }
+      return true;
+  }
+    vector<vector<string>> allPalindromicPerms(string S) {
+        vector<vector<string>>ans;
+        vector<string>path;
+        solve(0,S,path,ans);
+        return ans;
+    }
+};
+
+// Partition Equal Subset Sum
+
+class Solution{
+public:
+    bool safepartition(int N,int arr[],int index,int curr,int sum){
+        if(index>=N){
+            if(curr==sum){
+                return true;
+            }
+            return false;
+        }
+        if(curr<=sum){
+            return safepartition(N,arr,index+1,curr+arr[index],sum) || safepartition(N,arr,index+1,curr,sum);
+        }
+        else{
+            return safepartition(N,arr,index+1,curr,sum);
+        }
+    }
+    int equalPartition(int N, int arr[])
+    {
+        int sum=0;
+        for(int i=0;i<N;i++){
+            sum+=arr[i];
+        }
+        if(sum%2!=0){
+            return 0;
+        }
+        return safepartition(N,arr,0,0,sum/2);
+    }
+};
+
+// The Knight’s tour problem
+
+#include <bits/stdc++.h>
+using namespace std;
+#define N 8
+int solveKTUtil(int x, int y, int movei, int sol[N][N],
+				int xMove[], int yMove[]);
+/* A utility function to check if i,j are
+valid indexes for N*N chessboard */
+int isSafe(int x, int y, int sol[N][N])
+{
+	return (x >= 0 && x < N && y >= 0 && y < N
+			&& sol[x][y] == -1);
+}
+/* A utility function to print
+solution matrix sol[N][N] */
+void printSolution(int sol[N][N])
+{
+	for (int x = 0; x < N; x++) {
+		for (int y = 0; y < N; y++)
+			cout << " " << setw(2) << sol[x][y] << " ";
+		cout << endl;
+	}
+}
+/* This function solves the Knight Tour problem using
+Backtracking. This function mainly uses solveKTUtil()
+to solve the problem. It returns false if no complete
+tour is possible, otherwise return true and prints the
+tour.
+Please note that there may be more than one solutions,
+this function prints one of the feasible solutions. */
+int solveKT()
+{
+	int sol[N][N];
+	/* Initialization of solution matrix */
+	for (int x = 0; x < N; x++)
+		for (int y = 0; y < N; y++)
+			sol[x][y] = -1;
+	/* xMove[] and yMove[] define next move of Knight.
+	xMove[] is for next value of x coordinate
+	yMove[] is for next value of y coordinate */
+	int xMove[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
+	int yMove[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
+	// Since the Knight is initially at the first block
+	sol[0][0] = 0;
+	// Start from 0,0 and explore all tours using solveKTUtil() 
+	if (solveKTUtil(0, 0, 1, sol, xMove, yMove) == 0) {
+		cout << "Solution does not exist";
+		return 0;
+	}
+	else
+		printSolution(sol);
+	return 1;
+}
+// A recursive utility function to solve Knight Tour problem 
+int solveKTUtil(int x, int y, int movei, int sol[N][N], int xMove[8], int yMove[8])
+{
+	int k, next_x, next_y;
+	if (movei == N * N)
+		return 1;
+	// Try all next moves from the current coordinate x, y 
+	for (k = 0; k < 8; k++) {
+		next_x = x + xMove[k];
+		next_y = y + yMove[k];
+		if (isSafe(next_x, next_y, sol)) {
+			sol[next_x][next_y] = movei;
+			if (solveKTUtil(next_x, next_y, movei + 1, sol, xMove, yMove)== 1)
+				return 1;
+			else				
+			// backtracking
+				sol[next_x][next_y] = -1;
+		}
+	}
+	return 0;
+}
+// Driver Code
+int main()
+{
+	// Function Call
+	solveKT();
+	return 0;
+}
+
+// Tug of War
+
+#include <bits/stdc++.h>
+using namespace std;
+// function that tries every possible solution by calling itself recursively
+void TOWUtil(int* arr, int n, bool* curr_elements, int no_of_selected_elements,
+			bool* soln, int* min_diff, int sum, int curr_sum, int curr_position)
+{
+	// checks whether the it is going out of bound
+	if (curr_position == n)
+		return;
+	// checks that the numbers of elements left are not less than the number of elements required to form the solution
+	if ((n/2 - no_of_selected_elements) > (n - curr_position))
+		return;
+	// consider the cases when current element is not included in the solution
+	TOWUtil(arr, n, curr_elements, no_of_selected_elements,
+			soln, min_diff, sum, curr_sum, curr_position+1);
+	// add the current element to the solution
+	no_of_selected_elements++;
+	curr_sum = curr_sum + arr[curr_position];
+	curr_elements[curr_position] = true;
+	// checks if a solution is formed
+	if (no_of_selected_elements == n/2)
+	{
+		// checks if the solution formed is better than the best solution so far
+		if (abs(sum/2 - curr_sum) < *min_diff)
+		{
+			*min_diff = abs(sum/2 - curr_sum);
+			for (int i = 0; i<n; i++)
+				soln[i] = curr_elements[i];
+		}
+	}
+	else
+	{
+		// consider the cases where current element is included in the solution
+		TOWUtil(arr, n, curr_elements, no_of_selected_elements, soln,
+				min_diff, sum, curr_sum, curr_position+1);
+	}
+	// removes current element before returning to the caller of this function
+	curr_elements[curr_position] = false;
+}
+// main function that generate an arr
+void tugOfWar(int *arr, int n)
+{
+	// the boolean array that contains the inclusion and exclusion of an element in current set. The number excluded automatically form the other set
+	bool* curr_elements = new bool[n];
+	// The inclusion/exclusion array for final solution
+	bool* soln = new bool[n];
+	int min_diff = INT_MAX;
+	int sum = 0;
+	for (int i=0; i<n; i++)
+	{
+		sum += arr[i];
+		curr_elements[i] = soln[i] = false;
+	}
+	// Find the solution using recursive function TOWUtil()
+	TOWUtil(arr, n, curr_elements, 0, soln, &min_diff, sum, 0, 0);
+	// Print the solution
+	cout << "The first subset is: ";
+	for (int i=0; i<n; i++)
+	{
+		if (soln[i] == true)
+			cout << arr[i] << " ";
+	}
+	cout << "\nThe second subset is: ";
+	for (int i=0; i<n; i++)
+	{
+		if (soln[i] == false)
+			cout << arr[i] << " ";
+	}
+}
+// Driver program to test above functions
+int main()
+{
+	int arr[] = {23, 45, -34, 12, 0, 98, -99, 4, 189, -1, 4};
+	int n = sizeof(arr)/sizeof(arr[0]);
+	tugOfWar(arr, n);
+	return 0;
+}
+
+// Find shortest safe route in a path with landmines
+
+// Method-1
+#include <bits/stdc++.h>
+using namespace std;
+#define R 12
+#define C 10
+// These arrays are used to get row and column numbers of 4 neighbours of a given cell
+int rowNum[] = { -1, 0, 0, 1 };
+int colNum[] = { 0, -1, 1, 0 };
+// A function to check if a given cell (x, y) can be visited or not
+bool isSafe(int mat[R][C], int visited[R][C],
+			int x, int y)
+{
+	if (mat[x][y] == 0 || visited[x][y])
+		return false;
+
+	return true;
+}
+// A function to check if a given cell (x, y) is a valid cell or not
+bool isValid(int x, int y)
+{
+	if (x < R && y < C && x >= 0 && y >= 0)
+		return true;
+
+	return false;
+}
+// A function to mark all adjacent cells of landmines as unsafe. Landmines are shown with number 0
+void markUnsafeCells(int mat[R][C])
+{
+	for (int i = 0; i < R; i++)
+	{
+		for (int j = 0; j < C; j++)
+		{
+			// if a landmines is found
+			if (mat[i][j] == 0)
+			{
+			// mark all adjacent cells
+			for (int k = 0; k < 4; k++)
+				if (isValid(i + rowNum[k], j + colNum[k]))
+					mat[i + rowNum[k]][j + colNum[k]] = -1;
+			}
+		}
+	}
+	// mark all found adjacent cells as unsafe
+	for (int i = 0; i < R; i++)
+	{
+		for (int j = 0; j < C; j++)
+		{
+			if (mat[i][j] == -1)
+				mat[i][j] = 0;
+		}
+	}
+	// Uncomment below lines to print the path
+	/*for (int i = 0; i < R; i++)
+	{
+		for (int j = 0; j < C; j++)
+		{
+			cout << std::setw(3) << mat[i][j];
+		}
+		cout << endl;
+	}*/
+}
+// Function to find shortest safe Route in the
+// matrix with landmines
+// mat[][] - binary input matrix with safe cells marked as 1
+// visited[][] - store info about cells already visited in
+// current route
+// (i, j) are coordinates of the current cell
+// min_dist --> stores minimum cost of shortest path so far
+// dist --> stores current path cost
+void findShortestPathUtil(int mat[R][C], int visited[R][C], int i, int j, int &min_dist, int dist)
+{
+	// if destination is reached
+	if (j == C-1)
+	{
+		// update shortest path found so far
+		min_dist = min(dist, min_dist);
+		return;
+	}
+	// if current path cost exceeds minimum so far
+	if (dist > min_dist)
+		return;
+	// include (i, j) in current path
+	visited[i][j] = 1;
+	// Recurse for all safe adjacent neighbours
+	for (int k = 0; k < 4; k++)
+	{
+		if (isValid(i + rowNum[k], j + colNum[k]) &&
+			isSafe(mat, visited, i + rowNum[k], j + colNum[k]))
+		{
+			findShortestPathUtil(mat, visited, i + rowNum[k],
+						j + colNum[k], min_dist, dist + 1);
+		}
+	}
+	// Backtrack
+	visited[i][j] = 0;
+}
+// A wrapper function over findshortestPathUtil()
+void findShortestPath(int mat[R][C])
+{
+	// stores minimum cost of shortest path so far
+	int min_dist = INT_MAX;
+	// create a boolean matrix to store info about cells already visited in current route
+	int visited[R][C];
+	// mark adjacent cells of landmines as unsafe
+	markUnsafeCells(mat);
+	// start from first column and take minimum
+	for (int i = 0; i < R; i++)
+	{
+		// if path is safe from current cell
+		if (mat[i][0] == 1)
+		{
+			// initialize visited to false
+			memset(visited, 0, sizeof visited);
+			// find shortest route from (i, 0) to any cell of last column (x, C - 1) where 0 <= x < R
+			findShortestPathUtil(mat, visited, i, 0,
+								min_dist, 0);
+			// if min distance is already found
+			if(min_dist == C - 1)
+				break;
+		}
+	}
+	// if destination can be reached
+	if (min_dist != INT_MAX)
+		cout << "Length of shortest safe route is "
+			<< min_dist;
+	else // if the destination is not reachable
+		cout << "Destination not reachable from "
+			<< "given source";
+}
+// Driver code
+int main()
+{
+	// input matrix with landmines shown with number 0
+	int mat[R][C] =
+	{
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 0, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 },
+		{ 1, 0, 1, 1, 1, 1, 1, 1, 0, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 0, 1, 1, 1, 1, 0, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 0, 1, 1, 1, 1, 1, 1 }
+	};
+	// find shortest path
+	findShortestPath(mat);
+	return 0;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+#define R 12
+#define C 10
+struct Key{
+	int x,y;
+	Key(int i,int j){ x=i;y=j;};
+};
+// These arrays are used to get row and column numbers of 4 neighbours of a given cell
+int rowNum[] = { -1, 0, 0, 1 };
+int colNum[] = { 0, -1, 1, 0 };
+// A function to check if a given cell (x, y) is a valid cell or not
+bool isValid(int x, int y)
+{
+	if (x < R && y < C && x >= 0 && y >= 0)
+		return true;
+	return false;
+}
+// A function to mark all adjacent cells of landmines as unsafe. Landmines are shown with number 0
+void findShortestPath(int mat[R][C]){
+	int i,j;
+	for (i = 0; i < R; i++)
+	{
+		for (j = 0; j < C; j++)
+		{
+			// if a landmines is found
+			if (mat[i][j] == 0)
+			{
+			// mark all adjacent cells
+			for (int k = 0; k < 4; k++)
+				if (isValid(i + rowNum[k], j + colNum[k]))
+					mat[i + rowNum[k]][j + colNum[k]] = -1;
+			}
+		}
+	}
+// mark all found adjacent cells as unsafe
+	for (i = 0; i < R; i++)
+	{
+		for (j = 0; j < C; j++)
+		{
+			if (mat[i][j] == -1)
+				mat[i][j] = 0;
+		}
+	}
+	int dist[R][C];
+	for(i=0;i<R;i++){
+		for(j=0;j<C;j++)
+			dist[i][j] = -1;
+	}
+	queue<Key> q;
+	for(i=0;i<R;i++){
+		if(mat[i][0] == 1){
+			q.push(Key(i,0));
+			dist[i][0] = 0;
+		}
+	}
+	while(!q.empty()){
+		Key k = q.front();
+		q.pop();
+		int d = dist[k.x][k.y];
+		int x = k.x;
+		int y = k.y;
+		for (int k = 0; k < 4; k++) {
+			int xp = x + rowNum[k];
+			int yp = y + colNum[k];
+			if(isValid(xp,yp) && dist[xp][yp] == -1 && mat[xp][yp] == 1){
+				dist[xp][yp] = d+1;
+				q.push(Key(xp,yp));
+			}
+		}
+	}
+	// stores minimum cost of shortest path so far
+	int ans = INT_MAX;
+	// start from first column and take minimum
+	for(i=0;i<R;i++){
+		if(mat[i][C-1] == 1 && dist[i][C-1] != -1){
+			ans = min(ans,dist[i][C-1]);
+		}
+	}
+	// if destination can be reached
+	if(ans == INT_MAX)
+		cout << "NOT POSSIBLE\n";		
+	else// if the destination is not reachable
+		cout << "Length of shortest safe route is " << ans << endl;
+}
+// Driver code
+int main(){
+	// input matrix with landmines shown with number 0
+	int mat[R][C] =
+	{
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 0, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 },
+		{ 1, 0, 1, 1, 1, 1, 1, 1, 0, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 0, 1, 1, 1, 1, 0, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 0, 1, 1, 1, 1, 1, 1 }
+	};	
+	// find shortest path
+	findShortestPath(mat);
+}
+
+// Combination Sum
+
+class Solution {
+  public:
+    //Function to return a list of indexes denoting the required 
+    //combinations whose sum is equal to given number.
+    void solve(vector<int>&A,int N,int currsum,int B,int index,vector<vector<int>>&ans,vector<int>&temp){
+         if(index>=N){
+             if(currsum==B){
+                 ans.push_back(temp);
+             }
+             return;
+         }
+         if(currsum<=B){
+             temp.push_back(A[index]);
+             solve(A,N,currsum+A[index],B,index,ans,temp);
+             temp.pop_back();
+         }
+         solve(A,N,currsum,B,index+1,ans,temp);
+    }
+    vector<vector<int> > combinationSum(vector<int> &A, int B) {
+        set<int>s(A.begin(),A.end());
+        vector<int>arr(s.begin(),s.end());
+        vector<vector<int>>ans;
+        int N=arr.size();
+        vector<int>temp;
+        solve(arr,N,0,B,0,ans,temp);
+        return ans;
+      }
+};
+
+// Largest number in K swaps
+
+class Solution
+{
+    public:
+    void helper(string s,string &largestNumber,int k,int idx)
+    {
+        // agar number of swaps khatam hogaye toh return hojao
+        if(k==0)
+        {
+            return;
+        }
+        int n = s.size();
+        // current string ka first character hum maan rahe hai ki largest character hai string mein
+        char maxChar = s[idx];
+        // ab string mein aage traverse karke find karne ki koshish karenge ki current max character max hai ya aage koyi aur character hai 
+        // jo ki maximum character ban sakta hai toh usse appne paas rakhlenge
+        for(int i=idx+1;i<n;i++)
+        {
+            if(maxChar<s[i])
+            {
+                maxChar = s[i];
+            }
+        }
+        // agar current character jisse humne max character maana tha intially maximum character nahi hai toh iska matlab swap karna padega
+        if(maxChar!=s[idx])
+        {
+            k -= 1;
+        }
+        for(int i=idx;i<n;i++)
+        {
+            // ab hum string mein traverse karke maximum character ki position tak jaayenge and phir current character and maximum character
+            //  ko swap karke check karenge ki current string maximum hai ya phir largestNumber waala string maximum hai
+            if(s[i]==maxChar)
+            {
+                swap(s[i],s[idx]);
+                if(s.compare(largestNumber)>0)
+                {
+                    largestNumber = s;
+                }
+                helper(s,largestNumber,k,idx+1);
+                // backtracking step
+                swap(s[i],s[idx]);
+            }
+        }
+    }
+    string findMaximumNum(string str, int k)
+    {
+    //   Hum initially yehi maan kar chal rahe hai ki hamara given string hi maximum string hai
+       string largestNumber = str;
+       helper(str,largestNumber,k,0);
+       return largestNumber;
+    }
+};
+
+// Permutations of a given string
+
+class Solution{
+    public:
+    void solve(string s,int n,set<string> &st){
+        if(n==0){
+            st.insert(s);
+            return;
+        }
+        
+        for(int i=n;i>=0;i--){
+            string temp=s;
+            swap(temp[i],temp[n]);
+            solve(temp,n-1,st);
+        }
+    }
+    vector<string> find_permutation(string s){
+        int n=s.size();
+        set<string> st;
+            
+        solve(s,n-1,st);
+        vector<string> ans;
+        for(auto i:st){
+            ans.push_back(i);
+        }
+        sort(ans.begin(),ans.end());
+        return ans;
+    }
+};
+
+// Find if there is a path of more than k length from a source
+
+#include<bits/stdc++.h>
+using namespace std;
+// iPair ==> Integer Pair
+typedef pair<int, int> iPair;
+// This class represents a dipathted graph using adjacency list representation
+class Graph
+{
+	int V; // No. of vertices
+	// In a weighted graph, we need to store vertex and weight pair for every edge
+	list< pair<int, int> > *adj;
+	bool pathMoreThanKUtil(int src, int k, vector<bool> &path);
+public:
+	Graph(int V); // Constructor
+	// function to add an edge to graph
+	void addEdge(int u, int v, int w);
+	bool pathMoreThanK(int src, int k);
+};
+// Returns true if graph has path more than k length
+bool Graph::pathMoreThanK(int src, int k)
+{
+	// Create a path array with nothing included in path
+	vector<bool> path(V, false);
+	// Add source vertex to path
+	path[src] = 1;
+	return pathMoreThanKUtil(src, k, path);
+}
+// Prints shortest paths from src to all other vertices
+bool Graph::pathMoreThanKUtil(int src, int k, vector<bool> &path)
+{
+	// If k is 0 or negative, return true;
+	if (k <= 0)
+		return true;
+	// Get all adjacent vertices of source vertex src and recursively explore all paths from src.
+	list<iPair>::iterator i;
+	for (i = adj[src].begin(); i != adj[src].end(); ++i)
+	{
+		// Get adjacent vertex and weight of edge
+		int v = (*i).first;
+		int w = (*i).second;
+		// If vertex v is already there in path, then there is a cycle (we ignore this edge)
+		if (path[v] == true)
+			continue;
+		// If weight of is more than k, return true
+		if (w >= k)
+			return true;
+		// Else add this vertex to path
+		path[v] = true;
+		// If this adjacent can provide a path longer than k, return true.
+		if (pathMoreThanKUtil(v, k-w, path))
+			return true;
+		// Backtrack
+		path[v] = false;
+	}
+	// If no adjacent could produce longer path, return false
+	return false;
+}
+// Allocates memory for adjacency list
+Graph::Graph(int V)
+{
+	this->V = V;
+	adj = new list<iPair> [V];
+}
+// Utility function to an edge (u, v) of weight w
+void Graph::addEdge(int u, int v, int w)
+{
+	adj[u].push_back(make_pair(v, w));
+	adj[v].push_back(make_pair(u, w));
+}
+// Driver program to test methods of graph class
+int main()
+{
+	// create the graph given in above figure
+	int V = 9;
+	Graph g(V);
+	// making above shown graph
+	g.addEdge(0, 1, 4);
+	g.addEdge(0, 7, 8);
+	g.addEdge(1, 2, 8);
+	g.addEdge(1, 7, 11);
+	g.addEdge(2, 3, 7);
+	g.addEdge(2, 8, 2);
+	g.addEdge(2, 5, 4);
+	g.addEdge(3, 4, 9);
+	g.addEdge(3, 5, 14);
+	g.addEdge(4, 5, 10);
+	g.addEdge(5, 6, 2);
+	g.addEdge(6, 7, 1);
+	g.addEdge(6, 8, 6);
+	g.addEdge(7, 8, 7);
+	int src = 0;
+	int k = 62;
+	g.pathMoreThanK(src, k)? cout << "Yes\n" : cout << "No\n";
+	k = 60;
+	g.pathMoreThanK(src, k)? cout << "Yes\n" : cout << "No\n";
+	return 0;
+}
+
+// Longest Possible Route in a Matrix with Hurdles
+
+#include <bits/stdc++.h>
+using namespace std;
+#define R 3
+#define C 10
+// A Pair to store status of a cell. found is set to true of destination is reachable and value stores distance of longest path
+struct Pair {
+	// true if destination is found
+	bool found;
+	// stores cost of longest path from current cell to destination cell
+	int value;
+};
+// Function to find Longest Possible Route in the
+// matrix with hurdles. If the destination is not reachable
+// the function returns false with cost INT_MAX. (i, j) is source cell and (x, y) is destination cell.
+Pair findLongestPathUtil(int mat[R][C], int i, int j, int x, int y, bool visited[R][C])
+{
+	// if (i, j) itself is destination, return true
+	if (i == x && j == y) {
+		Pair p = { true, 0 };
+		return p;
+	}
+	// if not a valid cell, return false
+	if (i < 0 || i >= R || j < 0 || j >= C || mat[i][j] == 0 || visited[i][j]) {
+		Pair p = { false, INT_MAX };
+		return p;
+	}
+	// include (i, j) in current path i.e. set visited(i, j) to true
+	visited[i][j] = true;
+	// res stores longest path from current cell (i, j) to destination cell (x, y)
+	int res = INT_MIN;
+	// go left from current cell
+	Pair sol = findLongestPathUtil(mat, i, j - 1, x, y, visited);
+	// if destination can be reached on going left from current cell, update res
+	if (sol.found)
+		res = max(res, sol.value);
+	// go right from current cell
+	sol = findLongestPathUtil(mat, i, j + 1, x, y, visited);
+	// if destination can be reached on going right from current cell, update res
+	if (sol.found)
+		res = max(res, sol.value);
+	// go up from current cell
+	sol = findLongestPathUtil(mat, i - 1, j, x, y, visited);
+	// if destination can be reached on going up from current cell, update res
+	if (sol.found)
+		res = max(res, sol.value);
+	// go down from current cell
+	sol = findLongestPathUtil(mat, i + 1, j, x, y, visited);
+	// if destination can be reached on going down from current cell, update res
+	if (sol.found)
+		res = max(res, sol.value);
+	// Backtrack
+	visited[i][j] = false;
+	// if destination can be reached from current cell, return true
+	if (res != INT_MIN) {
+		Pair p = { true, 1 + res };
+		return p;
+	}
+	// if destination can't be reached from current cell, return false
+	else {
+		Pair p = { false, INT_MAX };
+		return p;
+	}
+}
+// A wrapper function over findLongestPathUtil()
+void findLongestPath(int mat[R][C], int i, int j, int x, int y)
+{
+	// create a boolean matrix to store info about cells already visited in current route
+	bool visited[R][C];
+	// initialize visited to false
+	memset(visited, false, sizeof visited);
+	// find longest route from (i, j) to (x, y) and print its maximum cost
+	Pair p = findLongestPathUtil(mat, i, j, x, y, visited);
+	if (p.found)
+		cout << "Length of longest possible route is "
+			<< p.value;
+	// If the destination is not reachable
+	else
+		cout << "Destination not reachable from given "
+				"source";
+}
+int main()
+{
+	// input matrix with hurdles shown with number 0
+	int mat[R][C] = { { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+					{ 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+					{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+	// find longest path with source (0, 0) and destination (1, 7)
+	findLongestPath(mat, 0, 0, 1, 7);
+	return 0;
+}
+
+// Print all possible paths from top left to bottom right of a mXn matrix
+
+// Method-1
+#include<iostream>
+using namespace std;
+/* mat: Pointer to the starting of mXn matrix
+i, j: Current position of the robot (For the first call use 0,0)
+m, n: Dimensions of given the matrix
+pi: Next index to be filed in path array
+*path[0..pi-1]: The path traversed by robot till now (Array to hold the
+				path need to have space for at least m+n elements) */
+void printAllPathsUtil(int *mat, int i, int j, int m, int n, int *path, int pi)
+{
+	// Reached the bottom of the matrix so we are left with
+	// only option to move right
+	if (i == m - 1)
+	{
+		for (int k = j; k < n; k++)
+			path[pi + k - j] = *((mat + i*n) + k);
+		for (int l = 0; l < pi + n - j; l++)
+			cout << path[l] << " ";
+		cout << endl;
+		return;
+	}
+	// Reached the right corner of the matrix we are left with only the downward movement.
+	if (j == n - 1)
+	{
+		for (int k = i; k < m; k++)
+			path[pi + k - i] = *((mat + k*n) + j);
+		for (int l = 0; l < pi + m - i; l++)
+			cout << path[l] << " ";
+		cout << endl;
+		return;
+	}
+	// Add the current cell to the path being generated
+	path[pi] = *((mat + i*n) + j);
+	// Print all the paths that are possible after moving down
+	printAllPathsUtil(mat, i+1, j, m, n, path, pi + 1);
+	// Print all the paths that are possible after moving right
+	printAllPathsUtil(mat, i, j+1, m, n, path, pi + 1);
+	// Print all the paths that are possible after moving diagonal
+	// printAllPathsUtil(mat, i+1, j+1, m, n, path, pi + 1);
+}
+// The main function that prints all paths from top left to bottom right in a matrix 'mat' of size mXn
+void printAllPaths(int *mat, int m, int n)
+{
+	int *path = new int[m+n];
+	printAllPathsUtil(mat, 0, 0, m, n, path, 0);
+}
+// Driver program to test above functions
+int main()
+{
+	int mat[2][3] = { {1, 2, 3}, {4, 5, 6} };
+	printAllPaths(*mat, 2, 3);
+	return 0;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+vector<vector<int>> allPaths;
+void findPathsUtil(vector<vector<int>> maze, int m, int n, int i, int j, vector<int> path, int index)
+{
+	// If we reach the bottom of maze, we can only move right
+	if (i == m - 1)
+	{
+		for(int k = j; k < n; k++)
+		{	
+			//path.append(maze[i][k])
+			path[index + k - j] = maze[i][k];
+		}
+		// If we hit this block, it means one path is completed. Add it to paths list and print
+		cout << "[" << path[0] << ", ";
+		for(int z = 1; z < path.size() - 1; z++)
+		{
+			cout << path[z] << ", ";
+		}
+		cout << path[path.size() - 1] << "]" << endl;
+		allPaths.push_back(path);
+		return;
+	}
+	// If we reach to the right most corner, we can only move down
+	if (j == n - 1)
+	{
+		for(int k = i; k < m; k++)
+		{
+			path[index + k - i] = maze[k][j];
+		}
+		//path.append(maze[j][k])
+		// If we hit this block, it means one path is completed. Add it to paths list and print
+		cout << "[" << path[0] << ", ";
+		for(int z = 1; z < path.size() - 1; z++)
+		{
+			cout << path[z] << ", ";
+		}
+		cout << path[path.size() - 1] << "]" << endl;
+		allPaths.push_back(path);
+		return;
+	}
+	// Add current element to the path list path.append(maze[i][j])
+	path[index] = maze[i][j];
+	// Move down in y direction and call findPathsUtil recursively
+	findPathsUtil(maze, m, n, i + 1, j, path, index + 1);
+	// Move down in y direction and call findPathsUtil recursively
+	findPathsUtil(maze, m, n, i, j + 1,
+						path, index + 1);
+}
+void findPaths(vector<vector<int>> maze, int m, int n)
+{
+	vector<int> path(m + n - 1, 0);
+	findPathsUtil(maze, m, n, 0, 0, path, 0);
+}
+int main()
+{
+	vector<vector<int>> maze{ { 1, 2, 3 },
+							{ 4, 5, 6 },
+							{ 7, 8, 9 } };
+	findPaths(maze, 3, 3);	
+	//print(allPaths)
+	return 0;
+}
+
+// Method-3
+#include<bits/stdc++.h>
+using namespace std;
+// function to display the path
+void display(vector<int> &ans) {
+      for(auto i :ans ) {
+        cout<<i <<" ";
+      }
+      cout<<endl;
+}
+// a function which check whether our step is safe or not
+bool issafe(int r,int c,vector<vector<int>>& visited,int n,int m) {
+      return (r < n and c <m and visited[r] !=-1 ); // return true if all values satisfied else false
+}
+void FindPaths(vector<vector<int>> &grid,int r,int c, int n,int m,vector<int> &ans) {
+      // when we hit the last cell we reach to destination then directly push the path
+      if(r == n-1 and c == m-1) {
+        ans.push_back(grid[r]);
+        display(ans); // function to display the path stored in ans vector
+        ans.pop_back(); // pop back because we need to backtrack to explore more path
+        return ;
+      }
+      // we will store the current value in ch and mark the visited place as -1
+      int ch = grid[r];
+      ans.push_back(ch); // push the path in ans array
+      grid[r] = -1; // mark the visited place with -1
+      // if is it safe to take next downward step then take it
+      if(issafe(r+1,c,grid,n,m)) {
+        FindPaths(grid,r+1,c,n,m,ans);
+      }
+      // if is it safe to take next rightward step then take it
+      if(issafe(r,c+1,grid,n,m)) {
+        FindPaths(grid,r,c+1,n,m,ans);
+      }
+      // backtracking step we need to make values original so to we can visit it by some another path
+      grid[r] = ch;
+      // remove the current path element we explore
+      ans.pop_back();
+      return ;
+}
+int main() {
+      int n = 3 ,m =3;
+      vector<vector<int> >grid{ {1,2,3},{4,5,6},{7,8,9}};
+      vector<int>ans ; // it will store the path which we have covered	
+      FindPaths(grid,0,0,n,m,ans); // here 0,0 are initial position to start with
+      return 0;
+}
+
+// Partition array to K subsets
+
+class Solution{
+  public:
+     bool solve(int a[],int sum,int part,int k,bool vis[],int index,int n)
+     {
+        if(k==0) return true;
+        if(sum>part) return false;
+        if(sum==part) {
+            return solve(a,0,part,k-1,vis,0,n);
+        }
+        for(int i=index;i<n;i++)
+        {
+            if(vis[i]) continue;
+            vis[i]=true;
+            if(solve(a,sum+a[i],part,k,vis,i+1,n)) return true;   
+            vis[i]=false;
+        }
+        return false;
+    }
+    bool isKPartitionPossible(int a[], int n, int k)
+    {
+         int sum = 0;
+         for(int i=0;i<n;i++)
+         {
+             sum+=a[i];
+         }
+         if(sum%k!=0) return false;
+         bool vis[n] = {false}; // to find unique subsets !!!       
+         return solve(a,0,sum/k,k,vis,0,n);
+    }
+};
+
+// Find the K-th Permutation Sequence of first N natural numbers
+
+// Method-1
+#include <bits/stdc++.h>
+using namespace std;
+// recursive function to generate all possible permutations of a string
+void generate_permutations(string& str, int idx, vector<string>& result) {
+	// base case
+	if (idx == str.size()) {
+		result.push_back(str);
+		return;
+	}	
+	// traverse string from idx to end
+	for (int i = idx; i < str.size(); i++) {
+		swap(str[i], str[idx]);
+		generate_permutations(str, idx + 1, result);
+		swap(str[i], str[idx]);
+	}
+}
+// Function to find the kth permutation of n numbers
+string findKthPermutation(int n, int k) {
+	string str = "";
+	vector<string> result;
+	// Insert all natural number upto n in string
+	for (int i = 1; i <= n; i++) {
+		str.push_back(i + '0');
+	}
+	generate_permutations(str, 0, result);
+	// sort the generated permutations
+	sort(result.begin(), result.end());
+	// make k 0-based indexed to point to kth sequence
+  return result[k-1];
+}
+int main() {
+	int n = 3, k = 4;
+	// function call
+	string kth_perm_seq = findKthPermutation(n, k);
+	cout << kth_perm_seq << endl;
+	return 0;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+// Function to find the index of number at first position of kth sequence of set of size n
+int findFirstNumIndex(int& k, int n)
+{
+	if (n == 1)
+		return 0;
+	n--;
+	int first_num_index;
+	// n_actual_fact = n!
+	int n_partial_fact = n;
+	while (k >= n_partial_fact && n > 1) {
+		n_partial_fact = n_partial_fact * (n - 1);
+		n--;
+	}
+	// First position of the kth sequence will be occupied by the number present at index = k / (n-1)!
+	first_num_index = k / n_partial_fact;
+	k = k % n_partial_fact;
+	return first_num_index;
+}
+// Function to find the kth permutation of n numbers
+string findKthPermutation(int n, int k)
+{
+	// Store final answer
+	string ans = "";
+	set<int> s;
+	// Insert all natural number upto n in set
+	for (int i = 1; i <= n; i++)
+		s.insert(i);
+	set<int>::iterator itr;
+	// Mark the first position
+	itr = s.begin();
+	// subtract 1 to get 0 based indexing
+	k = k - 1;
+	for (int i = 0; i < n; i++) {
+		int index	= findFirstNumIndex(k, n - i);
+		advance(itr, index);
+		// itr now points to the number at index in set s
+		ans += (to_string(*itr));
+		// remove current number from the set
+		s.erase(itr);
+		itr = s.begin();
+	}
+	return ans;
+}
+// Driver code
+int main()
+{
+	int n = 3, k = 4;
+	string kth_perm_seq	= findKthPermutation(n, k);
+	cout << kth_perm_seq << endl;
+	return 0;
+}
