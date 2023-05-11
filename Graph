@@ -1,0 +1,2910 @@
+// Creating and printing graph
+
+#include <bits/stdc++.h> 
+vector < vector < int >> printAdjacency(int n, int m, vector < vector < int >> & edges) {
+    vector<int>ans[n];
+    for(int i=0; i<m; i++)
+    {
+        int u=edges[i][0];
+        int v=edges[i][1];
+        ans[u].push_back(v);
+        ans[v].push_back(u);
+    }
+    vector < vector < int >> adj(n);
+    for(int i=0; i<n; i++) {
+        adj[i].push_back(i);
+        for (int j=0; j < ans[i].size(); j++) {
+            adj[i].push_back(ans[i][j]);
+        }
+    }
+    return adj;
+
+}
+
+// BFS of graph
+
+class Solution {
+  public:
+    vector<int> bfsOfGraph(int V, vector<int> adj[]) {
+        vector<int> res;
+        bool visited[V+1];
+        for(int i=0; i<V; ++i)
+            visited[i] = false;
+        queue<int> q;
+        q.push(0);
+        res.push_back(0);
+        visited[0] = true;
+        while(!q.empty()) {
+            auto u = q.front();
+            q.pop();
+            for(int v : adj[u]) {
+                if(!visited[v]) {
+                    visited[v] = true;
+                    q.push(v);
+                    res.push_back(v);
+                }
+            }
+        }
+        return res;
+    }
+};
+
+// DFS of graph
+
+class Solution {
+    // let's write the steps to make a dfs
+    // at first write the algorithm for dfs and make it private
+    // inside the dfs we do like;
+    // at first we pass the necessary parameters
+    // we make visited of the fist node to 1; i.e.vis[node]=1;
+    // we even store the nodes in the list ;i.e ls.push_back(node)
+    // then we have to iterate through the each node to find its adjacent nodes;i.e. 
+    // for(auto it: adj[node])
+    // inside the for loop we check for whether the node is visted or not
+    // if the not is not visited we continue the dfs ;i.e.dfs(it,adj,vis,ls)
+    // after the we write the necessary code in the public of the class 
+    // we first initialize all the necessary variables which are passed in the dfs call
+    // and in the last we return the list; i.e. return ls
+    private:
+    void dfs(int node,vector<int>adj[],int vis[],vector<int>&ls)
+    {
+       vis[node]=1;
+       ls.push_back(node);
+       for(auto it: adj[node])
+       {
+           if(!vis[it])
+           {
+               dfs(it,adj,vis,ls);
+           }
+       }
+    }
+    public:
+    vector<int> dfsOfGraph(int V, vector<int> adj[]) {
+        int vis[V]={0};
+        vector<int> ls;
+        int i=0;
+        dfs(i,adj,vis,ls);  
+        return ls;
+    }
+};
+
+// Detect Cycle in a Directed Graph
+
+// Method-1
+#include <bits/stdc++.h>
+bool cycle(int src, unordered_map<int, list<int>> &adj, unordered_map<int, bool> &visited, unordered_map<int, bool> &dfsCheck) {
+  visited[src] = true;
+  dfsCheck[src] = true;
+  for (auto side : adj[src]) {
+    if (!visited[side]) {
+      bool ans = cycle(side, adj, visited, dfsCheck);
+      if (ans)
+        return true;
+    } else if (dfsCheck[side]) {
+      return true;
+    }
+  }
+  dfsCheck[src] = false;
+  return false;
+}
+int detectCycleInDirectedGraph(int n, vector<pair<int, int>> &edges) {
+  unordered_map<int, list<int>> adj;
+  for (int i = 0; i < edges.size(); i++) {
+    int u = edges[i].first;
+    int v = edges[i].second;
+    adj[u].push_back(v);
+  }
+  unordered_map<int, bool> dfsCheck;
+  unordered_map<int, bool> visited;
+  for (int i = 1; i < n; i++) {
+    if (!visited[i]) {
+      bool ans = cycle(i, adj, visited, dfsCheck);
+      if (ans == 1)
+        return true;
+    }
+  }
+  return false;
+}
+
+// Method-2
+#include<bits/stdc++.h>
+bool DFS(int node,unordered_map<int,bool> &vis,unordered_map<int,bool> &dfsvis,unordered_map<int,list<int>> &adj){
+    vis[node] = 1;
+    dfsvis[node] = 1;
+    for(auto i:adj[node]){
+      if(!vis[i]){
+        bool present = DFS(i,vis,dfsvis,adj);
+        if(present) return 1;
+      }
+      else if(dfsvis[i])
+      // if Both vis & dfsvis of node is True then loop is present
+       return 1;
+    }
+    dfsvis[node] = 0;
+    return 0;
+}
+int detectCycleInDirectedGraph(int n,vector<pair<int,int>>&edges){
+  //preparing adjacency list
+  unordered_map<int,list<int>> adj;
+  for(int i = 0;i<edges.size();i++){
+    int u = edges[i].first;
+    int v = edges[i].second;
+    // directed graph
+    adj[u].push_back(v);
+  }
+  unordered_map<int,bool> vis;
+  unordered_map<int,bool> dfsvis;
+  for(int i =1;i<=n;i++){
+    if(!vis[i]){
+      bool present = DFS(i,vis,dfsvis,adj);
+      if(present) return 1;
+    }
+  }
+  return 0;
+}
+
+// Detect Cycle in a undirected Graph
+
+// Method-1
+#include<bits/stdc++.h>
+bool bfs( vector<int> adj[],vector<int> &vis,int node){
+    queue <pair<int,int>> q;
+    vis[node]=1;
+    q.push({node,-1});
+    while(!q.empty()){
+        int node=q.front().first;
+        int parent=q.front().second;
+        q.pop();
+        for(auto x:adj[node]){
+            if(!vis[x])
+            {
+                vis[x]=1;
+                q.push({x,node});
+            }
+            else if(x!=parent)
+            return 1;
+        }
+    }
+    return 0;
+}
+string cycleDetection (vector<vector<int>>& edges, int n, int m)
+{   
+    vector<int> adj[n+1];
+    for(int i=0;i<m;i++){
+        adj[edges[i][0]].push_back(edges[i][1]);
+        adj[edges[i][1]].push_back(edges[i][0]);
+    }
+    vector<int> vis(n+1,0);
+    for(int i=1;i<=n;i++){
+        if(!vis[i]){
+            if(bfs(adj,vis,i)) {
+                return "Yes";
+            }
+        }
+        
+    }
+    return "No";
+}
+
+// Method-2 ( Using DFS )
+#include<bits/stdc++.h>
+bool dfs(unordered_map<int,set<int>>&adj,unordered_map<int,bool>&vis,int node,int parent){
+    vis[node]=1;
+    for(int i:adj[node]){
+        if((vis[i] && i!=parent) || (!vis[i] && dfs(adj,vis,i,node)) ){
+            return 1;
+        }
+    }
+    return 0;
+}
+string cycleDetection (vector<vector<int>>& edges, int n, int m){
+    unordered_map<int,set<int>>adj;
+    unordered_map<int,bool>vis;
+    // Create a adjacency list
+    for(int i=0;i<m;i++){
+        adj[edges[i][0]].insert(edges[i][1]);
+        adj[edges[i][1]].insert(edges[i][0]); 
+    }
+    // Traverse over all vertices and check for cyclic BFS
+    for(int i=1;i<=n;i++){
+        if(!vis[i] && dfs(adj,vis,i,-1)){
+            return "Yes";
+        }
+    }
+    return "No";
+}
+
+// Method 3 ( Using BFS )
+#include<bits/stdc++.h>
+bool cyclicBFS(unordered_map<int,set<int>>&adj,unordered_map<int,bool>&vis,int node){
+    unordered_map<int,int>parent;
+    queue<int>q;
+    q.push(node),vis[node]=1,parent[node]=-1;
+    while(!q.empty()){
+        int front=q.front();
+        q.pop();
+        for(int i:adj[front]){
+            if(vis[i] && i!=parent[front]){
+                return 1;
+            }
+            if(!vis[i]){
+                q.push(i),vis[i]=1,parent[i]=front;
+            }
+        }
+    }
+    return 0;
+}
+string cycleDetection (vector<vector<int>>& edges, int n, int m){
+    unordered_map<int,set<int>> adj;
+    unordered_map<int,bool> vis;
+    // Create a adjacency list
+    for(int i=0;i<m;i++){
+        adj[edges[i][0]].insert(edges[i][1]);
+        adj[edges[i][1]].insert(edges[i][0]); 
+    }
+    // Traverse over all vertices and check for cyclic BFS
+    for(int i=1;i<=n;i++){
+        if(!vis[i] && cyclicBFS(adj,vis,i)){
+            return "Yes";
+        }
+    }
+    return "No";
+}
+
+// Rat in a maze problem
+
+class Solution{
+    private:
+    bool safe(int x ,int y , int n , vector<vector<int>> visited ,vector<vector<int>> &m ){
+        if( ( x >= 0 && x < n ) && ( y >= 0 && y < n ) && visited[x][y] == 0 && m[x][y] == 1){
+            return true; 
+        }
+        else{
+            return false;
+        }
+    }
+    void solve(vector<vector<int>> &m , int n ,vector<string>& ans , int x , int y ,vector<vector<int>> visited , string path){
+        //base case
+        if( x == n - 1 && y == n - 1 ){
+            ans.push_back(path);
+            return ;
+        }
+        //when you cover that index
+        visited[x][y] = 1;
+        // their are  choices     
+        // 1st is Down
+        int newx = x + 1;
+        int newy = y;
+        if( safe( newx , newy , n ,visited , m)){
+            path.push_back('D');
+            solve( m , n , ans , newx , newy , visited , path);
+            path.pop_back();
+        }
+        // 1st is Left
+         newx = x;
+         newy = y - 1;
+        if( safe( newx , newy , n ,visited , m)){
+            path.push_back('L');
+            solve( m , n , ans , newx , newy , visited , path);
+            path.pop_back();
+        }
+        // 1st is Right
+        newx = x;
+        newy = y + 1;
+        if( safe( newx , newy , n ,visited , m)){
+            path.push_back('R');
+            solve( m , n , ans , newx , newy , visited , path);
+            path.pop_back();
+        }
+        // 1st is Up
+         newx = x - 1;
+         newy = y;
+        if( safe( newx , newy , n ,visited , m)){
+            path.push_back('U');
+            solve( m , n , ans , newx , newy , visited , path);
+            path.pop_back();
+        }
+        visited[x][y] = 0;
+    }
+    public:
+    vector<string> findPath(vector<vector<int>> &m, int n) {
+        vector<string>ans ;
+        if( m [0][0] == 0){
+            return ans;
+        }
+        int srcx = 0;
+        int srcy = 0;
+        // Make a visited 2D vector
+        vector<vector<int>> visited = m;
+        // make it default by all indeces by 0
+        for( int i = 0; i < n; i++){
+            for( int j = 0; j < n; j++){
+                visited [i][j] = 0;
+            }
+        }
+        string path = "";
+        solve( m , n , ans , srcx , srcy , visited , path);
+        sort(ans.begin() , ans.end());
+        return ans;
+    }
+};
+
+// Steps by Knight
+
+class Solution 
+{
+    public:
+    /*
+           abbreviation used---
+           tx = target pos in x direction
+           ty = target pos in y direction
+           kix = knight initial pos in x direction
+           kiy = knight initial pos in y direction
+           kpx = knight pos in x direction
+           kpy = knight pos in y direction
+           knx = knight new pos in x direction
+           kny = knight new pos in y direction
+           nx = new pos in x direction
+           ny = new pos in y direction
+           Note -- bfs traversal gives the shortest path
+    */
+    bool isValid(int nx, int ny, vector<vector<bool>>&visited, int N)
+    {
+        if(nx>=0 && ny>=0 && nx<N && ny<N && visited[nx][ny]==false)
+        {
+            return true;
+        }
+        return false;
+    }
+      int minStepToReachTarget(vector<int>&KnightPos,vector<int>&TargetPos,int N)
+     {
+         // step 1: create a visited array to check the position visited or not
+         vector<vector<bool>>visited(N,vector<bool>(N,false));
+         // step2 : for 0 based indexing subtract 1 from the positions 
+         int tx=TargetPos[0]-1, ty=TargetPos[1]-1;
+         int kix=KnightPos[0]-1, kiy=KnightPos[1]-1;
+        // step 3: create ans to count the steps
+         int ans=0;
+        // return ans if the initial and target pos of the knight are same
+         if(tx==kix && ty==kiy)
+         {
+             return ans;
+         }
+        // step 4: create a queue for the bfs traversal
+         queue<pair<int,int>>q;
+        // insert the initial pos of the knight 
+         q.push({kix,kiy});
+        // mark the initial pos true;
+         visited[kix][kiy]=true;
+        // step 5: create array for 8 direction in which the knight can move
+           // for x direction
+         int kpx[8]={1,-1,1,-1,2,2,-2,-2};
+           // for y direction
+         int kpy[8]={2,2,-2,-2,1,-1,1,-1};
+          // step 6: bfs traversal
+         while(!q.empty())
+         {
+             int size=q.size();
+             ans++;
+             while(size!=0)
+             {
+             auto front=q.front();
+             q.pop();
+             int xx=front.first;
+             int yy=front.second;
+           // check all the 8 directions in which knight can move 
+             for(int i=0;i<8;i++)
+             {
+                 int knx=xx+kpx[i];
+                 int kny=yy+kpy[i];
+            // return the ans if knight gets the target
+                 if(knx==tx && kny==ty)
+                 {
+                    return ans;
+                 }
+            // check the knight move is valid or not in all the directions
+                 if(isValid(knx,kny, visited,N))
+                 {
+                     visited[knx][kny]=true;
+                     q.push({knx, kny});
+                 }
+            }
+            size--;
+            }
+        }
+        //step 7: return the final ans
+        return ans;
+    }
+};
+
+// Flood Fill
+
+class Solution {
+public:
+    void dfs(vector<vector<int>>& image, int i, int j,int val, int newColor)
+    {
+        if(i<0 || i>=image.size() || j<0 || j>= image[0].size() || image[i][j] == newColor || image[i][j] != val)
+        {
+            return;
+        }
+        image[i][j] = newColor;
+        dfs(image,i-1,j,val,newColor);
+        dfs(image,i+1,j,val,newColor);
+        dfs(image,i,j-1,val,newColor);
+        dfs(image,i,j+1,val,newColor);
+    }
+    
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor)
+    {
+        int val = image[sr][sc];
+        dfs(image,sr,sc,val,newColor);
+        return image;
+    }
+};
+
+// Clone Graph
+
+class Solution {
+    public:
+    Node* dfs(Node* cur,unordered_map<Node*,Node*>& mp)
+    {
+        vector<Node*> neighbour;
+        Node* clone=new Node(cur->val);
+        mp[cur]=clone;
+            for(auto it:cur->neighbors)
+            {
+                if(mp.find(it)!=mp.end())   //already clone and stored in map
+                {
+                    neighbour.push_back(mp[it]);    //directly push back the clone node from map to neigh
+                }
+                else
+                    neighbour.push_back(dfs(it,mp));
+            }
+            clone->neighbors=neighbour;
+            return clone;
+    }
+    Node* cloneGraph(Node* node) {
+        unordered_map<Node*,Node*> mp;
+        if(node==NULL)
+            return NULL;
+        if(node->neighbors.size()==0)   //if only one node present no neighbors
+        {
+            Node* clone= new Node(node->val);
+            return clone; 
+        }
+        return dfs(node,mp);
+    }
+};
+
+// Number of Operations to make Network Connected
+
+class Solution {
+public:
+    void dfs(vector<vector<int>>&adj, vector<bool>&visited, int currNode)
+    { 
+        visited[currNode] = true;
+        for (int adjNode : adj[currNode])
+        {
+            if (visited[adjNode]) continue;
+            dfs(adj, visited, adjNode);
+        }
+    }
+    int makeConnected(int n, vector<vector<int>>& connections) 
+    {
+        int currWireCount = connections.size();
+        int requiredWireCount = n - 1;
+        if (currWireCount < requiredWireCount) return -1;
+        vector<vector<int>>adj(n);
+        for (vector<int>connection : connections)
+        {
+            adj[connection[0]].push_back(connection[1]);
+            adj[connection[1]].push_back(connection[0]);
+        }
+        vector<bool>visited(n, false);
+        int componentCount = 0;
+        for (int node = 0; node < n; node++)
+        {
+            if (visited[node]) continue;
+            dfs(adj, visited, node);
+            componentCount++;
+        }
+        return componentCount - 1;
+    }
+};
+
+// Word Ladder
+
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        int len=0;
+        unordered_set<string> st;
+        for (int i=0; i<wordList.size(); i++)st.insert(wordList[i]);
+        queue<string> q;
+        q.push(beginWord);
+        while (!q.empty()){
+            int sz= q.size();
+            len++;
+            for (int yy=0; yy<sz; yy++){
+                string curr= q.front();
+                q.pop();
+                if (curr==endWord)return len;
+                for (int i=0; i<curr.size(); i++){
+                    for (char ch='a'; ch<='z'; ch++){
+                        if (curr[i]==ch)continue;
+                        string temp= curr;
+                        temp[i]= ch;
+                        if (st.find(temp)!=st.end()){
+                            q.push(temp);
+                            st.erase(temp);
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+};
+
+// How to find Shortest Paths from Source to all Vertices using Dijkstra’s Algorithm
+
+class Solution
+{
+    public:
+    //Function to find the shortest distance of all the vertices
+    //from the source vertex S.
+    vector <int> dijkstra(int V, vector<vector<int>> adj[], int S)
+    {
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
+        vector<int>dist(V);
+        for(int i=0;i<V;i++)
+        {
+            dist[i]=1e9;
+        }
+        //  first step of djikstra algorithm to make source node to zero
+        dist[S]=0;
+        // inserting the values of the elements in the form of pairs where '0' id sthe stating node and 'S' is current node
+        pq.push({0,S});
+        
+        // run untill the queue become empty
+        while(!pq.empty())
+        {
+            // start removing the the first element from the pair from the stack
+            int first_ele=pq.top().first;
+            // remove the second element from the pair
+            int second_ele=pq.top().second;
+            pq.pop();
+            
+            // chcek whether the second element has adjacent nodes and iterate through the adjacent nodes
+            for(auto it: adj[second_ele])
+            {
+                // it store the weight of rthe edge from the src to the destination nodes
+                int edgeWeight=it[1];
+                
+                // it store the node to which the above edge is connected to with
+                int adjEdge=it[0];
+                
+            // checks whether upon adding the first element and the edgeweight is shorter than the distance of the current connected edge 
+            
+                if(first_ele+edgeWeight<dist[adjEdge] )
+            
+                {
+                    
+                    // if the distance of the adjacent node is greater then we will change the diatance with new one  
+                     dist[adjEdge]=first_ele+edgeWeight;
+                     
+                    //  pushing the values of the distance of the edge and the index of the edge connected
+                     pq.push({dist[adjEdge],adjEdge});
+                }
+            }
+        }
+        return dist;
+    }
+};
+
+// Topological Sort
+
+class Solution
+{
+	public:
+    void dfs(int node,vector<int> adj[],vector<int>&vis,stack<int>&s){
+        vis[node] = 1;
+        for(auto i:adj[node]){
+            if(!vis[i])
+                dfs(i,adj,vis,s);
+        }
+        s.push(node);
+    }
+    vector<int> topoSort(int V, vector<int> adj[]) 
+	{
+	    vector<int> ans;
+	    stack<int>s;
+	    vector<int>vis(V,0);
+	    for(int i=0;i<V;i++) if(!vis[i]) dfs(i,adj,vis,s);
+	    while(!s.empty()){
+	        ans.push_back(s.top());
+	        s.pop();
+	    }
+	    return ans;
+	}
+};
+
+// Minimum time taken by each job to be completed given by a Directed Acyclic Graph
+
+#include <bits/stdc++.h>
+using namespace std;
+#define maxN 100000
+// Adjacency List to store the graph
+vector<int> graph[maxN];
+// Array to store the in-degree of node
+int indegree[maxN];
+// Array to store the time in which the job i can be done
+int job[maxN];
+// Function to add directed edge between two vertices
+void addEdge(int u, int v)
+{
+	// Insert edge from u to v
+	graph[u].push_back(v);
+	// Increasing the indegree of vertex v
+	indegree[v]++;
+}
+// Function to find the minimum time needed by each node to get the task
+void printOrder(int n, int m)
+{
+	// Find the topo sort order using the indegree approach
+	// Queue to store the nodes while processing
+	queue<int> q;
+	// Pushing all the vertex in the queue whose in-degree is 0
+	// Update the time of the jobs who don't require any job to be completed before this job
+	for (int i = 1; i <= n; i++) {
+		if (indegree[i] == 0) {
+			q.push(i);
+			job[i] = 1;
+		}
+	}
+	// Iterate until queue is empty
+	while (!q.empty()) {
+		// Get front element of queue
+		int cur = q.front();
+		// Pop the front element
+		q.pop();
+		for (int adj : graph[cur]) {
+			// Decrease in-degree of the current node
+			indegree[adj]--;
+			// Push its adjacent elements
+			if (indegree[adj] == 0) {
+				job[adj] = job[cur] + 1;
+				q.push(adj);
+			}
+		}
+	}
+	// Print the time to complete the job
+	for (int i = 1; i <= n; i++)
+		cout << job[i] << " ";
+	cout << "\n";
+}
+int main()
+{
+	// Given Nodes N and edges M
+	int n, m;
+	n = 10;
+	m = 13;
+	// Given Directed Edges of graph
+	addEdge(1, 3);
+	addEdge(1, 4);
+	addEdge(1, 5);
+	addEdge(2, 3);
+	addEdge(2, 8);
+	addEdge(2, 9);
+	addEdge(3, 6);
+	addEdge(4, 6);
+	addEdge(4, 8);
+	addEdge(5, 8);
+	addEdge(6, 7);
+	addEdge(7, 8);
+	addEdge(8, 10);
+	printOrder(n, m);
+	return 0;
+}
+
+// Find whether it is possible to finish all tasks or not from given dependencies
+
+class Solution {
+public:
+	bool isPossible(int N, vector<pair<int, int> >& prerequisites) {
+      vector<int>adj[N];
+      for(auto it:prerequisites)
+      {
+          adj[it.first].push_back(it.second);
+      }
+      int indegree[N]={0};
+      for(int i=0;i<N;i++)
+      {
+          for(auto it:adj[i])
+          {
+              indegree[it]++;
+          }
+      }
+      queue<int>q;
+      for(int i=0;i<N;i++)
+      {
+         if(indegree[i]==0)
+         {
+             q.push(i);
+         }
+      }
+      int count=0;
+      while(q.empty()==false)
+      {
+          int node =q.front();
+          q.pop();
+          count++;
+          for(auto it:adj[node])
+          {
+              indegree[it]--;
+              if(indegree[it]==0)
+              {
+                  q.push(it);
+              }
+          }
+      }
+      return (count==N);
+    }
+};
+
+// Find the number of islands
+
+class Solution{
+public:
+    int numIslands(vector<vector<char>>& grid) 
+    {
+        int count=0,m=grid.size(),n=grid[0].size();
+        vector<vector<char>> vis=grid;
+        for(int i=0;i<m;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                if(vis[i][j]=='1')
+                {
+                    count++;
+                    bfs(i,j,m,n,vis);
+                }
+            }
+        }
+        return count;
+    }
+private:
+    void bfs(int i,int j,int m,int n,vector<vector<char>> &vis)
+    {
+        if(i<0 or i>=m or j<0 or j>=n or vis[i][j]=='0') return;
+        vis[i][j]='0';
+        bfs(i,j+1,m,n,vis);
+        bfs(i,j-1,m,n,vis);
+        bfs(i-1,j,m,n,vis);
+        bfs(i+1,j,m,n,vis);
+        bfs(i+1,j-1,m,n,vis);
+        bfs(i+1,j+1,m,n,vis);
+        bfs(i-1,j-1,m,n,vis);
+        bfs(i-1,j+1,m,n,vis);
+    }
+};
+
+// Alien Dictionary
+
+class Solution{
+public:
+    void addEdge(vector<int> adj[], string s, string t) {
+        int i = 0, j = 0;
+        while (i < s.length() && j < t.length() && s[i] == t[j]) {
+            i++;
+            j++;
+        }
+        if (i < s.length() && j < t.length()) {
+            adj[s[i] - 'a'].push_back(t[j] - 'a');
+        }
+    }
+    void topologicalSortUtil(int v, vector<int> adj[], vector<bool>& visited, stack<int>& s) {
+        visited[v] = true;
+        for (int i = 0; i < adj[v].size(); i++) {
+            int u = adj[v][i];
+            if (!visited[u]) {
+                topologicalSortUtil(u, adj, visited, s);
+            }
+        }
+        s.push(v);
+    }
+    string findOrder(string dict[], int N, int K) {
+        vector<int> adj[K];
+        for (int i = 0; i < N - 1; i++) {
+            addEdge(adj, dict[i], dict[i + 1]);
+        }
+        vector<bool> visited(K, false);
+        stack<int> s;
+        for (int i = 0; i < K; i++) {
+            if (!visited[i]) {
+                topologicalSortUtil(i, adj, visited, s);
+            }
+        }
+        string ans = "";
+        while (!s.empty()) {
+            ans += (char)(s.top() + 'a');
+            s.pop();
+        }
+        return ans;
+    }
+};
+
+// Kruskal’s Minimum Spanning Tree (MST) Algorithm
+
+#include<bits/stdc++.h>
+void make_set(int v, vector <int> &parent, vector <int> &rank) {
+    parent[v] = v;
+    rank[v] = 0;
+}
+
+// Returns the parent of the set that contains the element v.
+int find_set(int v, vector <int> &parent) {
+    if (v == parent[v]) {
+        // Current element is the parent of its set.
+        return v;
+    } else {
+        // Using path compression technique.
+        return parent[v] = find_set(parent[v], parent);
+    }
+}
+
+// Merges the two specified sets.
+void union_sets(int a, int b, vector <int> &parent, vector <int> &rank) {
+    // Find the parent of both elements.
+    a = find_set(a, parent);
+    b = find_set(b, parent);
+
+    if (a != b) {
+        if (rank[a] < rank[b]) {
+            // Swap.
+            swap(a, b);
+        }
+        parent[b] = a;
+        if (rank[a] == rank[b]) {
+            rank[a]++;
+        }
+    }
+}
+
+// Custom comparator to sort the edges.
+bool compare(vector <int> const &a, vector <int> const &b) {
+    return a[2] < b[2];
+}
+
+int kruskalMST(int n, int m, vector <vector<int> > &graph) {
+    // Parent and rank arrays to be used in DSU.
+    vector <int> parent(n);
+    vector <int> rank(n);
+
+    for (int i = 1; i <= n; i++) {
+        // Create a new set for each node.
+        make_set(i, parent, rank);
+    }
+
+    // To store the weight of MST.
+    int cost = 0;
+
+    // Sort the edges in ascending order by its weight.
+    sort(graph.begin(), graph.end(), compare);
+
+    // Start traversign through the edges.
+    for (auto edge: graph) {
+        // Check if both vertices of current edge belong to different sets(subtrees).
+        if (find_set(edge[0], parent) != find_set(edge[1], parent)) {
+            // Add the weight of the current edge.
+            cost = cost + edge[2];
+
+            // Merge the two sets(subtrees).
+            union_sets(edge[0], edge[1], parent, rank);
+        }
+    }
+    return cost;
+}
+
+// Prim's Algorithm ( Minimum Spanning Tree )
+
+#include <bits/stdc++.h> 
+vector<pair<pair<int, int>, int>> calculatePrimsMST(int n, int m, vector<pair<pair<int, int>, int>> &g)
+{ 
+    vector<pair<int, int>> adj[n+1];
+    for(auto it: g){
+        adj[it.first.first].push_back({it.first.second, it.second});
+        adj[it.first.second].push_back({it.first.first, it.second});
+    }
+    priority_queue<pair<pair<int, int>, int>, vector<pair<pair<int, int>, int>>, greater<pair<pair<int, int>, int>>> pq;
+        vector<int> vist(n+1, 0);
+        vector<pair<pair<int, int>, int>> mst;
+        // {wt, node}
+        pq.push({{0, 1}, -1}); 
+        while(!pq.empty()){
+            auto it = pq.top();
+            pq.pop();
+            int wt = it.first.first;
+            int node = it.first.second;
+            int parent = it.second;
+            if(vist[node] == 1) continue; // if already visisted
+            vist[node] = 1; // else mark it visited only after popping out of the min-heap
+            if(parent != -1) mst.push_back({{parent, node}, wt});
+            // sum += wt; // add the edge weight to sum
+            for(auto it: adj[node]){
+                int adjNode = it.first;
+                int edgwt = it.second;
+                
+                if(!vist[adjNode])
+                    pq.push({{edgwt, adjNode}, node});
+            }
+        }
+    return mst;
+}
+
+// Total number of Spanning Trees in a Graph
+
+#include<bits/stdc++.h>
+using namespace std;
+#define MAX 100
+#define MOD 1000000007
+// Matrix Multiplication
+void multiply(int A[MAX][MAX], int B[MAX][MAX], int C[MAX][MAX])
+{
+	for (int i = 0; i < MAX; i++)
+		for (int j = 0; j < MAX; j++)
+			for (int k = 0; k < MAX; k++)
+				C[i][j] = (C[i][j] + (A[i][k] * B[k][j])%MOD)%MOD;	
+}
+// Function to find Nth power of A
+void power(int A[MAX][MAX], int N, int result[MAX][MAX])
+{
+	int temp[MAX][MAX];
+	for (int i = 0; i < MAX; i++)
+		for (int j = 0; j < MAX; j++)
+			result[i][j] = (i == j);
+	while (N>0)
+	{
+		if (N%2 == 1)
+		{
+			multiply(A, result, temp);
+			for (int i=0; i<MAX; i++)
+				for (int j=0; j<MAX; j++)
+					result[i][j] = temp[i][j];
+		}
+		N = N/2;
+		multiply(A, A, temp);
+		for (int i=0; i<MAX; i++)
+			for (int j=0; j<MAX; j++)
+				A[i][j] = temp[i][j];
+	}
+}
+// Function to find number of Spanning Trees in a Graph using Matrix Chain Multiplication.
+int numOfSpanningTree(int graph[][MAX], int V)
+{
+	int result[MAX][MAX] = {0};
+	int temp[MAX][MAX] = {0};
+	// Create a copy of graph as the Adjacency matrix will be changed during the process
+	for (int i = 0; i < V; i++)
+		for (int j = 0; j < V; j++)
+			temp[i][j] = graph[i][j]
+	// Find (V-2)th power of Adjacency matrix
+	power(temp, V-2, result);
+	int ans = 0;
+	// Find sum of all elements in (V-2)th power
+	for (int i = 0; i < V; i++)
+		for (int j = 0; j < V; j++)
+			ans = (ans + result[i][j])%MOD;
+	return ans;
+}
+int main()
+{
+	// Let us create the following graph
+	// 2 <-> 3
+	// | |
+	// 0 <-1-> 1
+	int V = 4; // Number of vertices in graph
+	int E = 5; // Number of edges in graph
+	int graph[][MAX] = {
+						{0, 1, 1, 1},
+						{1, 0, 1, 1},
+						{1, 1, 0, 1},
+						{1, 1, 1, 0}
+					};
+	cout << numOfSpanningTree(graph, V);
+	return 0;
+}
+
+// Negative Weight Cycle
+
+class Solution {
+public:
+    int isNegativeWeightCycle(int n, vector<vector<int>>edges){
+        int lop=n;
+        vector<int> dist(n,INT_MAX-1000);
+        dist[0]=0; //Source
+        while(lop>0)
+        {
+            for(int i=0;i<edges.size();i++)
+            {
+                int src = edges[i][0];
+                int des = edges[i][1];
+                int wt = edges[i][2];
+                if(dist[src]>dist[des]+wt){
+                    dist[src]=dist[des]+wt;
+                   if(lop==1)
+                   {
+                       return 1;   
+                   }
+                   } 
+              }
+            lop--;
+    
+           }
+        return 0;
+    }
+};
+
+// Floyd Warshall
+
+class Solution {
+  public:
+    void shortest_distance(vector<vector<int>>&matrix){
+        // Code here
+       int  n=matrix.size();
+       for(int i=0;i<n;i++)
+       {
+          for(int j=0;j<n;j++){
+              if(matrix[i][j]==-1)
+              {
+                  matrix[i][j]=1e9;
+              }
+              if(i==j)
+          matrix[i][j]=0;
+          }
+          
+       }
+       //to check the source and the destination node via node and add the source and the via node to reach the destination node
+       for(int k=0;k<n;k++){
+           for(int i=0;i<n;i++)
+           {
+               for(int j=0;j<n;j++)
+               {
+                  matrix[i][j]=min(matrix[i][j],matrix[i][k]+matrix[k][j]); 
+               }
+           }
+       }
+       
+       //to detect negative cycles
+       for(int i=0;i<n;i++)
+       {
+           for(int j=0;j<n;j++)
+           {
+             if(matrix[i][j]<0)
+             {
+
+             }
+           }
+       }
+       
+       for(int i=0;i<n;i++)
+       {
+          for(int j=0;j<n;j++){
+              if(matrix[i][j]==1e9)
+              {
+                  matrix[i][j]=-1;
+              }
+          } 
+       }
+    }
+};
+
+// Travelling Salesman Problem using Dynamic Programming
+
+#include <iostream>
+using namespace std;
+// there are four nodes in example graph (graph is 1-based)
+const int n = 4;
+// give appropriate maximum to avoid overflow
+const int MAX = 1000000;
+// dist[i][j] represents shortest distance to go from i to j this matrix can be calculated for any given graph using all-pair shortest path algorithms
+int dist[n + 1][n + 1] = {
+	{ 0, 0, 0, 0, 0 }, { 0, 0, 10, 15, 20 },
+	{ 0, 10, 0, 25, 25 }, { 0, 15, 25, 0, 30 },
+	{ 0, 20, 25, 30, 0 },
+};
+// memoization for top down recursion
+int memo[n + 1][1 << (n + 1)];
+int fun(int i, int mask)
+{
+	// base case
+  // if only ith bit and 1st bit is set in our mask, it implies we have visited all other nodes already
+	if (mask == ((1 << i) | 3))
+		return dist[1][i];
+	// memoization
+	if (memo[i][mask] != 0)
+		return memo[i][mask];
+	int res = MAX; // result of this sub-problem
+	// we have to travel all nodes j in mask and end the path at ith node so for every node j in mask, recursively calculate cost of travelling all nodes in
+	// mask except i and then travel back from node j to node i taking the shortest path take the minimum of all possible j nodes
+	for (int j = 1; j <= n; j++)
+		if ((mask & (1 << j)) && j != i && j != 1)
+			res = std::min(res, fun(j, mask & (~(1 << i))) + dist[j][i]);
+	return memo[i][mask] = res;
+}
+int main()
+{
+	int ans = MAX;
+	for (int i = 1; i <= n; i++)
+		// try to go from node 1 visiting all nodes in between to i then return from i taking the shortest route to 1
+		ans = std::min(ans, fun(i, (1 << (n + 1)) - 1) + dist[i][1]);
+	printf("The cost of most efficient tour = %d", ans);
+	return 0;
+}
+
+// Graph Coloring ( https://www.geeksforgeeks.org/graph-coloring-applications/ )
+
+// Snakes and Ladders
+
+class Solution {
+public:
+    int snakesAndLadders(vector<vector<int>>& board) {
+            int n = board.size();
+    vector<int> flattenedBoard(n * n);
+    int index = 0;
+    bool leftToRight = true;
+    for (int i = n - 1; i >= 0; i--) {
+        if (leftToRight) {
+            for (int j = 0; j < n; j++) {
+                flattenedBoard[index++] = board[i][j];
+            }
+        } else {
+            for (int j = n - 1; j >= 0; j--) {
+                flattenedBoard[index++] = board[i][j];
+            }
+        }
+        leftToRight = !leftToRight;
+    }
+    vector<int> dist(n * n, -1);
+    queue<int> q;
+    q.push(0);
+    dist[0] = 0;
+    while (!q.empty()) {
+        int curr = q.front();
+        q.pop();
+        if (curr == n * n - 1) {
+            return dist[curr];
+        }
+        for (int i = 1; i <= 6; i++) {
+            int next = curr + i;
+            if (next >= n * n) {
+                continue;
+            }
+            if (flattenedBoard[next] != -1) {
+                next = flattenedBoard[next] - 1;
+            }
+            if (dist[next] == -1) {
+                dist[next] = dist[curr] + 1;
+                q.push(next);
+            }
+        }
+    }
+    return -1;
+    }
+};
+
+// Bridges in a graph
+
+#include <bits/stdc++.h>
+void dfs(int node, vector<vector<int>> &result, vector<int> &low,
+         vector<int> &disc, int &timer, unordered_map<int, list<int>> &adj,
+         int parent, unordered_map<int, bool> &vis) {
+    vis[node] = true;
+    low[node] = disc[node] = timer++;
+    for (auto nebr : adj[node]) {
+        if (nebr == parent) {
+            continue;
+        }
+        if (!vis[nebr]) {
+            dfs(nebr, result, low, disc, timer, adj, node, vis);
+            low[node] = min(low[node], low[nebr]); // check bridges
+            if (low[nebr] > disc[node]) {
+                vector<int> ans;
+                ans.push_back(node);
+                ans.push_back(nebr);
+                result.push_back(ans);
+            }
+        } 
+        else { // back edges
+            low[node] = min(low[node], disc[nebr]);
+        }
+    }
+}
+vector<vector<int>> findBridges(vector<vector<int>> &edges, int v, int e) {
+  unordered_map<int, list<int>> adj;
+  for (int i = 0; i < edges.size(); i++) {
+    int u = edges[i][0];
+    int v = edges[i][1];
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+  }
+  int timer = 0;
+  vector<int> low(v);
+  vector<int> disc(v);
+  int parent = -1;
+  unordered_map<int, bool> vis;
+  for (int i = 0; i < v; i++) {
+    low[i] = -1;
+    disc[i] = -1;
+  }
+  vector<vector<int>> result; // dfs
+  for (int i = 0; i < v; i++) {
+    if (!vis[i]) {
+      dfs(i, result, low, disc, timer, adj, parent, vis);
+    }
+  }
+  return result;
+}
+
+// Strongly Connected Components (Kosaraju's Algo)
+
+class Solution
+{
+	public:
+	//Function to find number of strongly connected components in the graph.
+	void dfs(int node,vector<int> &vis,vector<vector<int>>& adj,stack<int> &st){
+	    vis[node]=1;
+	    for(auto it:adj[node]){
+	        if(!vis[it])dfs(it,vis,adj,st);
+	    }
+	    st.push(node);
+	}
+	void dfs2(int node,vector<int> &vis,vector<int> adj[]){
+	    vis[node]=1;
+	    for(auto it:adj[node]){
+	        if(!vis[it])dfs2(it,vis,adj);
+	    }
+	}
+    int kosaraju(int V, vector<vector<int>>& adj)
+    {
+        vector<int> vis(V,0);
+        stack<int> st;
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                dfs(i,vis,adj,st);
+            }
+        }
+        vector<int> adjT[V];
+        for(int i=0;i<V;i++){
+            vis[i]=0;
+            for(auto it:adj[i]){
+                adjT[it].push_back(i);
+            }
+        }
+        int scc=0;
+        while(!st.empty()){
+            int node=st.top();
+            st.pop();
+            if(!vis[node]){
+                dfs2(node,vis,adjT);
+                scc++;
+            }
+        }
+        return scc;      
+    }
+};
+
+// Check whether a given graph is Bipartite or not 
+
+// Method-1
+class Solution {
+public:
+    bool dfs(int node,vector<int> &vis,vector<int>&col,vector<int> adj[],int oldcol){
+        vis[node] = 1;
+        if(oldcol==0)
+        col[node] = 1;
+        else
+        col[node] = 0;
+        for(auto i:adj[node]){
+            if(!vis[i]){
+                bool b = dfs(i,vis,col,adj,col[node]);
+                if(b==0) return 0;
+            }
+            else if(col[node]==col[i]) return 0;
+        }
+        return 1;
+    }
+	bool isBipartite(int V,vector<int>adj[]){
+	    vector<int> vis(V,0);
+	    vector<int> col(V,-1);
+	    for(int i=0;i<V;i++)
+	        if(!vis[i]){
+	            bool b = dfs(i,vis,col,adj,0);
+	            if(b==0) return 0;
+	        }
+	    return 1;
+	}
+};
+
+// Method-2
+class Solution {
+public:
+    bool bfs(int node,vector<int> &vis,vector<int>&col,vector<int> adj[]){
+        queue<int> q;
+        q.push(node);
+        vis[node] = 1;
+        col[node] = 0;
+        while(!q.empty()){
+            int node = q.front();
+            q.pop();
+            for(auto i:adj[node]){
+                if(!vis[i]){
+                    q.push(i);
+                    vis[i] = 1;
+                    if(col[node]==0)
+                        col[i] = 1;
+                    else col[i] = 0;
+                }
+                else if(col[node] == col[i]) return 0;
+            }
+        }
+        return 1;
+    }
+	bool isBipartite(int V,vector<int>adj[]){
+	    vector<int> vis(V,0);
+	    vector<int> col(V,-1);
+	    for(int i =0;i<V;i++)
+	        if(!vis[i]){
+	            bool b = bfs(i,vis,col,adj);
+	            if(b==0) return 0;
+	        }
+	        
+	    return 1;
+	}
+};
+
+// Detect a negative cycle in a Graph | (Bellman Ford)
+
+#include <bits/stdc++.h> 
+int bellmonFord(int n, int m, int src, int dest, vector<vector<int>> &edges) {
+    vector<int> dist(n+1, 1e9);
+    dist[src] = 0;
+    for (int i=1; i<=n; i++){
+        for (int j=0; j<m; j++){
+            int u = edges[j][0];
+            int v = edges[j][1];
+            int wt = edges[j][2];
+            if (dist[u] != 1e9 && ((dist[u]+wt) < dist[v])){
+                dist[v] = dist[u]+wt;
+            }
+        }
+    }
+    return dist[dest];
+
+    // if -ve cycle is present
+    // bool flag = 0;
+    // for (int j=0; j<m; j++){
+    //     int u = edges[j][0];
+    //     int v = edges[j][1];
+    //     int wt = edges[j][2];
+    //     if (dist[u] != 1e9 && ((dist[u]+wt) < dist[v])){
+    //         bool flag = 1;
+    //     }
+    // }
+    // if (flag == 0){
+    //     return dist[dest];
+    // }
+    // return -1;
+}
+
+// Longest Path in a Directed Acyclic Graph
+
+#include <iostream>
+#include <limits.h>
+#include <list>
+#include <stack>
+#define NINF INT_MIN
+using namespace std;
+// Graph is represented using adjacency list. Every
+// node of adjacency list contains vertex number of
+// the vertex to which edge connects. It also
+// contains weight of the edge
+class AdjListNode {
+	int v;
+	int weight;
+public:
+	AdjListNode(int _v, int _w)
+	{
+		v = _v;
+		weight = _w;
+	}
+	int getV() { return v; }
+	int getWeight() { return weight; }
+};
+// Class to represent a graph using adjacency list
+// representation
+class Graph {
+	int V; // No. of vertices'
+	// Pointer to an array containing adjacency lists
+	list<AdjListNode>* adj;
+	// A function used by longestPath
+	void topologicalSortUtil(int v, bool visited[],
+							stack<int>& Stack);
+public:
+	Graph(int V); // Constructor
+	~Graph(); // Destructor
+	// function to add an edge to graph
+	void addEdge(int u, int v, int weight);
+	// Finds longest distances from given source vertex
+	void longestPath(int s);
+};
+Graph::Graph(int V) // Constructor
+{
+	this->V = V;
+	adj = new list<AdjListNode>[V];
+}
+Graph::~Graph() // Destructor
+{
+	delete [] adj;
+}
+void Graph::addEdge(int u, int v, int weight)
+{
+	AdjListNode node(v, weight);
+	adj[u].push_back(node); // Add v to u's list
+}
+
+// A recursive function used by longestPath. See below
+// link for details
+// https:// www.geeksforgeeks.org/topological-sorting/
+void Graph::topologicalSortUtil(int v, bool visited[],
+								stack<int>& Stack)
+{
+	// Mark the current node as visited
+	visited[v] = true;
+
+	// Recur for all the vertices adjacent to this vertex
+	list<AdjListNode>::iterator i;
+	for (i = adj[v].begin(); i != adj[v].end(); ++i) {
+		AdjListNode node = *i;
+		if (!visited[node.getV()])
+			topologicalSortUtil(node.getV(), visited, Stack);
+	}
+
+	// Push current vertex to stack which stores topological
+	// sort
+	Stack.push(v);
+}
+
+// The function to find longest distances from a given vertex.
+// It uses recursive topologicalSortUtil() to get topological
+// sorting.
+void Graph::longestPath(int s)
+{
+	stack<int> Stack;
+	int dist[V];
+
+	// Mark all the vertices as not visited
+	bool* visited = new bool[V];
+	for (int i = 0; i < V; i++)
+		visited[i] = false;
+
+	// Call the recursive helper function to store Topological
+	// Sort starting from all vertices one by one
+	for (int i = 0; i < V; i++)
+		if (visited[i] == false)
+			topologicalSortUtil(i, visited, Stack);
+
+	// Initialize distances to all vertices as infinite and
+	// distance to source as 0
+	for (int i = 0; i < V; i++)
+		dist[i] = NINF;
+	dist[s] = 0;
+	// Process vertices in topological order
+	while (Stack.empty() == false) {
+		// Get the next vertex from topological order
+		int u = Stack.top();
+		Stack.pop();
+
+		// Update distances of all adjacent vertices
+		list<AdjListNode>::iterator i;
+		if (dist[u] != NINF) {
+			for (i = adj[u].begin(); i != adj[u].end(); ++i){
+			
+				if (dist[i->getV()] < dist[u] + i->getWeight())
+					dist[i->getV()] = dist[u] + i->getWeight();
+			}
+		}
+	}
+
+	// Print the calculated longest distances
+	for (int i = 0; i < V; i++)
+		(dist[i] == NINF) ? cout << "INF " : cout << dist[i] << " ";
+	
+	delete [] visited;
+}
+// Driver program to test above functions
+int main()
+{
+	// Create a graph given in the above diagram.
+	// Here vertex numbers are 0, 1, 2, 3, 4, 5 with
+	// following mappings:
+	// 0=r, 1=s, 2=t, 3=x, 4=y, 5=z
+	Graph g(6);
+	g.addEdge(0, 1, 5);
+	g.addEdge(0, 2, 3);
+	g.addEdge(1, 3, 6);
+	g.addEdge(1, 2, 2);
+	g.addEdge(2, 4, 4);
+	g.addEdge(2, 5, 2);
+	g.addEdge(2, 3, 7);
+	g.addEdge(3, 5, 1);
+	g.addEdge(3, 4, -1);
+	g.addEdge(4, 5, -2);
+
+	int s = 1;
+	cout << "Following are longest distances from "
+			"source vertex "
+		<< s << " \n";
+	g.longestPath(s);
+
+	return 0;
+}
+
+// Journey to the moon
+
+#include <iostream>
+#include <list>
+#include <vector>
+#include <stdio.h>
+#include <iterator>
+#include <cmath>
+    
+#define MAX 100000
+    
+using namespace std;
+    
+list<int> *ad;
+int *visited;
+int vertices;
+    
+void DFS(int u)
+{
+    visited[u] = 1;
+    
+    vertices++;
+    
+    list<int>::iterator it;
+    
+    for(it=ad[u].begin();it!=ad[u].end();it++)
+    {
+        if(visited[*it] == 0)
+        {
+            visited[*it] = 1;
+            DFS(*it);
+        }
+    }
+}
+    
+int main()
+{
+    int i,m,u,v,numComponents=0,allv=0,temp=2,count=0;
+    long long int n;
+    int eachC[MAX];
+    
+    cin >> n >> m;
+    
+    if(n == 1)
+    {
+        cout <<"0\n";
+        return 0;
+    }
+    
+    ad = new list<int>[n];
+    
+    list<int>::iterator it;
+    
+    for(i=0;i<m;i++)
+    {
+        cin >> u >> v;
+    
+        ad[u].push_back(v);
+        ad[v].push_back(u);    
+    }
+    
+    visited = new int[n];
+    
+    for(i=0;i<n;i++)
+    {
+        visited[i] = 0;
+    }
+    
+    for(i=0;i<n;i++)
+    {
+        if(visited[i] == 0)
+        {
+            vertices = 0;
+            DFS(i);
+            eachC[numComponents] = vertices;
+            numComponents++;
+        }
+    }
+    
+    long long int totalWays = n*(n-1) / 2;
+    long long int sameWays = 0;
+    
+    for(i=0;i<numComponents;i++)
+    {    
+        sameWays = sameWays + (eachC[i]*(eachC[i]-1) / 2);
+    }
+    cout << (totalWays - sameWays) << endl;
+    return 0;
+}
+
+// Cheapest Flights Within K Stops
+
+Approach for this Problem
+1.Initialize an adjacency list with the given flights information, where each index i represents the node i, and the corresponding value is a list of pairs (neighbor, price) representing the edges from node i to its neighboring nodes and the price of the flight.
+2.Initialize a queue with the source node and its cost (0) and a vector minCost with the same size as the number of nodes, where each index i represents the minimum cost to reach node i and the corresponding value is initialized to INT_MAX.
+3.Create a variable stops and initialize it to 0.
+4.Start a while loop until the queue is not empty and stops are less than or equal to k (maximum stops allowed).
+5.In the while loop, create a variable size equal to the size of the queue.
+6.Start another while loop with the size of the queue.
+7.In the inner while loop, pop the front element from the queue and assign it to a variable (currNode, cost).
+8.Iterate through the neighbors and price of the current node from the adjacency list.
+9.If the total cost to reach the neighbor is greater than or equal to the minimum cost to reach the neighbor, continue to the next iteration.
+10.Else, update the minimum cost to reach the neighbor as the total cost and push the neighbor and its cost to the queue.
+11.End the inner while loop and increment the stops by 1.
+12.End the outer while loop.
+13.If the minimum cost to reach the destination is still INT_MAX, return -1, otherwise, return the minimum cost to reach the destination.
+
+class Solution {
+public:
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+        vector<vector<pair<int, int>>> adj(n);
+        for(auto flight : flights){
+            // flight[0] represent node i, flight[1] represent neighbor node of node i, flight[2] represent cost between node i to neighbor node
+            adj[flight[0]].push_back({flight[1], flight[2]});
+        }
+        //it will store [node, cost]
+        queue<pair<int, int>> q;
+        q.push({src, 0});
+        //it will store minimum cost to reach each node
+        vector<int> minCost(n, INT_MAX);
+        int stops = 0;
+        while(!q.empty() && stops <= k){
+            int size = q.size();
+            while (size--) {
+                auto [currNode, cost] = q.front();
+                q.pop();
+                for (auto& [neighbour, price] : adj[currNode]) {
+                    if (price + cost < minCost[neighbour]){
+                        minCost[neighbour] = price + cost;
+                        q.push({neighbour, minCost[neighbour]});
+                    }
+                }
+            }
+            stops++;
+        }
+        if(minCost[dst] == INT_MAX)
+            return -1;
+        return minCost[dst];
+    }
+};
+
+// Oliver and the Game
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+int *in;
+int *out;
+void dfs(vector<vector<ll>> &AList, ll &count, ll parent, ll u)
+{ 
+    // note the in time of the current node 
+    in[u] = count;
+    // increment the count 
+    count++;
+    for (ll v : AList[u])
+    {
+        if (v != parent)
+        {
+            dfs(AList, count, u, v);
+        }
+    } 
+    // note the out time of the current node 
+    out[u] = count; 
+    // increment the count 
+    count++;
+}
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    ll n;
+    cin >> n;
+    vector<vector<ll>> AList(n + 1); 
+    // create an adjacency list
+    for (ll i = 0; i < n - 1; i++)
+    {
+        ll u, v;
+        cin >> u >> v;
+        AList[u].push_back(v);
+        AList[v].push_back(u);
+    } 
+    // we need to do an euler tour of the tree starting from the vertex 1
+    in = new int[n + 1];
+    out = new int[n + 1];
+    ll count = 0;
+    dfs(AList, count, 0, 1);
+    ll q;
+    cin >> q;
+    for (ll i = 0; i < q; i++)
+    {
+        ll t, x, y;
+        cin >> t >> x >> y;
+        if (t == 0)
+        {
+            if (in[x] < in[y] and out[x] > out[y])
+            {
+                printf("YES\n");
+            }
+            else
+            {
+                printf("NO\n");
+            }
+        }
+        else
+        {
+            if (in[x] > in[y] and out[x] < out[y])
+            {
+                printf("YES\n");
+            }
+            else
+            {
+                printf("NO\n");
+            }
+        }
+    }
+    return 0;
+}
+
+// Water Jug Problem 
+
+#include <bits/stdc++.h>
+using namespace std;
+typedef pair<int, int> pii;
+void printpath(map<pii, pii> mp, pii u)
+{
+	if (u.first == 0 && u.second == 0) {
+		cout << 0 << " " << 0 << endl;
+		return;
+	}
+	printpath(mp, mp[u]);
+	cout << u.first << " " << u.second << endl;
+}
+void BFS(int a, int b, int target)
+{
+	map<pii, int> m;
+	bool isSolvable = false;
+	map<pii, pii> mp;
+
+	queue<pii> q;
+
+	q.push(make_pair(0, 0));
+	while (!q.empty()) {
+
+		auto u = q.front();
+		// cout<<u.first<<" "<<u.second<<endl;
+		q.pop();
+		if (m[u] == 1)
+			continue;
+
+		if ((u.first > a || u.second > b || u.first < 0
+			|| u.second < 0))
+			continue;
+		// cout<<u.first<<" "<<u.second<<endl;
+
+		m[{ u.first, u.second }] = 1;
+
+		if (u.first == target || u.second == target) {
+			isSolvable = true;
+
+			printpath(mp, u);
+			if (u.first == target) {
+				if (u.second != 0)
+					cout << u.first << " " << 0 << endl;
+			}
+			else {
+				if (u.first != 0)
+					cout << 0 << " " << u.second << endl;
+			}
+			return;
+		}
+		// completely fill the jug 2
+		if (m[{ u.first, b }] != 1) {
+			q.push({ u.first, b });
+			mp[{ u.first, b }] = u;
+		}
+
+		// completely fill the jug 1
+		if (m[{ a, u.second }] != 1) {
+			q.push({ a, u.second });
+			mp[{ a, u.second }] = u;
+		}
+
+		// transfer jug 1 -> jug 2
+		int d = b - u.second;
+		if (u.first >= d) {
+			int c = u.first - d;
+			if (m[{ c, b }] != 1) {
+				q.push({ c, b });
+				mp[{ c, b }] = u;
+			}
+		}
+		else {
+			int c = u.first + u.second;
+			if (m[{ 0, c }] != 1) {
+				q.push({ 0, c });
+				mp[{ 0, c }] = u;
+			}
+		}
+		// transfer jug 2 -> jug 1
+		d = a - u.first;
+		if (u.second >= d) {
+			int c = u.second - d;
+			if (m[{ a, c }] != 1) {
+				q.push({ a, c });
+				mp[{ a, c }] = u;
+			}
+		}
+		else {
+			int c = u.first + u.second;
+			if (m[{ c, 0 }] != 1) {
+				q.push({ c, 0 });
+				mp[{ c, 0 }] = u;
+			}
+		}
+
+		// empty the jug 2
+		if (m[{ u.first, 0 }] != 1) {
+			q.push({ u.first, 0 });
+			mp[{ u.first, 0 }] = u;
+		}
+
+		// empty the jug 1
+		if (m[{ 0, u.second }] != 1) {
+			q.push({ 0, u.second });
+			mp[{ 0, u.second }] = u;
+		}
+	}
+	if (!isSolvable)
+		cout << "No solution";
+}
+
+int main()
+{
+	int Jug1 = 4, Jug2 = 3, target = 2;
+	cout << "Path from initial state "
+			"to solution state ::\n";
+	BFS(Jug1, Jug2, target);
+	return 0;
+}
+
+// Find if there is a path of more than k length from a source
+
+// Program to find if there is a simple path with
+// weight more than k
+#include<bits/stdc++.h>
+using namespace std;
+
+// iPair ==> Integer Pair
+typedef pair<int, int> iPair;
+
+// This class represents a dipathted graph using
+// adjacency list representation
+class Graph
+{
+	int V; // No. of vertices
+
+	// In a weighted graph, we need to store vertex
+	// and weight pair for every edge
+	list< pair<int, int> > *adj;
+	bool pathMoreThanKUtil(int src, int k, vector<bool> &path);
+
+public:
+	Graph(int V); // Constructor
+
+	// function to add an edge to graph
+	void addEdge(int u, int v, int w);
+	bool pathMoreThanK(int src, int k);
+};
+
+// Returns true if graph has path more than k length
+bool Graph::pathMoreThanK(int src, int k)
+{
+	// Create a path array with nothing included
+	// in path
+	vector<bool> path(V, false);
+
+	// Add source vertex to path
+	path[src] = 1;
+
+	return pathMoreThanKUtil(src, k, path);
+}
+
+// Prints shortest paths from src to all other vertices
+bool Graph::pathMoreThanKUtil(int src, int k, vector<bool> &path)
+{
+	// If k is 0 or negative, return true;
+	if (k <= 0)
+		return true;
+
+	// Get all adjacent vertices of source vertex src and
+	// recursively explore all paths from src.
+	list<iPair>::iterator i;
+	for (i = adj[src].begin(); i != adj[src].end(); ++i)
+	{
+		// Get adjacent vertex and weight of edge
+		int v = (*i).first;
+		int w = (*i).second;
+
+		// If vertex v is already there in path, then
+		// there is a cycle (we ignore this edge)
+		if (path[v] == true)
+			continue;
+
+		// If weight of is more than k, return true
+		if (w >= k)
+			return true;
+
+		// Else add this vertex to path
+		path[v] = true;
+
+		// If this adjacent can provide a path longer
+		// than k, return true.
+		if (pathMoreThanKUtil(v, k-w, path))
+			return true;
+
+		// Backtrack
+		path[v] = false;
+	}
+
+	// If no adjacent could produce longer path, return
+	// false
+	return false;
+}
+
+// Allocates memory for adjacency list
+Graph::Graph(int V)
+{
+	this->V = V;
+	adj = new list<iPair> [V];
+}
+
+// Utility function to an edge (u, v) of weight w
+void Graph::addEdge(int u, int v, int w)
+{
+	adj[u].push_back(make_pair(v, w));
+	adj[v].push_back(make_pair(u, w));
+}
+
+// Driver program to test methods of graph class
+int main()
+{
+	// create the graph given in above figure
+	int V = 9;
+	Graph g(V);
+
+	// making above shown graph
+	g.addEdge(0, 1, 4);
+	g.addEdge(0, 7, 8);
+	g.addEdge(1, 2, 8);
+	g.addEdge(1, 7, 11);
+	g.addEdge(2, 3, 7);
+	g.addEdge(2, 8, 2);
+	g.addEdge(2, 5, 4);
+	g.addEdge(3, 4, 9);
+	g.addEdge(3, 5, 14);
+	g.addEdge(4, 5, 10);
+	g.addEdge(5, 6, 2);
+	g.addEdge(6, 7, 1);
+	g.addEdge(6, 8, 6);
+	g.addEdge(7, 8, 7);
+
+	int src = 0;
+	int k = 62;
+	g.pathMoreThanK(src, k)? cout << "Yes\n" :
+							cout << "No\n";
+
+	k = 60;
+	g.pathMoreThanK(src, k)? cout << "Yes\n" :
+							cout << "No\n";
+
+	return 0;
+}
+
+// M-Coloring Problem
+
+class Solution{
+public:
+    // Function to determine if graph can be coloured with at most M colours such
+    // that no two adjacent vertices of graph are coloured with same colour.
+    bool isSafe(int node, int currCol, bool graph[101][101], int m, int n
+            ,int color[]) {
+        for(int i=0; i<n; i++) {
+            if(i!=node && graph[i][node]==true && color[i]==currCol) {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool solve(int node, bool graph[101][101], int m, int n, int color[]) {
+        if(node == n) {
+            return true;
+        }
+        for(int i=1; i<=m; i++) {
+            if(isSafe(node, i, graph, m, n, color)) {
+                color[node] = i;
+                if(solve(node+1, graph, m, n, color)) {
+                    return true;
+                }
+                color[node] = 0;
+            }
+        }
+        return false;
+    }
+    bool graphColoring(bool graph[101][101], int m, int n) {
+        int color[n] = {0};
+        if(solve(0, graph, m, n, color))   return true;
+        return false;
+    }
+};
+
+// Minimum edges to reverse to make path from a source to a destination
+
+// Method-1
+// C++ Program to find minimum edge reversal to get
+// atleast one path from source to destination
+#include <bits/stdc++.h>
+using namespace std;
+#define INF 0x3f3f3f3f
+
+// This class represents a directed graph using
+// adjacency list representation
+class Graph
+{
+	int V;
+	list<pair<int, int>> *graph;
+
+public:
+	// Constructor:
+	Graph(int V)
+	{
+		this->V = V;
+		graph = new list<pair<int, int>>[V];
+	}
+
+	// Adding edges into the graph:
+	void addEdge(int u, int v, int w)
+	{
+		graph[u].push_back(make_pair(v, w));
+	}
+
+	// Returns shortest path from source to all other vertices.
+	vector<int> shortestPath(int source)
+	{
+		// Create a set to store vertices that are being preprocessed
+		set<pair<int, int>> setds;
+
+		// Create a vector for distances and initialize all
+		// distances as infinite (INF)
+		vector<int> distance(V, INF);
+
+		// Insert source itself in Set and initialize its distance as 0.
+		setds.insert(make_pair(0, source));
+		distance = 0;
+
+		/* Looping till all shortest distance are finalized
+		then setds will become empty */
+		while (!setds.empty())
+		{
+			// The first vertex in Set is the minimum distance
+			// vertex, extract it from set.
+			pair<int, int> tmp = *(setds.begin());
+			setds.erase(setds.begin());
+
+			// vertex label is stored in second of pair (it
+			// has to be done this way to keep the vertices
+			// sorted distance (distance must be first item
+			// in pair)
+			int u = tmp.second;
+
+			list<pair<int, int>>::iterator i;
+			for (i = graph[u].begin(); i != graph[u].end(); ++i)
+			{
+				// Get vertex label and weight of current adjacent
+				// of u.
+				int v = (*i).first;
+				int weight = (*i).second;
+
+				// If there is shorter path to v through u.
+				if (distance[v] > distance[u] + weight)
+				{
+					/* If distance of v is not INF then it must be in
+						our set, so removing it and inserting again
+						with updated less distance.
+						Note : We extract only those vertices from Set
+						for which distance is finalized. So for them,
+						we would never reach here. */
+					if (distance[v] != INF)
+						setds.erase(setds.find(make_pair(distance[v], v)));
+
+					// Updating distance of v
+					distance[v] = distance[u] + weight;
+					setds.insert(make_pair(distance[v], v));
+				}
+			}
+		}
+		return distance;
+	}
+
+	Graph modelGraphWithEdgeWeight(int edge[][2], int E, int V)
+	{
+		Graph g(V);
+		for (int i = 0; i < E; i++)
+		{
+			// original edge : weight 0
+			g.addEdge(edge[i][0], edge[i][1], 0);
+
+			// reverse edge : weight 1
+			g.addEdge(edge[i][1], edge[i][0], 1);
+		}
+		return g;
+	}
+
+	int getMinEdgeReversal(int edge[][2], int E, int V, int source, int destination)
+	{
+		// get modified graph with edge weight.
+		Graph g = modelGraphWithEdgeWeight(edge, E, V);
+
+		// distance vector stores shortest path.
+		vector<int> dist = g.shortestPath(source);
+
+		// If distance of destination is still INF then we cannot reach destination. Hence, not possible.
+		if (dist[destination] == INF)
+			return -1;
+		else
+			return dist[destination];
+	}
+};
+
+int main()
+{
+	int V = 7;
+	Graph g(V);
+
+	int edge[][2] = {{0, 1}, {2, 1}, {2, 3}, {5, 1}, {4, 5}, {6, 4}, {6, 3}};
+	int E = sizeof(edge) / sizeof(edge[0]);
+
+	int minEdgeToReverse = g.getMinEdgeReversal(edge, E, V, 0, 6);
+
+	if (minEdgeToReverse != -1)
+		cout << minEdgeToReverse << endl;
+	else
+		cout << "Not Possible." << endl;
+
+	return 0;
+}
+
+// Method-2
+// C++ code to find minimum edge reversal to get
+// atleast one path from source to destination using 0-1 BFS
+// Code By: Sparsh_CBS
+#include <bits/stdc++.h>
+using namespace std;
+
+// Creating a node
+class Node {
+private:
+	int val;
+	int weight;
+	int parent;
+
+public:
+	Node(int val, int weight)
+	{
+		this->val = val;
+		this->weight = weight;
+		parent = -1;
+	}
+
+	// We have used the concept of parent to avoid
+	// a child revisiting its parent and pushing it in
+	// the deque during the 0-1 BFS
+	Node(int val, int distance, int parent)
+	{
+		this->val = val;
+		this->weight = distance;
+		this->parent = parent;
+	}
+	int getVal() { return val; }
+	int getWeight() { return weight; }
+	int getParent() { return parent; }
+};
+
+int getMinRevEdges(vector<vector<int> >& adj, int src,
+				int dest)
+{
+	int n = adj.size();
+
+	// Create the given graph into bidirectional graph
+	vector<vector<Node> > newAdj(n);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < adj[i].size(); j++) {
+			int neighbour = adj[i][j];
+			// original edges are to be assigned a weight of
+			// 0
+			newAdj[i].push_back(Node(neighbour, 0));
+			// make a fake edge and assign a weight of 1
+			newAdj[neighbour].push_back(Node(i, 1));
+		}
+	}
+
+	// Now, Apply 0-1 BFS using Deque to get the shortest
+	// path
+
+	// In the implementation, we will only add the
+	// encountered node into the deque if and only if
+	// the distance at which it was earlier explored was
+	// strictly larger than the currently encountered
+	// distance
+	deque<Node> dq;
+	// Here Node is made up of : Node(int node_val, int
+	// node_distance, int node_parent)
+	dq.push_front(Node(src, 0, -1));
+	vector<int> dist(n, INT_MAX);
+	// Set the distance of all nodes to infinity(INT_MAX)
+	// set distance of source node as 0
+	dist[src] = 0;
+
+	while (!dq.empty()) {
+		Node curr = dq.front();
+		dq.pop_front();
+		int currVal = curr.getVal();
+		int currWeight = curr.getWeight();
+		int currParent = curr.getParent();
+		// If we encounter the destination node, we return
+		if (currVal == dest)
+			return currWeight;
+		// Iterate over the neighbours of the current Node
+		for (auto neighbourNode : newAdj[currVal]) {
+			int neighbour = neighbourNode.getVal();
+			if (neighbour == currParent)
+				continue;
+
+			int wt = neighbourNode.getWeight();
+			if (wt == 0 && dist[neighbour] > currWeight) {
+				dist[neighbour] = currWeight;
+				dq.push_front(
+					Node(neighbour, currWeight, currVal));
+			}
+			else if (dist[neighbour] > currWeight + wt) {
+				dist[neighbour] = currWeight + wt;
+				dq.push_back(Node(
+					neighbour, currWeight + wt, currVal));
+			}
+		}
+	}
+	return INT_MAX;
+}
+
+// Driver code
+int main()
+{
+	vector<vector<int> > adj = { { 1 }, {}, { 1, 3 }, {},
+								{ 5 }, { 1 }, { 3, 4 } };
+	int ans = getMinRevEdges(adj, 0, 6);
+	if (ans == INT_MAX)
+		cout << -1;
+	else
+		cout << ans;
+	return 0;
+}
+
+// Paths to travel each nodes using each edge (Seven Bridges of Königsberg)
+
+// A C++ program print Eulerian Trail in a
+// given Eulerian or Semi-Eulerian Graph
+#include <iostream>
+#include <string.h>
+#include <algorithm>
+#include <list>
+using namespace std;
+
+// A class that represents an undirected graph
+class Graph
+{
+// No. of vertices
+	int V;
+
+	// A dynamic array of adjacency lists
+	list<int> *adj;
+public:
+
+	// Constructor and destructor
+	Graph(int V)
+	{
+		this->V = V;
+		adj = new list<int>[V];
+	}
+	~Graph()
+	{
+		delete [] adj;
+	}
+
+	// functions to add and remove edge
+	void addEdge(int u, int v)
+	{
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+
+	void rmvEdge(int u, int v);
+
+	// Methods to print Eulerian tour
+	void printEulerTour();
+	void printEulerUtil(int s);
+
+	// This function returns count of vertices
+	// reachable from v. It does DFS
+	int DFSCount(int v, bool visited[]);
+
+	// Utility function to check if edge u-v
+	// is a valid next edge in Eulerian trail or circuit
+	bool isValidNextEdge(int u, int v);
+};
+
+/* The main function that print Eulerian Trail.
+It first finds an odd degree vertex (if there is any)
+and then calls printEulerUtil() to print the path */
+void Graph::printEulerTour()
+{
+	// Find a vertex with odd degree
+	int u = 0;
+
+	for (int i = 0; i < V; i++)
+		if (adj[i].size() & 1)
+		{
+			u = i;
+			break;
+		}
+
+	// Print tour starting from oddv
+	printEulerUtil(u);
+	cout << endl;
+}
+
+// Print Euler tour starting from vertex u
+void Graph::printEulerUtil(int u)
+{
+
+	// Recur for all the vertices adjacent to
+	// this vertex
+	list<int>::iterator i;
+	for (i = adj[u].begin(); i != adj[u].end(); ++i)
+	{
+		int v = *i;
+
+		// If edge u-v is not removed and it's a
+		// valid next edge
+		if (v != -1 && isValidNextEdge(u, v))
+		{
+			cout << u << "-" << v << " ";
+			rmvEdge(u, v);
+			printEulerUtil(v);
+		}
+	}
+}
+
+// The function to check if edge u-v can be considered
+// as next edge in Euler Tout
+bool Graph::isValidNextEdge(int u, int v)
+{
+
+	// The edge u-v is valid in one of the following
+	// two cases:
+
+	// 1) If v is the only adjacent vertex of u
+	int count = 0; // To store count of adjacent vertices
+	list<int>::iterator i;
+	for (i = adj[u].begin(); i != adj[u].end(); ++i)
+		if (*i != -1)
+			count++;
+	if (count == 1)
+		return true;
+
+
+	// 2) If there are multiple adjacents, then u-v
+	// is not a bridge
+	// Do following steps to check if u-v is a bridge
+
+	// 2.a) count of vertices reachable from u
+	bool visited[V];
+	memset(visited, false, V);
+	int count1 = DFSCount(u, visited);
+
+	// 2.b) Remove edge (u, v) and after removing
+	// the edge, count vertices reachable from u
+	rmvEdge(u, v);
+	memset(visited, false, V);
+	int count2 = DFSCount(u, visited);
+
+	// 2.c) Add the edge back to the graph
+	addEdge(u, v);
+
+	// 2.d) If count1 is greater, then edge (u, v)
+	// is a bridge
+	return (count1 > count2)? false: true;
+}
+
+// This function removes edge u-v from graph.
+// It removes the edge by replacing adjacent
+// vertex value with -1.
+void Graph::rmvEdge(int u, int v)
+{
+	// Find v in adjacency list of u and replace
+	// it with -1
+	list<int>::iterator iv = find(adj[u].begin(),
+								adj[u].end(), v);
+	*iv = -1;
+
+
+	// Find u in adjacency list of v and replace
+	// it with -1
+	list<int>::iterator iu = find(adj[v].begin(),
+								adj[v].end(), u);
+	*iu = -1;
+}
+
+// A DFS based function to count reachable
+// vertices from v
+int Graph::DFSCount(int v, bool visited[])
+{
+	// Mark the current node as visited
+	visited[v] = true;
+	int count = 1;
+
+	// Recur for all vertices adjacent to this vertex
+	list<int>::iterator i;
+	for (i = adj[v].begin(); i != adj[v].end(); ++i)
+		if (*i != -1 && !visited[*i])
+			count += DFSCount(*i, visited);
+
+	return count;
+}
+
+// Driver program to test above function
+int main()
+{
+	// Let us first create and test
+	// graphs shown in above figure
+	Graph g1(4);
+	g1.addEdge(0, 1);
+	g1.addEdge(0, 2);
+	g1.addEdge(1, 2);
+	g1.addEdge(2, 3);
+	g1.printEulerTour();
+
+	Graph g3(4);
+	g3.addEdge(0, 1);
+	g3.addEdge(1, 0);
+	g3.addEdge(0, 2);
+	g3.addEdge(2, 0);
+	g3.addEdge(2, 3);
+	g3.addEdge(3, 1);
+
+	// comment out this line and you will see that
+	// it gives TLE because there is no possible
+	// output g3.addEdge(0, 3);
+	g3.printEulerTour();
+
+	return 0;
+}
+
+// Introduction and Approximate Solution for Vertex Cover Problem
+
+// Program to print Vertex Cover of a given undirected graph
+#include<iostream>
+#include <list>
+using namespace std;
+
+// This class represents a undirected graph using adjacency list
+class Graph
+{
+	int V; // No. of vertices
+	list<int> *adj; // Pointer to an array containing adjacency lists
+public:
+	Graph(int V); // Constructor
+	void addEdge(int v, int w); // function to add an edge to graph
+	void printVertexCover(); // prints vertex cover
+};
+
+Graph::Graph(int V)
+{
+	this->V = V;
+	adj = new list<int>[V];
+}
+
+void Graph::addEdge(int v, int w)
+{
+	adj[v].push_back(w); // Add w to v’s list.
+	adj[w].push_back(v); // Since the graph is undirected
+}
+
+// The function to print vertex cover
+void Graph::printVertexCover()
+{
+	// Initialize all vertices as not visited.
+	bool visited[V];
+	for (int i=0; i<V; i++)
+		visited[i] = false;
+
+	list<int>::iterator i;
+
+	// Consider all edges one by one
+	for (int u=0; u<V; u++)
+	{
+		// An edge is only picked when both visited[u] and visited[v]
+		// are false
+		if (visited[u] == false)
+		{
+			// Go through all adjacents of u and pick the first not
+			// yet visited vertex (We are basically picking an edge
+			// (u, v) from remaining edges.
+			for (i= adj[u].begin(); i != adj[u].end(); ++i)
+			{
+				int v = *i;
+				if (visited[v] == false)
+				{
+					// Add the vertices (u, v) to the result set.
+					// We make the vertex u and v visited so that
+					// all edges from/to them would be ignored
+					visited[v] = true;
+					visited[u] = true;
+					break;
+				}
+			}
+		}
+	}
+
+	// Print the vertex cover
+	for (int i=0; i<V; i++)
+		if (visited[i])
+		cout << i << " ";
+}
+
+// Driver program to test methods of graph class
+int main()
+{
+	// Create a graph given in the above diagram
+	Graph g(7);
+	g.addEdge(0, 1);
+	g.addEdge(0, 2);
+	g.addEdge(1, 3);
+	g.addEdge(3, 4);
+	g.addEdge(4, 5);
+	g.addEdge(5, 6);
+
+	g.printVertexCover();
+
+	return 0;
+}
+
+// Chinese Postman or Route Inspection ( https://www.geeksforgeeks.org/chinese-postman-route-inspection-set-1-introduction/ )
+
+// Number of Triangles in Directed and Undirected Graphs
+
+// C++ program to count triangles
+// in a graph. The program is for
+// adjacency matrix representation
+// of the graph.
+#include<bits/stdc++.h>
+
+// Number of vertices in the graph
+#define V 4
+
+using namespace std;
+
+// function to calculate the
+// number of triangles in a
+// simple directed/undirected
+// graph. isDirected is true if
+// the graph is directed, its
+// false otherwise
+int countTriangle(int graph[V][V],
+				bool isDirected)
+{
+	// Initialize result
+	int count_Triangle = 0;
+
+	// Consider every possible
+	// triplet of edges in graph
+	for (int i = 0; i < V; i++)
+	{
+		for (int j = 0; j < V; j++)
+		{
+			for (int k = 0; k < V; k++)
+			{
+			// Check the triplet if
+			// it satisfies the condition
+			if (graph[i][j] && graph[j][k]
+							&& graph[k][i])
+				count_Triangle++;
+			}
+		}
+	}
+
+	// If graph is directed ,
+	// division is done by 3,
+	// else division by 6 is done
+	isDirected? count_Triangle /= 3 :
+				count_Triangle /= 6;
+
+	return count_Triangle;
+}
+
+//driver function to check the program
+int main()
+{
+	// Create adjacency matrix
+	// of an undirected graph
+	int graph[][V] = { {0, 1, 1, 0},
+					{1, 0, 1, 1},
+					{1, 1, 0, 1},
+					{0, 1, 1, 0}
+					};
+
+	// Create adjacency matrix
+	// of a directed graph
+	int digraph[][V] = { {0, 0, 1, 0},
+						{1, 0, 0, 1},
+						{0, 1, 0, 0},
+						{0, 0, 1, 0}
+					};
+
+	cout << "The Number of triangles in undirected graph : "
+		<< countTriangle(graph, false);
+	cout << "\n\nThe Number of triangles in directed graph : "
+		<< countTriangle(digraph, true);
+
+	return 0;
+}
+
+// Minimize Cash Flow among a given set of friends who have borrowed money from each other
+
+// C++ program to find maximum cash flow among a set of persons
+#include<iostream>
+using namespace std;
+
+// Number of persons (or vertices in the graph)
+#define N 3
+
+// A utility function that returns index of minimum value in arr[]
+int getMin(int arr[])
+{
+	int minInd = 0;
+	for (int i=1; i<N; i++)
+		if (arr[i] < arr[minInd])
+			minInd = i;
+	return minInd;
+}
+
+// A utility function that returns index of maximum value in arr[]
+int getMax(int arr[])
+{
+	int maxInd = 0;
+	for (int i=1; i<N; i++)
+		if (arr[i] > arr[maxInd])
+			maxInd = i;
+	return maxInd;
+}
+
+// A utility function to return minimum of 2 values
+int minOf2(int x, int y)
+{
+	return (x<y)? x: y;
+}
+
+// amount[p] indicates the net amount to be credited/debited
+// to/from person 'p'
+// If amount[p] is positive, then i'th person will amount[i]
+// If amount[p] is negative, then i'th person will give -amount[i]
+void minCashFlowRec(int amount[])
+{
+	// Find the indexes of minimum and maximum values in amount[]
+	// amount[mxCredit] indicates the maximum amount to be given
+	//				 (or credited) to any person .
+	// And amount[mxDebit] indicates the maximum amount to be taken
+	//				 (or debited) from any person.
+	// So if there is a positive value in amount[], then there must
+	// be a negative value
+	int mxCredit = getMax(amount), mxDebit = getMin(amount);
+
+	// If both amounts are 0, then all amounts are settled
+	if (amount[mxCredit] == 0 && amount[mxDebit] == 0)
+		return;
+
+	// Find the minimum of two amounts
+	int min = minOf2(-amount[mxDebit], amount[mxCredit]);
+	amount[mxCredit] -= min;
+	amount[mxDebit] += min;
+
+	// If minimum is the maximum amount to be
+	cout << "Person " << mxDebit << " pays " << min
+		<< " to " << "Person " << mxCredit << endl;
+
+	// Recur for the amount array. Note that it is guaranteed that
+	// the recursion would terminate as either amount[mxCredit]
+	// or amount[mxDebit] becomes 0
+	minCashFlowRec(amount);
+}
+
+// Given a set of persons as graph[] where graph[i][j] indicates
+// the amount that person i needs to pay person j, this function
+// finds and prints the minimum cash flow to settle all debts.
+void minCashFlow(int graph[][N])
+{
+	// Create an array amount[], initialize all value in it as 0.
+	int amount[N] = {0};
+
+	// Calculate the net amount to be paid to person 'p', and
+	// stores it in amount[p]. The value of amount[p] can be
+	// calculated by subtracting debts of 'p' from credits of 'p'
+	for (int p=0; p<N; p++)
+	for (int i=0; i<N; i++)
+		amount[p] += (graph[i][p] - graph[p][i]);
+
+	minCashFlowRec(amount);
+}
+
+// Driver program to test above function
+int main()
+{
+	// graph[i][j] indicates the amount that person i needs to
+	// pay person j
+	int graph[N][N] = { {0, 1000, 2000},
+						{0, 0, 5000},
+						{0, 0, 0},};
+
+	// Print the solution
+	minCashFlow(graph);
+	return 0;
+}
+
+// Two Clique Problem (Check if Graph can be divided in two Cliques) 
+
+// C++ program to find out whether a given graph can be
+// converted to two Cliques or not.
+#include <bits/stdc++.h>
+using namespace std;
+
+const int V = 5;
+
+// This function returns true if subgraph reachable from
+// src is Bipartite or not.
+bool isBipartiteUtil(int G[][V], int src, int colorArr[])
+{
+	colorArr[src] = 1;
+
+	// Create a queue (FIFO) of vertex numbers and enqueue
+	// source vertex for BFS traversal
+	queue <int> q;
+	q.push(src);
+
+	// Run while there are vertices in queue (Similar to BFS)
+	while (!q.empty())
+	{
+		// Dequeue a vertex from queue
+		int u = q.front();
+		q.pop();
+
+		// Find all non-colored adjacent vertices
+		for (int v = 0; v < V; ++v)
+		{
+			// An edge from u to v exists and destination
+			// v is not colored
+			if (G[u][v] && colorArr[v] == -1)
+			{
+				// Assign alternate color to this adjacent
+				// v of u
+				colorArr[v] = 1 - colorArr[u];
+				q.push(v);
+			}
+
+			// An edge from u to v exists and destination
+			// v is colored with same color as u
+			else if (G[u][v] && colorArr[v] == colorArr[u])
+				return false;
+		}
+	}
+
+	// If we reach here, then all adjacent vertices can
+	// be colored with alternate color
+	return true;
+}
+
+// Returns true if a Graph G[][] is Bipartite or not. Note
+// that G may not be connected.
+bool isBipartite(int G[][V])
+{
+	// Create a color array to store colors assigned
+	// to all vertices. Vertex number is used as index in
+	// this array. The value '-1' of colorArr[i]
+	// is used to indicate that no color is assigned to
+	// vertex 'i'. The value 1 is used to indicate first
+	// color is assigned and value 0 indicates
+	// second color is assigned.
+	int colorArr[V];
+	for (int i = 0; i < V; ++i)
+		colorArr[i] = -1;
+
+	// One by one check all not yet colored vertices.
+	for (int i = 0; i < V; i++)
+		if (colorArr[i] == -1)
+			if (isBipartiteUtil(G, i, colorArr) == false)
+				return false;
+
+	return true;
+}
+
+// Returns true if G can be divided into
+// two Cliques, else false.
+bool canBeDividedinTwoCliques(int G[][V])
+{
+	// Find complement of G[][]
+	// All values are complemented except
+	// diagonal ones
+	int GC[V][V];
+	for (int i=0; i<V; i++)
+		for (int j=0; j<V; j++)
+			GC[i][j] = (i != j)? !G[i][j] : 0;
+
+	// Return true if complement is Bipartite
+	// else false.
+	return isBipartite(GC);
+}
+
+// Driver program to test above function
+int main()
+{
+	int G[][V] = {{0, 1, 1, 1, 0},
+		{1, 0, 1, 0, 0},
+		{1, 1, 0, 0, 0},
+		{0, 1, 0, 0, 1},
+		{0, 0, 0, 1, 0}
+	};
+
+	canBeDividedinTwoCliques(G) ? cout << "Yes" :
+								cout << "No";
+	return 0;
+}
