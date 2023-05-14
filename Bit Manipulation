@@ -1,0 +1,347 @@
+// Number of Set Bits
+
+class Solution {
+  public:
+    int setBits(int n) {
+    	unsigned int count = 0;
+    	while (n) {
+    		count += (n & 1);
+    		n >>= 1;
+    	}
+    	return count;
+    }
+};
+
+// Non-Repeating Numbers
+
+class Solution
+{
+public:
+    vector<int> singleNumber(vector<int> nums) 
+    {
+        vector<int>v;
+        int n=nums.size();
+        int ans=0;
+        for(int i=0;i<n;i++)
+        {
+            ans^=nums[i];
+        }
+        // trick to found right most bit 
+        int p=ans & ~(ans-1);
+        int set1=0;
+        int set2=0;
+        for(int i=0;i<n;i++)
+        {
+            if(p&nums[i])
+            set1^=nums[i];
+            else
+             set2^=nums[i];
+        }
+        v.push_back(set1);
+        v.push_back(set2);
+        sort(v.begin(),v.end());
+        return v;
+    }
+};
+
+// Bit Difference
+
+// Method-1
+class Solution{
+    public:
+    int countBitsFlip(int a, int b){
+        int count=0;
+        while(a!=0 || b!=0)
+        {
+            if((a%2)!=(b%2))
+            count++;
+            a=a/2;
+            b=b/2;
+        }
+        return count;
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+    int countBitsFlip(int a, int b){
+        int count =0;
+        for(int i=0; i<32; i++){
+            int mask = 1<<i;
+            if((a&mask) != (b&mask))
+            count++;
+            else
+            continue;
+        }
+        return count;
+    }
+};
+
+// Count total Set Bits
+
+// Method-1
+class Solution{
+    public:
+    // n: input to count the number of set bits
+    //Function to return sum of count of set bits in the integers from 1 to n.
+    int countSetBits(int n)
+    {
+        if(n==0 || n==1) 
+            return n;
+        int i=0;
+        while((1<<i)<=n) 
+            i++;
+        return ((1<<(--i))/2*i)+n-(1<<i)+1+countSetBits(n-(1<<i));
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+    // binary exponentiation
+    // log2(n)
+    int power(int x, int n) {
+        long long res = 1;
+        while(n) {
+            if(n & 1)
+                res *= x;
+            x *= x;
+            n = n >> 1;
+        }
+        return res;
+    }
+    int countSetBits(int n)
+    {
+        // base case
+        if(n <= 1)
+            return n;
+    
+        // pattern, formula
+        int x = log2(n);
+        // totalSetBits = x * 2^(x-1) + (n - 2^x + 1) + repeat(n - 2^x)
+    
+        int power2x = power(2, x-1);
+    
+        return x * power2x + (n - power2x * 2 + 1) + countSetBits(n - power(2, x));
+    }
+};
+
+// Power of 2
+
+// Method-1
+class Solution{
+    public:
+    bool isPowerofTwo(long long num){
+        int digit=0;
+        int count=0;
+        while(num!=0){
+            digit=num%2;
+            if(digit==1){
+                count++;
+            }
+            num=num/2;
+        }
+        if(count==1){
+            return 1;
+        }
+        return 0;
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+    bool isPowerofTwo(long long n){
+        if(n==0) return false;
+        if((n & n-1)==0) return true;
+        return false;
+    }
+};
+
+// Find Position of set bits
+
+class Solution {
+  public:
+    int findPosition(int N) {
+        int ct = 0;
+        if(N==0) return -1;
+        if(!(N & (N-1))){
+            while(N){
+                ct++;
+                if(N&1) return ct;
+                N >>= 1;
+            }
+        }
+        return -1;
+    }
+};
+
+// Copy set bits in a range
+
+class Solution{
+    public:
+    int setSetBit(int x, int y, int l, int r){
+       for(int i=l; i<=r; i++)
+       {
+            if(y&(1<<(i-1)))
+            {
+                x|=(1<<(i-1));
+            }
+       }
+       return x;
+    }
+};
+
+// Divide two integers without using multiplication, division and mod operator
+
+class Solution
+{
+    public:
+    long long divide(long long dividend, long long divisor) 
+    {
+        long long quotient=0,sign=((divisor<0) ^ (dividend<0))?-1:1;
+        dividend=abs(dividend),divisor=abs(divisor);
+        for(int i=31;i>=0;i--){
+            long long partDiv=(divisor<<i);
+            if(partDiv<=dividend){
+                dividend-=partDiv;
+                quotient|=(1<<i);
+            }
+        }
+        return sign*quotient;
+    }
+};
+
+// Calculate square of a number without using *, / and pow()
+
+// Method-1
+#include <iostream>
+using namespace std;
+int square(int n)
+{
+	// handle negative input
+	if (n < 0)
+		n = -n;
+	// Initialize result
+	int res = n;
+	// Add n to res n-1 times
+	for (int i = 1; i < n; i++)
+		res += n;
+	return res;
+}
+int main()
+{
+	for (int n = 1; n <= 5; n++)
+		cout << "n = " << n << ", n^2 = " << square(n) << endl;
+	return 0;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+int square(int n)
+{
+	// Base case
+	if (n == 0)
+		return 0;
+	// Handle negative number
+	if (n < 0)
+		n = -n;
+	// Get floor(n/2) using right shift
+	int x = n >> 1;
+	// If n is odd
+	if (n & 1)
+		return ((square(x) << 2) + (x << 2) + 1);
+	else // If n is even
+		return (square(x) << 2);
+}
+int main()
+{
+	// Function calls
+	for (int n = 1; n <= 5; n++)
+		cout << "n = " << n << ", n^2 = " << square(n) << endl;
+	return 0;
+}
+
+// Method-3
+#include <iostream>
+using namespace std;
+int square(int num)
+{
+	// handle negative input
+	if (num < 0) num = -num;
+	// Initialize result
+	int result = 0, times = num;
+	while (times > 0)
+	{
+		int possibleShifts = 0, currTimes = 1;
+		while ((currTimes << 1) <= times)
+		{
+			currTimes = currTimes << 1;
+			++possibleShifts;
+		}
+		result = result + (num << possibleShifts);
+		times = times - currTimes;
+	}
+	return result;
+}
+int main()
+{
+	// Function calls
+	for (int n = 10; n <= 15; ++n)
+		cout << "n = " << n << ", n^2 = " << square(n) << endl;
+	return 0;
+}
+
+// Method-4
+#include <iostream>
+using namespace std;
+int square(int num)
+{
+	// handle negative input
+	if (num < 0)
+		num = -num;
+	// Initialize power of 2 and result
+	int power = 0, result = 0;
+	int temp = num;
+	while (temp) {
+		if (temp & 1) {
+			// result=result+(num*(2^power))
+			result += (num << power);
+		}
+		power++;
+		// temp=temp/2
+		temp = temp >> 1;
+	}
+	return result;
+}
+int main()
+{
+	// Function calls
+	for (int n = 10; n <= 15; ++n)
+		cout << "n = " << n << ", n^2 = " << square(n) << endl;
+	return 0;
+}
+
+// Power Set
+
+class Solution{
+	public:
+		vector<string> AllPossibleStrings(string s){
+            vector<string> ans;
+            int n=s.size();
+            for(int i=1;i<1<<n;i++)
+            {
+                string res="";
+                for(int j=0;j<n;j++)
+                {
+                    if(i&(1<<j))
+                        res+=s[j];
+                }
+                ans.push_back(res);
+            }
+            sort(ans.begin(),ans.end());
+            return ans;
+        }
+};
