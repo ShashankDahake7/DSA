@@ -1,0 +1,2111 @@
+// Coin Change problem
+
+1. Naive Recursive approach (TLE)
+Time complexity: O(2^n)
+Space complexity: Stack Space
+class Solution {
+public:
+    int count(vector<int>&coins, int amount, int n){
+        if(amount==0) return 0;
+        if(n==0 && amount>0) return INT_MAX-1;
+        int res=0;
+        if(amount>=coins[n-1]){
+            int take=1+count(coins, amount-coins[n-1], n);
+            int dontTake=count(coins, amount, n-1);
+            res=min(take, dontTake);
+        }
+        else{
+            res=count(coins, amount, n-1);
+        } 
+        return res;
+    }
+    int coinChange(vector<int>& coins, int amount) {
+        if(amount == 0) return 0;
+        int n=coins.size();
+        int res= count(coins, amount, n);
+        if(res==INT_MAX-1) return -1;
+        else return res;
+    }
+};
+2. Memoization(DP-TLE)
+Time complexity: O(N*amount)
+Space complexity: O(N*amount)+Stack Space
+class Solution {
+public:
+    int count(vector<int>&coins, int amount, int n, vector<vector<int>>&memo){
+        if(amount==0) return 0;
+        if(n==0 && amount>0) return INT_MAX-1;
+        int res=0;
+        if(amount>=coins[n-1]){
+            int take=1+count(coins, amount-coins[n-1], n, memo);
+            int dontTake=count(coins, amount, n-1, memo);
+            res=min(take, dontTake);
+        }
+        else{
+            res=count(coins, amount, n-1, memo);
+        } 
+        return memo[n][amount]=res;
+    }
+    int coinChange(vector<int>& coins, int amount) {
+        if(amount == 0) return 0;
+        if(coins.size()==1 && coins[0]>amount) return -1;
+        int n=coins.size();
+        vector<vector<int>>memo(n+1, vector<int>(amount+1, -1));
+        int res= count(coins, amount, n, memo);
+        if(res==INT_MAX-1) return -1;
+        else return res;
+    }
+};
+3. Tabulation(DP)
+Time complexity: O(N*amount)
+Space complexity: O(N*amount)
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        if(amount == 0) return 0;
+        int n=coins.size();
+        vector<vector<int>>dp(n+1, vector<int>(amount+1, -1));
+        for(int i=0;i<=n;i++){
+            dp[i][0]=0;
+        }
+        for(int i=1;i<=amount;i++){
+            dp[0][i]=INT_MAX-1;
+        }
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=amount;j++){
+                if(j>=coins[i-1]) dp[i][j]=min(1+dp[i][j-coins[i-1]], dp[i-1][j]);
+                else dp[i][j]=dp[i-1][j];
+            }
+        }
+        int res= dp[n][amount];
+        if(res==INT_MAX-1) return -1;
+        else return res;
+    }
+};
+4. Optimized Space (BEST Approach)
+Time complexity: O(N*amount)
+Space complexity: O(amount)
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        if(amount == 0) return 0;
+        int n=coins.size();
+        vector<int>dp(amount+1);
+        dp[0]=0;
+        for(int i=1;i<=amount;i++){
+            dp[i]=INT_MAX-1;
+        }
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=amount;j++){
+                if(j>=coins[i-1]) dp[j]=min(1+dp[j-coins[i-1]], dp[j]);
+                else dp[j]=dp[j];
+            }
+        }
+        int res= dp[amount];
+        if(res==INT_MAX-1) return -1;
+        else return res;
+    }
+};
+
+// 0/1 Knapsack Problem
+
+// Recursion
+#include <bits/stdc++.h> 
+int Rec(vector<int> &weight, vector<int> &value, int n, int W){
+    if(n==0){
+        if(weight[0]<=W)
+            return value[0];
+        else
+            return 0;
+    }
+    int incl = 0;
+    if(weight[n]<=W)
+    incl = value[n] + Rec(weight,value,n-1,W-weight[n]);
+    int excl = Rec(weight,value,n-1,W); 
+    return max(incl,excl);
+}
+int knapsack(vector<int>weight, vector<int> value, int n, int maxWeight) 
+{
+    return Rec(weight,value,n-1,maxWeight);
+}
+
+// Recursion+Memoization
+#include <bits/stdc++.h> 
+int Mem(vector<int> &weight, vector<int> &value, int n, int W,vector<vector<int>>&dp){
+    if(n==0){
+        if(weight[0]<=W)
+            return value[0];
+        else
+            return 0;
+    }
+    if(dp[n][W]!=-1) return dp[n][W];
+    int incl = 0;
+    if(weight[n]<=W)
+    incl = value[n] + Mem(weight,value,n-1,W-weight[n],dp);
+    int excl = Mem(weight,value,n-1,W,dp);  
+    return dp[n][W] = max(incl,excl);
+}
+int knapsack(vector<int>weight, vector<int> value, int n, int maxWeight) 
+{
+    vector<vector<int>>dp(n,vector<int>(maxWeight+1,-1));
+    return Mem(weight,value,n-1,maxWeight,dp);
+}
+
+// Tabulation
+#include <bits/stdc++.h> 
+int tab(vector<int> &weight, vector<int> &value, int n, int W){
+    vector<vector<int>> dp(n,vector<int>(W+1,0));
+    for(int j = weight[0];j<=W;j++) dp[0][j] = value[0];
+        for (int i = 1; i < n; i++) {
+          for (int j = 0; j <= W; j++){
+              int in = 0;
+                if(weight[i]<=j)
+                in = value[i] + dp[i-1][j-weight[i]];
+              int ex = dp[i-1][j];
+              dp[i][j] = max(in,ex);
+          }
+        }
+    return dp[n-1][W];
+}
+int knapsack(vector<int>weight, vector<int> value, int n, int maxWeight) 
+{
+    return tab(weight,value,n,maxWeight);
+}
+
+// Space Optimized 1
+#include <bits/stdc++.h> 
+int SO(vector<int> &weight, vector<int> &value, int n, int W){
+    vector<int> prev(W+1,0);
+    vector<int> curr(W+1,0);
+    for(int j = weight[0];j<=W;j++) prev[j] = value[0];
+        for (int i = 1; i < n; i++) {
+          for (int j = 0; j <= W; j++){
+              int in = 0;
+                if(weight[i]<=j)
+                in = value[i] +prev[j-weight[i]];
+                int ex = prev[j];
+                curr[j] = max(in,ex);
+            }
+            for(int k =0;k<=W;k++)
+            prev[k] = curr[k];
+        }
+    return prev[W];
+}
+int knapsack(vector<int>weight, vector<int> value, int n, int maxWeight) 
+{
+    //SPACE OPTIMIZATION --> using two vectors
+    return SO(weight,value,n,maxWeight);
+}
+
+// Space Optimized 2
+int SO2(vector<int> &weight, vector<int> &value, int n, int W){
+    vector<int> curr(W+1,0);
+    for(int j = weight[0];j<=W;j++) curr[j] = value[0];
+        for (int i = 1; i < n; i++) {
+          for (int j = W; j >=0 ; j--){
+              int in = 0;
+                if(weight[i]<=j)
+                in = value[i] +curr[j-weight[i]];
+                int ex = curr[j];
+                curr[j] = max(in,ex);
+            }
+        }
+    return curr[W];
+}
+int knapsack(vector<int>weight, vector<int> value, int n, int maxWeight) 
+{
+    //SPACE OPTIMIZATION --> using single vector
+    return SO2(weight,value,n,maxWeight);
+}
+
+// Permutation Coefficient 
+
+// Method-1
+#include <bits/stdc++.h>
+using namespace std;
+#include<bits/stdc++.h>
+int permutationCoeff(int n, int k)
+{
+	int P[n + 1][k + 1];
+	// Calculate value of Permutation Coefficient in bottom up manner
+	for (int i = 0; i <= n; i++)
+	{
+		for (int j = 0; j <= std::min(i, k); j++)
+		{
+			// Base Cases
+			if (j == 0)
+				P[i][j] = 1;
+			// Calculate value using previously stored values
+			else
+				P[i][j] = P[i - 1][j] + (j * P[i - 1][j - 1]);
+			// This step is important as P(i,j)=0 for j>i
+			P[i][j + 1] = 0;
+		}
+	}
+	return P[n][k];
+}
+int main()
+{
+	int n = 10, k = 2;
+	cout << "Value of P(" << n <<" " << k<< ") is " << permutationCoeff(n, k);
+	return 0;
+}
+
+// Method-2
+#include<bits/stdc++.h>
+using namespace std;
+// Returns value of Permutation Coefficient P(n, k)
+int permutationCoeff(int n, int k)
+{
+	int fact[n + 1];
+	// Base case
+	fact[0] = 1;
+	// Calculate value factorials up to n
+	for(int i = 1; i <= n; i++)
+	fact[i] = i * fact[i - 1];
+	// P(n,k) = n! / (n - k)!
+	return fact[n] / fact[n - k];
+}
+int main()
+{
+	int n = 10, k = 2;
+	cout << "Value of P(" << n << ", "
+		<< k << ") is "
+		<< permutationCoeff(n, k);
+	return 0;
+}
+
+// Method-3
+#include <iostream>
+using namespace std;
+int PermutationCoeff(int n, int k)
+{
+	int P = 1;
+	// Compute n*(n-1)*(n-2)....(n-k+1)
+	for (int i = 0; i < k; i++)
+		P *= (n-i) ;
+	return P;
+}
+int main()
+{
+	int n = 10, k = 2;
+	cout << "Value of P(" << n << ", " << k
+		<< ") is " << PermutationCoeff(n, k);
+	return 0;
+}
+
+// Program for nth Catalan Number
+
+// Method-1
+#include <iostream>
+using namespace std;
+unsigned long int catalan(unsigned int n)
+{
+	// Base case
+	if (n <= 1)
+		return 1;
+	// catalan(n) is sum of catalan(i)*catalan(n-i-1)
+	unsigned long int res = 0;
+	for (int i = 0; i < n; i++)
+		res += catalan(i) * catalan(n - i - 1);
+	return res;
+}
+int main()
+{
+	for (int i = 0; i < 10; i++)
+		cout << catalan(i) << " ";
+	return 0;
+}
+
+// Method-2
+#include <iostream>
+using namespace std;
+unsigned long int catalanDP(unsigned int n)
+{
+	// Table to store results of subproblems
+	unsigned long int catalan[n + 1];
+	// Initialize first two values in table
+	catalan[0] = catalan[1] = 1;
+	// Fill entries in catalan[] using recursive formula
+	for (int i = 2; i <= n; i++) {
+		catalan[i] = 0;
+		for (int j = 0; j < i; j++)
+			catalan[i] += catalan[j] * catalan[i - j - 1];
+	}
+	// Return last entry
+	return catalan[n];
+}
+int main()
+{
+	for (int i = 0; i < 10; i++)
+		cout << catalanDP(i) << " ";
+	return 0;
+}
+
+// Method-3
+#include <iostream>
+using namespace std;
+unsigned long int binomialCoeff(unsigned int n, unsigned int k)
+{
+	unsigned long int res = 1;
+	// Since C(n, k) = C(n, n-k)
+	if (k > n - k)
+		k = n - k;
+	// Calculate value of [n*(n-1)*---*(n-k+1)] / [k*(k-1)*---*1]
+	for (int i = 0; i < k; ++i) {
+		res *= (n - i);
+		res /= (i + 1);
+	}
+	return res;
+}
+unsigned long int catalan(unsigned int n)
+{
+	// Calculate value of 2nCn
+	unsigned long int c = binomialCoeff(2 * n, n);
+	// return 2nCn/(n+1)
+	return c / (n + 1);
+}
+int main()
+{
+	for (int i = 0; i < 10; i++)
+		cout << catalan(i) << " ";
+	return 0;
+}
+
+// Method-4
+#include <bits/stdc++.h>
+#include <boost/multiprecision/cpp_int.hpp>
+using boost::multiprecision::cpp_int;
+using namespace std;
+// Function to print the number
+void catalan(int n)
+{
+	cpp_int cat_ = 1;
+	// For the first number
+	cout << cat_ << " "; // C(0)
+	// Iterate till N
+	for (cpp_int i = 1; i <= n; i++) {
+		// Calculate the number and print it
+		cat_ *= (4 * i - 2);
+		cat_ /= (i + 1);
+		cout << cat_ << " ";
+	}
+}
+int main()
+{
+	int n = 5;
+	// Function call
+	catalan(n);
+	return 0;
+}
+
+// Method-5
+#include <bits/stdc++.h>
+using namespace std;
+#define bigint long long int
+bigint findCatalan(int n)
+{
+	bigint b = 1;
+	// calculating n!
+	for (int i = 1; i <= n; i++) {
+		b = b * i;
+	}
+	// calculating n! * n!
+	b = b * b;
+	bigint d = 1;
+	// calculating (2n)!
+	for (int i = 1; i <= 2 * n; i++) {
+		d = d * i;
+	}
+	// calculating (2n)! / (n! * n!)
+	bigint ans = d / b;
+	// calculating (2n)! / ((n! * n!) * (n+1))
+	ans = ans / (n + 1);
+	return ans;
+}
+int main() {
+	int n = 5;
+	cout << findCatalan(n);
+}
+
+// Matrix Chain Multiplication 
+
+// Method-1
+class Solution{
+public:
+    int matrixMultiplication(int n, int arr[]){
+        vector<vector<int>> dp(n,vector<int> (n,0));
+        int i=0,j=1;
+        while(j<n&&i<n){
+            dp[i][j]=0;
+            i++;
+            j++;
+        }
+        for(int gap=2;gap<n;gap++){
+            int i = 0, j = gap;
+            while(j<n&&i<n){
+                int store=INT_MAX;
+                for(int k=i+1;k<j;k++){
+                  int val = dp[i][k] + dp[k][j];
+                  val+=arr[i]*arr[k]*arr[j];
+                  store=min(store,val);
+                }
+                dp[i][j]=store;
+                i++;
+                j++;
+            }
+        }
+        return dp[0][n-1];
+    }
+};
+
+// Method-2
+class Solution{
+public:
+    int t[501][501];
+    int matrixMultiplication(int N, int arr[])
+    {
+        memset(t,-1,sizeof(t));
+        // code here
+        int i=1;int j=N-1;
+        return sol(arr,i,j);
+    }
+    int sol(int arr[],int i,int j){
+        
+        int mn=INT_MAX;
+        //base condition
+        if(i>=j) return 0;
+        
+        //if matrix element is changed from -1 to any other  
+        if(t[i][j]!=-1)
+            return t[i][j];
+        
+        //main code
+        for(int k=i;k<j;k++)
+        {
+            int temp= sol(arr,i,k)+sol(arr,k+1,j)+ arr[i-1]*arr[k]*arr[j];
+            
+            if(temp<mn)
+                mn=temp;
+        }
+        return t[i][j]=mn;
+    }
+};
+
+// Edit Distance
+
+// Recursion
+int solve(int i,int j,string &a,string &b){
+    //i is for a and j is for b
+    if(i==a.size())
+        return b.size()-j;
+    if(j==b.size())
+        return a.size()-i;
+    int ans=0;
+    if(a[i]==b[j])
+        return solve(i+1,j+1,a,b);
+    else{
+        int insert=1+solve(i+1,j,a,b);
+        int del=1+solve(i,j+1,a,b) ;
+        int replace=1+solve(i+1,j+1,a,b);
+        ans=min(insert,min(del,replace));
+    }
+    return ans;
+}
+int editDistance(string str1, string str2)
+{
+    return solve(0,0,str1,str2);
+}
+
+// Recursive+Memoization
+int solve(int i,int j,string &a,string &b,vector<vector<int>>&dp){
+    //i is for a and j is for b
+    if(i==a.size())
+        return b.size()-j;
+    if(j==b.size())
+        return a.size()-i;
+        if(dp[i][j]!=-1)
+            return dp[i][j];
+    int ans=0;
+    if(a[i]==b[j])
+        return solve(i+1,j+1,a,b,dp);
+    else{
+        int insert=1+solve(i+1,j,a,b,dp);
+        int del=1+solve(i,j+1,a,b,dp) ;
+        int replace=1+solve(i+1,j+1,a,b,dp);
+        ans=min(insert,min(del,replace));
+    }
+    return dp[i][j]=ans;
+}
+int editDistance(string str1, string str2)
+{
+    int n=str1.size();
+    int m=str2.size();
+    vector<vector<int>>dp(n+1,vector<int>(m+1,-1));
+    return solve(0,0,str1,str2,dp);
+}
+
+// Tabulation
+int solve(string &a,string &b){
+    int n=a.size();
+    int m=b.size();
+    vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+    //setting base case
+    for(int j=0;j<m;j++){
+        dp[n][j]=m-j;
+    }
+    for(int i=0;i<n;i++){
+        dp[i][m]=n-i;
+    }
+    for(int i=n-1;i>=0;i--){
+        for(int j=m-1;j>=0;j--){
+            int ans=0;
+            if(a[i]==b[j]){
+                dp[i][j]=dp[i+1][j+1];
+                continue;
+            }                
+            else{
+                int insert=1+dp[i+1][j];
+                int del=1+dp[i][j+1];
+                int replace=1+dp[i+1][j+1];
+                ans=min(insert,min(del,replace));
+            }
+            dp[i][j]=ans;
+        }
+    }
+    return dp[0][0];    
+}
+int editDistance(string str1, string str2)
+{
+    return solve(str1,str2);
+}
+
+// Space Optimized
+int solve(string &a,string &b){
+    int n=a.size();
+    int m=b.size();
+    vector<int>curr(m+1,0),next(m+1,0);
+    //setting base case
+    for(int j=0;j<m;j++){
+        //curr[j]=m-j;
+        next[j]=m-j;
+
+    }
+    
+    for(int i=n-1;i>=0;i--){
+        for(int j=m-1;j>=0;j--){
+            curr[m]=n-i;
+            int ans=0;
+            if(a[i]==b[j]){
+                curr[j]=next[j+1];
+                continue;
+            }                
+            else{
+                int insert=1+next[j];
+                int del=1+curr[j+1];
+                int replace=1+next[j+1];
+                ans=min(insert,min(del,replace));
+            }
+            curr[j]=ans;
+        }
+        next=curr;
+    }
+    return next[0];    
+}
+int editDistance(string str1, string str2)
+{   
+    return solve(str1,str2);
+}
+
+// Partition equal Subset Sum  ( DP  Distinct Ways Pattern )
+
+// Recursion
+bool solve(int index,int n,int half,vector<int>&arr){
+	//base case
+	if(index>=n)
+		return false;
+	if(half<0)
+		return false;
+	if(half==0)
+		return true;
+	bool include=solve(index+1,n,half-arr[index],arr);
+	bool exclude=solve(index+1,n,half,arr);
+	return include || exclude;
+	
+}
+bool canPartition(vector<int> &arr, int n)
+{
+	int total=0;
+	for(int i=0;i<n;i++){
+		total+=arr[i];
+	}
+	//if total is odd we cant divide it into eqaul parts
+	if(total&1==1)
+		return false;
+	int half=total/2;
+	return solve(0,n,half,arr);
+}
+
+// Recursion+Memoization
+bool solve(int index,int n,int half,vector<int>&arr,vector<vector<int>>&dp){
+	//base case
+	if(index>=n)
+		return false;
+	if(half<0)
+		return false;
+	if(half==0)
+		return true;
+	if(dp[index][half]!=-1)
+		return dp[index][half];
+	bool include=solve(index+1,n,half-arr[index],arr,dp);
+	bool exclude=solve(index+1,n,half,arr,dp);
+	return dp[index][half]=include || exclude;
+	
+}
+bool canPartition(vector<int> &arr, int n)
+{
+	int total=0;
+	for(int i=0;i<n;i++){
+		total+=arr[i];
+	}
+	//if total is odd we cant divide it into eqaul parts
+	if(total&1==1)
+		return false;
+	int half=total/2;
+	vector<vector<int>>dp(n+1,vector<int>(half+1,-1));
+	return solve(0,n,half,arr,dp);
+}
+
+// Tabulation
+bool solve(int n,int half,vector<int>&arr){
+
+	vector<vector<int>>dp(n+1,vector<int>(half+1,0));
+	//from base case we found that when half ==0 return true
+	//but we dont know at which index so all index's 0 is made true
+	for(int i=0;i<=n;i++){
+		dp[i][0]=1;
+	}
+
+	for(int index=n-1;index>=0;index--){
+		for(int h=0;h<=half;h++){
+			int include=0;
+			if(h-arr[index]>=0)
+				include=dp[index+1][h-arr[index]];
+			int exclude=dp[index+1][h];
+			dp[index][h]=include||exclude;
+		}
+	}
+	return dp[0][half];	
+}
+bool canPartition(vector<int> &arr, int n)
+{
+	int total=0;
+	for(int i=0;i<n;i++){
+		total+=arr[i];
+	}
+	//if total is odd we cant divide it into eqaul parts
+	if(total&1==1)
+		return false;
+	int half=total/2;
+	return solve(n,half,arr);
+}
+
+// Space Optimized
+bool solve(int n,int half,vector<int>&arr){
+
+	vector<int>curr(half+1,0);
+	vector<int>next(half+1,0);
+	//from base case we found that when half ==0 return true
+	//but we dont know at which index so all index's 0 is made true
+	next[0]=curr[0]=1;	
+
+	for(int index=n-1;index>=0;index--){
+		for(int h=0;h<=half;h++){
+			int include=0;
+			if(h-arr[index]>=0)
+				include=next[h-arr[index]];
+			int exclude=next[h];
+			curr[h]=include||exclude;
+		}
+		next=curr;
+	}
+	return next[half];	
+}
+bool canPartition(vector<int> &arr, int n)
+{
+	int total=0;
+	for(int i=0;i<n;i++){
+		total+=arr[i];
+	}
+	//if total is odd we cant divide it into eqaul parts
+	if(total&1==1)
+		return false;
+	int half=total/2;
+	return solve(n,half,arr);
+}
+
+// Friends Pairing Problem
+
+// Recursion+Memoization
+class Solution
+{
+public:
+    vector<long long int> t;
+    long long int MM = 1000000007;
+    int solve(int i){
+        
+        //Memoization
+        //base condition
+        if(i==1){
+            return t[i]=1;
+        }
+        if(i==2){
+            return t[i] = 2;
+        }
+        if(t[i]!=-1){
+            return t[i];
+        }
+
+        t[i] = ((solve(i-1))%MM + (i-1)*((solve(i-2))%MM))%MM;
+        return t[i];
+    }
+    long long int countFriendsPairings(int n) 
+    {
+        t.resize(1e4+1, -1);
+        return solve(n);   
+    }
+};
+
+// Tabulation
+class Solution
+{
+public:
+    long long int countFriendsPairings(int n) 
+    { 
+        long long int t[n+1];
+        long long int MM = 1000000007;
+        t[1] = 1;
+        t[2] = 2;
+        for(int i=3; i<n+1; i++){
+            t[i] = (t[i-1]%MM + (i-1)*(t[i-2]%MM))%MM;
+        }
+        return t[n];
+    }
+};
+
+// Space Optimmized
+class Solution
+{
+public:
+    int countFriendsPairings(int n) 
+    {  
+        long mod = 1e9+7;
+           long prev2 = 0,prev1 =1;
+        for(int i =1;i<=n;i++){
+            long ans = ((prev1%mod)+(prev2%mod)*(i-1))%mod;
+            prev2 = prev1%mod;
+            prev1 = ans;
+        }
+        return  (int)prev1%mod;
+    }
+};
+
+// Gold Mine Problem
+
+// Memoization
+class Solution{
+public:
+    int helpG(int i, int m, vector<vector<int>> &M, int z, int n, vector<vector<int>> &dp)
+    {  
+       if(i<0 || z<0|| i>=n || z>=m)
+       return 0;
+       
+       if(dp[i][z]!=-1)
+       return dp[i][z];
+       
+       int right=helpG(i, m, M, z+1,n,dp);
+       int rightup=helpG(i+1, m, M, z+1,n,dp);
+       int rightdown=helpG(i-1, m, M, z+1,n,dp);
+       
+       return dp[i][z]= M[i][z] + max(rightup, max(right , rightdown));
+   }
+    
+    
+    int maxGold(int n, int m, vector<vector<int>> M)
+    {
+        // code here
+        int mx=0;
+        vector<vector<int>> dp(n+1, vector<int>(m+1, -1));
+        for(int i=0; i<n; i++)
+        {
+            mx= max(mx, helpG(i,m,M,0,n,dp));
+        }
+        return mx;
+    }
+};
+
+// Tabulation
+class Solution{
+public:
+    bool isSafe(int n,int m,int i,int j){
+        return (i>=0 &&i<n && j>=0 && j<m );
+    }
+    int maxGold(int n, int m, vector<vector<int>> M){
+        vector<vector<int>> mat(n,vector<int>(m,0));
+        for(int i=0;i<n;i++)
+            mat[i][0]=M[i][0];
+        for(int j=1;j<m;j++){
+            for(int i=0;i<n;i++){
+                if(isSafe(n,m,i-1,j-1))
+                    mat[i][j]=max(mat[i][j],mat[i-1][j-1]+M[i][j]);
+                if(isSafe(n,m,i,j-1))
+                    mat[i][j]=max(mat[i][j],mat[i][j-1]+M[i][j]);
+                if(isSafe(n,m,i+1,j-1))
+                    mat[i][j]=max(mat[i][j],mat[i+1][j-1]+M[i][j]);
+            }
+        }
+        int ans=INT_MIN;
+        for(int i=0;i<n;i++)
+            ans=max(ans,mat[i][m-1]);
+        return ans;
+    }
+};
+
+// Assembly Line Scheduling
+
+// Method-1
+#include <iostream>
+#include <vector>
+using namespace std;
+int fun(vector<vector<int> > a, vector<vector<int> > t,
+		int cl, int cs, int x1, int x2, int n)
+{
+	// base case
+	if (cs == n - 1) {
+		if (cl == 0) { // exiting from (current) line =0
+			return x1;
+		}
+		else // exiting from line 2
+			return x2;
+	}
+	// continue on same line
+	int same
+		= fun(a, t, cl, cs + 1, x1, x2, n) + a[cl][cs + 1];
+	// continue on different line
+	int diff = fun(a, t, !cl, cs + 1, x1, x2, n)
+			+ a[!cl][cs + 1] + t[cl][cs + 1];
+	return min(same, diff);
+}
+int main()
+{
+	int n = 4; // number of statin
+	vector<vector<int> > a
+		= { { 4, 5, 3, 2 }, { 2, 10, 1, 4 } };
+	vector<vector<int> > t
+		= { { 0, 7, 4, 5 }, { 0, 9, 2, 8 } };
+	int e1 = 10;
+	int e2 = 12;
+	int x1 = 18;
+	int x2 = 7;
+	// entry from 1st line
+	int x = fun(a, t, 0, 0, x1, x2, n) + e1 + a[0][0];
+	// entry from 2nd line
+	int y = fun(a, t, 1, 0, x1, x2, n) + e2 + a[1][0];
+	cout << min(x, y) << endl;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+#define NUM_LINE 2
+#define NUM_STATION 4
+// Utility function to find a minimum of two numbers
+int min(int a, int b)
+{
+	return a < b ? a : b;
+}
+int carAssembly(int a[][NUM_STATION],
+				int t[][NUM_STATION],
+				int *e, int *x)
+{
+	int T1[NUM_STATION], T2[NUM_STATION], i;
+	// time taken to leave first station in line 1
+	T1[0] = e[0] + a[0][0];
+	// time taken to leave first station in line 2
+	T2[0] = e[1] + a[1][0];
+	// Fill tables T1[] and T2[] using the above given recursive relations
+	for (i = 1; i < NUM_STATION; ++i)
+	{
+		T1[i] = min(T1[i - 1] + a[0][i],
+					T2[i - 1] + t[1][i] + a[0][i]);
+		T2[i] = min(T2[i - 1] + a[1][i],
+					T1[i - 1] + t[0][i] + a[1][i]);
+	}
+	// Consider exit times and return minimum
+	return min(T1[NUM_STATION - 1] + x[0],
+			T2[NUM_STATION - 1] + x[1]);
+}
+int main(){
+	int a[][NUM_STATION] = {{4, 5, 3, 2},
+							{2, 10, 1, 4}};
+	int t[][NUM_STATION] = {{0, 7, 4, 5},
+							{0, 9, 2, 8}};
+	int e[] = {10, 12}, x[] = {18, 7};
+	cout << carAssembly(a, t, e, x);
+	return 0;
+}
+
+// Method-3
+#include <bits/stdc++.h>
+using namespace std;
+int carAssembly(int a[][4],
+				int t[][4],
+				int *e, int *x)
+{
+	int first, second, i;
+	// Time taken to leave first station in line 1
+	first = e[0] + a[0][0];
+	// Time taken to leave first station in line 2
+	second = e[1] + a[1][0];
+	// Fill tables T1[] and T2[] using the above given recursive relations
+	for(i = 1; i < 4; ++i)
+	{
+		int up = min(first + a[0][i],
+					second + t[1][i] +
+							a[0][i]);
+		int down = min(second + a[1][i],
+						first + t[0][i] +
+								a[1][i]);
+		first = up;
+		second = down;
+	}
+	// Consider exit times and return minimum
+	return min(first + x[0],
+			second + x[1]);
+}
+int main()
+{
+	int a[][4] = { { 4, 5, 3, 2 },
+				{ 2, 10, 1, 4 } };
+	int t[][4] = { { 0, 7, 4, 5 },
+				{ 0, 9, 2, 8 } };
+	int e[] = { 10, 12 }, x[] = { 18, 7 };
+	cout << carAssembly(a, t, e, x);
+	return 0;
+}
+
+// Painting the Fence
+
+//Recursive Approach
+class Solution{
+    public:
+    long mod=1000000007;
+    unordered_map<long long int,long long int> dp;
+    long long countWays(int n, int k){
+        if(n==1) return k;
+        if(n==2) return ((long long)k*(long long)k)%mod;
+        if(n==0 or k==0) return 0;
+        if(dp.find(n)!=dp.end()){
+            return dp[n];
+        }
+        long long ans=((long long)(k-1)*(countWays(n-1,k)%mod+countWays(n-2,k)%mod)%mod)%mod;
+        return dp[n]=ans%mod;
+    }
+};
+
+// Space Optimized
+class Solution{
+    public:
+    long long countWays(int n, int k){
+        int m=1000000007;
+        if(n==1) return k;
+        long long int same=k,diff=k*(k-1);
+        long long int total=same+diff;
+        for(int i=3;i<=n;i++){
+            same=diff%m;
+            diff=(total%m * (k-1)%m)%m;
+            total=(same%m+diff%m)%m;
+        }
+        return total%m;
+    }
+};
+
+// Longest Common Subsequence
+
+// 1. Naive Recusive approach 
+// Time complexity: O(2^n)
+// Space complexity: Stack Space
+// (n = Size of strings text1 and text2)
+
+class Solution {
+public:
+    int helper(string text1, string text2, int m, int n){
+        if(m==0 || n==0) return 0;
+        else if(text1[m-1]==text2[n-1]) return 1+helper(text1, text2, m-1, n-1);
+        else return max(helper(text1, text2, m, n-1), helper(text1, text2, m-1, n));
+    }
+    int longestCommonSubsequence(string text1, string text2) {
+        int m= text1.size();
+        int n=text2.size();
+        return helper(text1, text2, m, n);
+    }
+};
+
+// 2. Memoization 
+// Time complexity: O(M*N)
+// Space complexity: O(M*N) + Stack Space
+// (M = Size of text1, N = Size of text2)
+
+class Solution {
+public:
+    int helper(string text1, string text2, int m, int n, vector<vector<int>>&dp){
+        if(m==0 || n==0) return 0;
+        else if(dp[m-1][n-1]!=-1) return dp[m-1][n-1];
+        else if(text1[m-1]==text2[n-1])
+                return dp[m-1][n-1]=1+helper(text1, text2, m-1, n-1, dp);
+        else return dp[m-1][n-1]=max(helper(text1, text2, m, n-1, dp), helper(text1, text2, m-1, n, dp));     
+    }
+    int longestCommonSubsequence(string text1, string text2) {
+        int m= text1.size();
+        int n=text2.size();
+        vector<vector<int>>dp(m, vector<int>(n, -1));
+        return helper(text1, text2, m, n, dp);
+    }
+};
+
+// 3. Tabulation
+// Time complexity: O(M*N)
+// Space complexity: O(M*N)
+// (M = Size of text1, N = Size of text2)
+
+class Solution {
+public:
+    int longestCommonSubsequence(string text1, string text2) {
+        int m= text1.size();
+        int n=text2.size();
+        vector<vector<int>>dp(m+1, vector<int>(n+1));
+        for(int i=0;i<=n;i++){
+            dp[0][i]=0;
+        }
+        for(int i=0;i<=m;i++){
+            dp[i][0]=0;
+        }
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(text1[i-1]==text2[j-1]){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j]=max(dp[i][j-1], dp[i-1][j]);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};
+
+// 4. Optimized space (but with 2 array)
+// Time complexity: O(M*N)
+// Space complexity: O(N) + O(N) = O(N)
+// (M = Size of text1, N = Size of text2)
+
+class Solution {
+public:
+    int longestCommonSubsequence(string text1, string text2) {
+        int m= text1.size();
+        int n=text2.size();
+        vector<int>prev(n+1, 0);
+        vector<int>curr(n+1, 0);
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(text1[i-1]==text2[j-1]){
+                    curr[j]=1+prev[j-1];
+                }
+                else{
+                    curr[j]=max(curr[j-1], prev[j]);
+                }
+            }
+            prev=curr;
+        }
+        return prev[n];
+    }
+};
+
+// 5. Optimized space (with only one array) 
+// Time complexity: O(M*N)
+// Space complexity: O(N)
+// (M = Size of text1, N = Size of text2)
+
+class Solution {
+public:
+    int longestCommonSubsequence(string text1, string text2) {
+        int m= text1.size();
+        int n=text2.size();
+        vector<int>prev(n+1, 0);
+        int temp=0, diag=0;
+        for(int i=1;i<=m;i++){
+            diag=0;
+            for(int j=1;j<=n;j++){
+                temp=prev[j];
+                if(text1[i-1]==text2[j-1]){
+                    prev[j]=1+diag;
+                }
+                else{
+                    prev[j]=max(prev[j], prev[j-1]);
+                }
+                diag=temp;
+            }
+        }
+        return prev[n];
+    }
+};
+
+// Maximize The Cut Segments
+
+// Recursion
+#include<limits.h>
+int solve(int n,vector<int>&lengths){
+	//base case
+	if(n==0)
+		return 0;
+	if(n<0)
+		return INT_MIN;
+	int maxi=INT_MIN;
+	for(int i=0;i<lengths.size();i++){
+		int ans=solve(n-lengths[i],lengths);
+		if(ans!=INT_MIN){
+			maxi=max(maxi,ans+1);
+		}
+	}
+	return maxi;
+}
+int cutSegments(int n, int x, int y, int z) {
+	vector<int>lengths={x,y,z};
+	int ans =solve(n,lengths);
+	if(ans==INT_MIN)
+		return 0;
+	return ans;
+}
+
+// Recursion+Memoization
+#include<limits.h>
+int solve(int n,vector<int>&lengths,vector<int>&dp){
+	//base case
+	if(n==0)
+		return 0;
+	if(n<0)
+		return INT_MIN;
+	if(dp[n]!=INT_MIN)
+		return dp[n];
+	int maxi=INT_MIN;
+	for(int i=0;i<lengths.size();i++){
+		int ans=solve(n-lengths[i],lengths,dp);
+		if(ans!=INT_MIN){
+			maxi=max(maxi,ans+1);
+		}
+	}
+	dp[n]=maxi;
+	return maxi;
+}
+int cutSegments(int n, int x, int y, int z) {
+	vector<int>lengths={x,y,z};
+	vector<int>dp(n+1,INT_MIN);
+	int ans =solve(n,lengths,dp);
+	if(ans==INT_MIN)
+		return 0;
+	return ans;
+}
+
+// Tabulation
+#include<bits/stdc++.h>
+int Tabulation(int n, int x, int y, int z){
+	vector<int> dp(n+1, INT_MIN);
+	dp[0] = 0;
+	// 1 to n
+	for (int i=1; i<=n; i++){
+		if (i-x >= 0){
+			dp[i] = max(dp[i], dp[i-x]+1);
+		}
+		if (i-y >= 0){
+			dp[i] = max(dp[i], dp[i-y]+1);
+		}
+		if (i-z >= 0){
+			dp[i] = max(dp[i], dp[i-z]+1);
+		}
+	}
+	if (dp[n] < 0) return 0;
+	return dp[n];
+}
+int cutSegments(int n, int x, int y, int z) {
+	return Tabulation(n, x, y, z);
+}
+
+// Longest Repeating Subsequence
+
+// Memoization
+class Solution {
+	public:
+	    int t[1001][1001]; // Declare the cache memory for fast response
+	    
+	    int helper(string &s1, string &s2, int m, int n){
+	        // if any or both of the string is empry, then there'll be no subsequence, hence return 0
+	        if(m == 0 || n == 0) return 0;
+	        
+	        // if Subproblem is already calculated then return from there
+	        if(t[m][n] != -1) return t[m][n];
+	        
+	        // if current element is valid and its not repeating then add '1' and proceed next element
+	        if(s1[m-1] == s2[n-1] && m != n){
+	            return t[m][n] = 1 + helper(s1, s2, m-1, n-1);
+	        }
+	        // else calculate for both the string by reducing one by one.
+	        else{
+	            return t[m][n] = max(helper(s1, s2, m, n-1), helper(s1, s2, m-1, n));
+	        }
+	    }
+		int LongestRepeatingSubsequence(string str){
+		    // Initializing our cache matrix with all '-1' value.
+		    memset(t, -1, sizeof(t));
+		    
+		    int n = str.size();
+		    return helper(str, str, n, n);
+		}
+};
+
+// Tabulation (Bottom Up DP): 
+class Solution {
+	public:
+		int LongestRepeatingSubsequence(string str){
+		    int n = str.size();
+		    int t[n+1][n+1];
+		    
+		    for(int i=0;i<n+1;i++) t[i][0] = 0;
+		    for(int j=0;j<n+1;j++) t[0][j] = 0;
+		    
+		    for(int i=1;i<n+1;i++){
+		        for(int j=1;j<n+1;j++){
+		            if(str[i-1] == str[j-1] && i != j){
+		                t[i][j] = 1 + t[i-1][j-1];
+		            }
+		            else{
+		                t[i][j] = max(t[i][j-1], t[i-1][j]);
+		            }
+		        }
+		    }
+		    return t[n][n];
+		}
+};
+
+// Longest Increasing Subsequence
+
+// Brute Force
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        return solve(nums, 0, INT_MIN);
+    }
+    int solve(vector<int>& nums, int i, int prev) {
+        if(i >= size(nums)) return 0;                                // cant pick any more elements
+        int take = 0, dontTake = solve(nums, i + 1, prev);           // try skipping the current element
+        if(nums[i] > prev) take = 1 + solve(nums, i + 1, nums[i]);   // or pick it if it is greater than previous picked element
+        return max(take, dontTake);                                  // return whichever choice gives max LIS
+    }
+};
+
+// Memoization
+class Solution {
+public:
+    vector<vector<int>> dp;
+    int lengthOfLIS(vector<int>& nums) {
+        dp.resize(size(nums), vector<int>(1+size(nums), -1));   // dp[i][j] denotes max LIS starting from i when nums[j] is previous picked element
+        return solve(nums, 0, -1);
+    }
+    int solve(vector<int>& nums, int i, int prev_i) {
+        if(i >= size(nums)) return 0;
+        if(dp[i][prev_i+1] != -1) return dp[i][prev_i+1];
+        int take = 0, dontTake = solve(nums, i + 1, prev_i);
+        // try picking current element if no previous element is chosen or current > nums[prev_i]
+        if(prev_i == -1 || nums[i] > nums[prev_i]) take = 1 + solve(nums, i + 1, i); 
+        return dp[i][prev_i+1] = max(take, dontTake);
+    }
+};
+
+// Memoization
+class Solution {
+public:
+    vector<int> dp;
+    int lengthOfLIS(vector<int>& nums) {
+        dp.resize(size(nums)+1, -1);
+        return solve(nums, 0, -1);
+    }
+    int solve(vector<int>& nums, int i, int prev_i) {
+        if(i >= size(nums)) return 0;
+        if(dp[prev_i+1] != -1) return dp[prev_i+1];
+        int take = 0, dontTake = solve(nums, i + 1, prev_i);
+        if(prev_i == -1 || nums[i] > nums[prev_i])
+            take = 1 + solve(nums, i + 1, i);
+        return dp[prev_i+1] = max(take, dontTake);
+    }
+};
+
+// Tabuation
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int ans = 1, n = size(nums);
+        vector<int> dp(n, 1);
+        for(int i = 0; i < n; i++) 
+            for(int j = 0; j < i; j++) 
+                if(nums[i] > nums[j]) 
+				    dp[i] = max(dp[i], dp[j] + 1), ans = max(ans, dp[i]);
+        return ans;
+    }
+};
+
+// Space Optimized
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& A) {
+        int len = 0;
+        for(auto cur : A) 
+            if(len == 0 || A[len-1] < cur) A[len++] = cur;             // extend
+            else *lower_bound(begin(A), begin(A) + len, cur) = cur;    // replace
+        return len;
+    }
+};
+
+// LCS of three strings
+
+// Method-1
+int lcs(string s1,string s2,string s3,int i,int j,int k,vector<vector<vector<int>>> &dp){
+        // base case
+        if(i==s1.size()||j==s2.size()||k==s3.size()){
+            return 0;
+        }
+        if(dp[i][j][k]!=-1){
+            return dp[i][j][k];
+        }
+        // if same
+        int a=0;
+        int b1=0,b2=0,b3=0,b4=0,b5=0,b6=0,b7=0,b8=0,maxi=0;
+        if(s1[i]==s2[j]&&s1[i]==s3[k]){
+            a=1+lcs(s1,s2,s3,i+1,j+1,k+1,dp);
+        }
+        // if not
+        else{
+            b1=lcs(s1,s2,s3,i+1,j,k,dp);
+            b2=lcs(s1,s2,s3,i,j+1,k,dp);
+            b3=lcs(s1,s2,s3,i,j,k+1,dp);
+            b4=lcs(s1,s2,s3,i+1,j+1,k,dp);
+            b5=lcs(s1,s2,s3,i+1,j,k+1,dp);
+            b6=lcs(s1,s2,s3,i,j+1,k+1,dp);
+            b7=lcs(s1,s2,s3,i+1,j+1,k,dp);
+            b8=lcs(s1,s2,s3,i+1,j+1,k+1,dp);
+            //int maxi=0;
+            if(b1>maxi){
+                maxi=b1;
+            }
+            if(b2>maxi){
+                maxi=b2;
+            }
+            if(b3>maxi){
+                maxi=b3;
+            }
+            if(b4>maxi){
+                maxi=b4;
+            }
+            if(b5>maxi){
+                maxi=b5;
+            }
+            if(b6>maxi){
+                maxi=b6;
+            }
+            if(b7>maxi){
+                maxi=b7;
+            }
+            if(b8>maxi){
+                maxi=b8;
+            }
+        }       
+        return dp[i][j][k]=max(a,maxi);
+}
+int LCSof3 (string A, string B, string C, int n1, int n2, int n3)
+{
+    vector<vector<vector<int>>> dp(n1,vector<vector<int>> (n2,vector<int> (n3,-1)));
+    return lcs(A,B,C,0,0,0,dp);
+}
+
+// Method-2
+int LCSof3 (string s1, string s2, string s3, int n1, int n2, int n3){
+     vector<vector<vector<int>>>dp(n1+1,vector<vector<int>>(n2+1,vector<int>(n3+1,0)));
+        for(int i=1;i<=n1;i++)
+        {
+            for(int j=1;j<=n2;j++){
+                for(int k=1;k<=n3;k++)
+                {
+                    if(s1[i-1]==s2[j-1] and s2[j-1]==s3[k-1])
+                    {
+                        dp[i][j][k]=1+dp[i-1][j-1][k-1];
+                    }
+                    else
+                    {
+                        dp[i][j][k]=max(dp[i-1][j][k],max(dp[i][j-1][k],dp[i][j][k-1]));
+                    }
+                }
+            }
+        }
+        return dp[n1][n2][n3];
+}
+
+// Maximum sum increasing subsequence
+
+// Recursion
+class Solution{
+	public:
+	int solveRec(int curr, int prev, int arr[], int n)
+    {
+        if (curr == n)
+            return 0;
+        int incl = 0;
+        if (prev == -1 || arr[curr] > arr[prev])
+            incl = arr[curr] + solveRec(curr + 1, curr, arr, n);
+        int excl = 0 + solveRec(curr + 1, prev, arr, n);
+        return max(incl, excl);
+    }
+    int maxSumIS(int arr[], int n)
+    {
+        return solveRec(0,-1,arr,n);
+    }
+};
+
+// Memoization
+class Solution{
+	public:
+	int solveMem(int curr, int prev, int arr[], int n, vector<vector<int>> &dp)
+    {
+        if (curr == n)
+            return 0;
+        if (dp[curr][prev + 1] != -1)
+            return dp[curr][prev + 1];
+        int incl = 0;
+        if (prev == -1 || arr[curr] > arr[prev])
+            incl = arr[curr] + solveMem(curr + 1, curr, arr, n, dp);
+        int excl = 0 + solveMem(curr + 1, prev, arr, n, dp);
+        return dp[curr][prev + 1] = max(incl, excl);
+    }
+    int maxSumIS(int arr[], int n)
+    {
+        vector<vector<int>>dp(n, vector<int>(n+1,-1));
+        return solveMem(0,-1,arr,n,dp);
+    }
+};
+
+// Tabulation
+class Solution{
+	public:
+	int solveTab(int arr[], int n)
+    {
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
+        for (int curr = n - 1; curr >= 0; curr--)
+        {
+            for (int prev = curr - 1; prev >= -1; prev--)
+            {
+                int incl = 0;
+                if (prev == -1 || arr[curr] > arr[prev])
+                    incl = arr[curr] + dp[curr + 1][curr + 1];
+                int excl = 0 + dp[curr + 1][prev + 1];
+                dp[curr][prev + 1] = max(incl, excl);
+            }
+        }
+        return dp[0][-1 + 1];
+    }
+    int maxSumIS(int arr[], int n)
+    {
+        return solveTab(arr,n);
+    }
+};
+
+// Space Optimized 1
+class Solution{
+	public:
+	int solveSpace(int arr[], int n)
+    {
+        vector<int> cur(n + 1, 0);
+        vector<int> next(n + 1, 0);
+        for (int curr = n - 1; curr >= 0; curr--)
+        {
+            for (int prev = curr - 1; prev >= -1; prev--)
+            {
+                int incl = 0;
+                if (prev == -1 || arr[curr] > arr[prev])
+                    incl = arr[curr] + next[curr + 1];
+                int excl = 0 + next[prev + 1];
+                cur[prev + 1] = max(incl, excl);
+            }
+            next = cur;
+        }
+        return next[-1 + 1];
+    }
+    int maxSumIS(int arr[], int n)
+    {
+        return solveSpace(arr, n);
+    }
+};
+
+// Space Optimized 2
+class Solution{
+	public:
+	int solveSpace1D(int arr[], int n)
+    {
+        vector<int> curr(n, 0);
+        int ans = 0;
+        for (int i = 0; i < n; i++)
+        {
+            curr[i] = arr[i];
+            for (int j = 0; j < i; j++)
+            {
+                if (arr[i] > arr[j])
+                    curr[i] = max(curr[i], curr[j] + arr[i]);
+            }
+            ans = max(ans, curr[i]);
+        }
+        return ans;
+    }
+    int maxSumIS(int arr[], int n)
+    {
+        return solveSpace1D(arr, n);
+    }
+};
+
+// Count all subsequences having product less than K
+
+#include <bits/stdc++.h>
+using namespace std;
+int productSubSeqCount(vector<int> &arr, int k)
+{
+	int n = arr.size();
+	int dp[k + 1][n + 1];
+	memset(dp, 0, sizeof(dp))
+	for (int i = 1; i <= k; i++) {
+		for (int j = 1; j <= n; j++) {
+			// number of subsequence using j-1 terms
+			dp[i][j] = dp[i][j - 1];
+			// if arr[j-1] > i it will surely make product greater thus it won't contribute then
+			if (arr[j - 1] <= i)
+				// number of subsequence using 1 to j-1 terms and j-th term
+				dp[i][j] += dp[i/arr[j-1]][j-1] + 1;
+		}
+	}
+	return dp[k][n];
+}
+int main()
+{
+	vector<int> A;
+	A.push_back(1);
+	A.push_back(2);
+	A.push_back(3);
+	A.push_back(4);
+	int k = 10;
+	cout << productSubSeqCount(A, k) << endl;
+}
+
+// Longest subsequence-1
+
+// Recursion
+class Solution{
+public:
+    int f(int n,int arr[],int i,int p){
+        if(i==n) return 0;
+        int nt=f(n,arr,i+1,p);
+        int t=0;
+        if((arr[p]-arr[i])==1 || p==-1 ||(arr[p]-arr[i])==-1) t=1+f(n,arr,i+1,i);
+        return max(t,nt);
+    }
+    int longestSubsequence(int n, int arr[])
+    {
+        return f(n,arr,0,-1);
+    }
+};
+
+// Memoization
+class Solution
+{
+    public:
+    int f(int i,int p,int arr[],int n,vector<vector<int>> &dp){
+        if(i==n) return 0;
+        if(dp[i][p+1]!=-1) return dp[i][p+1];
+        int nt=f(i+1,p,arr,n,dp);
+        int t=-1e9;
+        if((arr[p]-arr[i])==1 || p==-1 ||(arr[p]-arr[i])==-1) t=1+f(i+1,i,arr,n,dp);
+        return dp[i][p+1]=max(t,nt);
+    }
+    int longestSubsequence(int n, int arr[])
+    {
+       vector<vector<int>> dp(n+1,vector<int>(n+1,-1));
+       return f(0,-1,arr,n,dp);
+    }
+};
+
+here dp[i][p+1] because p is negative in argument so we are doing index shifting.
+// Tabulation
+class Solution
+{
+    public:
+    int longestSubsequence(int n, int arr[])
+    {
+       vector<vector<int>> dp(n+1,vector<int>(n+1,0));
+       for(int i=n-1;i>=0;i--){
+           for(int p=n-1;p>=-1;p--){
+               int nt=dp[i+1][p+1];
+        int t=0;
+        if((arr[p]-arr[i])==1 || p==-1 ||(arr[p]-arr[i])==-1) t=1+dp[i+1][i+1];
+            dp[i][p+1]=max(t,nt);
+           }
+       }
+       return dp[0][-1+1];
+    }
+};
+
+// Space Optimisation
+class Solution
+{
+    public:
+    int longestSubsequence(int n, int arr[])
+    {
+       vector<int> prev(n+1,0);
+       for(int i=n-1;i>=0;i--){
+           vector<int> curri(n+1,0);
+           for(int p=n-1;p>=-1;p--){
+               int nt=prev[p+1];
+        int t=0;
+        if((arr[p]-arr[i])==1 || p==-1 ||(arr[p]-arr[i])==-1) t=1+prev[i+1];
+           curri[p+1]=max(t,nt);
+           }
+           prev=curri;
+       }
+       return prev[-1+1];
+    }
+};
+
+// Maximum subsequence sum such that no three are consecutive
+
+// Method-1
+class Solution{
+  public:
+  int findMaxSum(vector<int>& a){
+      int N = a.size();
+      if (N == 1) return a[0];
+      if (N == 2) return a[0] + a[1];
+      int S[] = {0, a[0], a[1], a[0]+a[1]};
+      for (int i = 2; i < N; i++) {
+          int s0 = max(S[0], S[1]); // exclude both
+          int s1 = max(S[2], S[3]); // include prev
+          int s2 = s0 + a[i];		// include cur
+          int s3 = S[2] + a[i];		// include both
+          S[0]=s0; S[1]=s1; S[2]=s2; S[3]=s3;
+      }
+      return max(S[0], max(S[1], max(S[2], S[3])));
+    }
+};
+
+// Method-2
+class Solution{
+  public:
+      int fun(vector<int>&a,int n,int i,vector<int>&dp)
+      {
+          if(i>=n)
+          return 0;
+          if(dp[i]!=-1)
+          return dp[i];
+          int pick=a[i]+fun(a,n,i+3,dp);
+          if(i+1<n)
+          pick+=a[i+1];
+          int nonpick=fun(a,n,i+1,dp);
+          int x=a[i]+fun(a,n,i+2,dp);
+          return dp[i]=max(max(pick,nonpick),x);
+      }
+      int findMaxSum(vector<int>& a){
+          int n=a.size();
+          vector<int>dp(n,-1);
+          fun(a,a.size(),0,dp);
+          return dp[0];
+      }
+};
+
+// Egg Dropping Puzzle
+
+// RC + Memoization (Top Down Approach): 
+class Solution
+{
+    public:
+    int t[201][201]; //Cache momory for fast response
+    
+    int helper(int eggs, int floors){
+        // Base Cases
+        // If we reach at the bottom then return that
+        if(floors == 0 || floors == 1) return floors;
+        
+        // If we have just one eggs we can't experiment more
+        if(eggs == 1) return floors;
+        
+        // If sub Problem is already calculated then return from there
+        if(t[eggs][floors] != -1) return t[eggs][floors];
+        
+        int ans = INT_MAX; // Create ans varible with max value
+         
+        // Just using MCM fomat
+        for(int k=1;k<=floors;k++){
+            int temp = 1 + max(helper(eggs-1, k-1), helper(eggs, floors-k));
+            
+            ans = min(ans, temp);
+        }
+        return t[eggs][floors] = ans;
+    }
+    
+    int eggDrop(int n, int k) {
+        memset(t, -1, sizeof(t)); // Initislize with all '-1'
+        return helper(n, k); // Call our servent - helper function
+    }
+};
+
+// Optimized Memoization (Top Down Approach):
+class Solution
+{
+    public:
+    int t[201][201]; //Cache momory for fast response
+    
+    int helper(int eggs, int floors){
+        // Base Cases
+        // If we reach at the bottom then return that
+        if(floors == 0 || floors == 1) return floors;
+        
+        // If we have just one eggs we can't experiment more
+        if(eggs == 1) return floors;
+        
+        // If sub Problem is already calculated then return from there
+        if(t[eggs][floors] != -1) return t[eggs][floors];
+        
+        int ans = INT_MAX; // Create ans varible with max value
+         
+        int low, high;
+         
+        // Just using MCM fomat
+        for(int k=1;k<=floors;k++){
+            // Some Optimizations
+            if(t[eggs-1][k-1] != -1) low  = t[eggs-1][k-1];
+            else low  = helper(eggs-1, k-1);
+            
+            if(t[eggs][floors-k] != -1) high  = t[eggs][floors-k];
+            else high  = helper(eggs, floors-k);
+            
+            int temp = 1 + max(low, high);
+            
+            ans = min(ans, temp);
+        }
+        return t[eggs][floors] = ans;
+    }
+    
+    int eggDrop(int n, int k) {
+        memset(t, -1, sizeof(t)); // Initislize with all '-1'
+        return helper(n, k); // Call our servent - helper function
+    }
+};
+
+// Tabulation (Bottom Up Dp):
+class Solution
+{
+    public:
+    int eggDrop(int n, int k) {
+        int t[n+1][k+1];
+        
+        for(int i=0;i<n+1;i++){
+            t[i][0] = 0;
+            t[i][1] = 1;
+        }
+        
+        for(int i=0;i<k+1;i++) t[1][i] = i;
+        
+        for(int i=2;i<n+1;i++){
+            for(int j=2;j<k+1;j++){
+                t[i][j] = INT_MAX;
+                for(int x=1;x<j+1;x++){
+                    int temp = 1 + max(t[i-1][x-1], t[i][j-x]);
+                    t[i][j] = min(t[i][j], temp);
+                }
+            }
+        }
+        return t[n][k];
+    }
+};
+
+// Max length chain
+
+class Solution{
+public:
+    static bool cmp(val &a , val&b)
+    {
+        return a.second < b.second ;
+    }
+    int maxChainLen(struct val p[],int n){
+        sort(p,p+n,cmp);
+        int c=1;
+        for(int i=1;i<n;i++)
+        {
+            if(p[i-1].second < p[i].first)
+            {
+                c++;
+            }
+            else
+            {
+                p[i].second = min(p[i].second,p[i-1].second);
+            }
+        }
+        return c;
+    }
+};
+
+// Largest square formed in a matrix
+
+// Brute Force
+// To start with brute-force approach, we can simply consider each possible starting cell (row, col) and side length (sideLen) of square starting at that cell.
+// For each cell and sideLen, we will check if the corresponding square inside the matrix is valid or not (i.e, all cells are "1" or not). 
+// After checking each possible squares, we will return the one with maximum area.
+class Solution {
+public:
+    int maximalSquare(vector<vector<char>>& M) {
+        auto isValidSquare = [&](int i, int j, int side) {
+            return all_of(begin(M)+i, begin(M)+i+side, [&](auto& R){
+                return all_of(begin(R)+j, begin(R)+j+side, [&](auto cell) { return cell == '1'; });
+            });
+        };
+        int m = size(M), n = size(M[0]), ans = 0;
+        for(int row = 0; row < m; row++)
+            for(int col = 0; col < n; col++)
+                for(int sideLen = 1; sideLen <= min(m-row, n-col); sideLen++) 
+                    if(isValidSquare(row, col, sideLen))
+                        ans = ans = max(ans, sideLen*sideLen);
+        return ans;
+    }
+};
+
+// We can slightly optimize the code by running from sideLen = min(m, n) down to 1 instead of the other way around. 
+// This ensures that we can return the area of sqaure as soon as we find the 1st valid square since that square would be the 1st valid square of maximum side length.
+class Solution {
+public:
+    int maximalSquare(vector<vector<char>>& M) {
+        auto isValidSquare = [&](int i, int j, int side) {
+            return all_of(begin(M)+i, begin(M)+i+side, [&](auto& R){
+                return all_of(begin(R)+j, begin(R)+j+side, [&](auto cell) { return cell == '1'; });
+            });
+        };
+        int m = size(M), n = size(M[0]);
+        for(int sideLen = min(m, n); sideLen; sideLen--)
+            for(int row = 0; row <= m-sideLen; row++)
+                for(int col = 0; col <= n-sideLen; col++)
+                    if(isValidSquare(row, col, sideLen))
+                        return sideLen*sideLen;
+        return 0;
+    }
+};
+// Time Complexity : O(M*N*min(M,N)3)
+// Space Complexity : O(1), only constant extra space is being used
+
+// Optimized Brute Approach
+class Solution {
+public:
+    int getMaxSquareLen(vector<vector<char>>& M, int row, int col) {
+        int allOnesRowLen = min(size(M)-row, size(M[0])-col), sqLen = 0;
+        for(int i = 0, j; i < allOnesRowLen; i++) {
+            for(j = 0; j < allOnesRowLen && M[i+row][j+col] != '0'; j++);
+            allOnesRowLen = j;
+            sqLen = min(allOnesRowLen, i+1);
+        }
+        return sqLen;
+    }
+    int maximalSquare(vector<vector<char>>& M) {
+        int m = size(M), n = size(M[0]), ans = 0;
+        for(int row = 0; row < m; row++)
+            for(int col = 0; col < n; col++) 
+                ans = max(ans, getMaxSquareLen(M, row, col));
+        return ans * ans;
+    }
+};
+// Time Complexity : O(MN*min(M,N)2)
+// Space Complexity : O(1)
+
+// Dynamic Programming
+class Solution {
+public:
+    int getMaxSquareLen(vector<vector<char>>& M, vector<vector<int>>& ones, int row, int col) {
+        int allOnesRowLen = min(size(M)-row, size(M[0])-col), sqLen = 0;
+        for(int i = 0, j; i < allOnesRowLen; i++) 
+            allOnesRowLen = min(allOnesRowLen, ones[i+row][col]),
+            sqLen = min(allOnesRowLen, i+1);
+        return sqLen;
+    }
+    int maximalSquare(vector<vector<char>>& M) {
+        int m = size(M), n = size(M[0]), ans = 0;
+        vector<vector<int>> ones(m, vector<int>(n+1));
+        for(int i = m-1; ~i; i--)
+            for(int j = n-1; ~j; j--)
+                ones[i][j] = (M[i][j] == '1' ? 1 + ones[i][j+1] : 0);
+        
+        for(int row = 0; row < m; row++)
+            for(int col = 0; col < n; col++) 
+                ans = max(ans, getMaxSquareLen(M, ones, row, col));
+        return ans * ans;
+    }
+};
+//Time Complexity : O(MN*min(M,N))
+// Space Complexity : O(1)
+
+// Dynamic Programming
+class Solution {
+public:
+    int maximalSquare(vector<vector<char>>& M) {
+        int m = size(M), n = size(M[0]), ans = 0;
+        vector<vector<int>> dp(m+1, vector<int>(n+1));
+        for(int i = m-1; ~i; i--)
+            for(int j = n-1; ~j; j--) 
+                dp[i][j] = (M[i][j] == '1' ? 1 + min({dp[i+1][j], dp[i][j+1], dp[i+1][j+1]}) : 0),
+                ans = max(ans, dp[i][j]);
+
+        return ans * ans;
+    }
+};
+// Time Complexity : O(MN)
+// Space Complexity : O(MN)
+
+// Optimized
+class Solution {
+public:
+    int maximalSquare(vector<vector<char>>& M) {
+        int m = size(M), n = size(M[0]), ans = 0;
+        vector<vector<int>> dp(2, vector<int>(n+1));
+        for(int i = m-1; ~i; i--)
+            for(int j = n-1; ~j; j--) 
+                dp[i&1][j] = (M[i][j] == '1' ? 1 + min({dp[(i+1)&1][j], dp[i&1][j+1], dp[(i+1)&1][j+1]}) : 0),
+                ans = max(ans, dp[i&1][j]);
+
+        return ans * ans;
+    }
+};
+// Time Complexity : O(MN)
+// Space Complexity : O(N), this can be further optimized to O(min(M, N)) as well.
+
+// Pairs with certain difference
+
+class Solution{
+    public:
+    int maxSumPairWithDifferenceLessThanK(int arr[], int N, int K)
+    {
+        sort(arr, arr + N);
+        int sum = 0;
+        for (int i = N-1; i > 0; i--) {
+            if (arr[i] - arr[i-1] < K) {
+                sum += arr[i] + arr[i-1];
+                i--;
+            }
+        }
+        return sum;
+    }
+};
+
+// Maximum path sum in matrix
+
+// Recursive Approach: [O(N*3^(N*N)) & O(N+N)
+class Solution{
+public:
+    int helper(int i, int j, int N, vector<vector<int>> Matrix){
+        if(j < 0 || j >= N) return -1e9;
+        if(i == 0) return Matrix[0][j];
+        int up = Matrix[i][j] + helper(i-1, j, N, Matrix);
+        int ld = Matrix[i][j] + helper(i-1, j-1, N, Matrix);
+        int rd = Matrix[i][j] + helper(i-1, j+1, N, Matrix); 
+        return max(up, max(ld, rd));
+    }
+    int maximumPath(int N, vector<vector<int>> Matrix){
+        int maxi = INT_MIN;   
+        for(int j=0;j<N;j++){
+            int ans = helper(N-1, j, N, Matrix);
+            maxi = max(maxi, ans);
+        }
+        return maxi;
+    }
+};
+ 
+// DP - Memoization: [O(N*N) & O(N*N) + O(N)]
+class Solution{
+public:
+    int helper(int i, int j, int N, vector<vector<int>> &Matrix, vector<vector<int>> &dp){
+        if(j < 0 || j >= N) return -1e9;
+        if(i == 0) return Matrix[0][j];
+        if(dp[i][j] != -1) return dp[i][j];
+        int up = Matrix[i][j] + helper(i-1, j, N, Matrix, dp);
+        int ld = Matrix[i][j] + helper(i-1, j-1, N, Matrix, dp);
+        int rd = Matrix[i][j] + helper(i-1, j+1, N, Matrix, dp);
+        return dp[i][j] = max(up, max(ld, rd));
+    }
+    int maximumPath(int N, vector<vector<int>> Matrix){
+        vector<vector<int>> dp(N, vector<int> (N, -1));   
+        int maxi = INT_MIN;
+        for(int j=0;j<N;j++){
+            int ans = helper(N-1, j, N, Matrix, dp);
+            maxi = max(maxi, ans);
+        }
+        return maxi;
+    }
+};
+ 
+// DP - Tabulation: [O(N*N) + O(N) & O(N*N)]
+class Solution{
+public:
+    int maximumPath(int N, vector<vector<int>> Matrix){
+        vector<vector<int>> dp(N, vector<int> (N, 0));  
+        for(int j=0;j<N;j++) dp[0][j] = Matrix[0][j];
+        for(int i=1;i<N;i++){
+            for(int j=0;j<N;j++){
+                int up = Matrix[i][j] + dp[i-1][j];
+                int ld = Matrix[i][j];
+                (j >= 0)? ld += dp[i-1][j-1] : ld += -1e9;
+                int rd = Matrix[i][j];
+                (j+1 < N)? rd += dp[i-1][j+1] : rd += -1e9;
+                dp[i][j] = max(up, max(ld, rd));
+            }
+        }
+        int maxi = INT_MIN;
+        for(int j=0;j<N;j++){
+            maxi = max(maxi, dp[N-1][j]);
+        }
+        return maxi;
+    }
+};
+ 
+
+// Optimized - Iterative: [O(N*N) + O(N) & O(N)]
+class Solution{
+public:
+    int maximumPath(int N, vector<vector<int>> Matrix){
+        vector<int> prev(N, 0);        
+        for(int j=0;j<N;j++) prev[j] = Matrix[0][j];
+        for(int i=1;i<N;i++){
+            vector<int> cur(N, 0);
+            for(int j=0;j<N;j++){
+                int up = Matrix[i][j] + prev[j];
+                int ld = Matrix[i][j];
+                (j >= 0)? ld += prev[j-1] : ld += -1e9;
+                int rd = Matrix[i][j];
+                (j+1 < N)? rd += prev[j+1] : rd += -1e9;
+                cur[j] = max(up, max(ld, rd));
+            }
+            prev = cur;
+        }
+        int maxi = INT_MIN;
+        for(int j=0;j<N;j++){
+            maxi = max(maxi, prev[j]);
+        }
+        return maxi;
+    }
+};
+
+// 
