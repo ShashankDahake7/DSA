@@ -2080,7 +2080,6 @@ public:
         return maxi;
     }
 };
- 
 
 // Optimized - Iterative: [O(N*N) + O(N) & O(N)]
 class Solution{
@@ -2108,4 +2107,1952 @@ public:
     }
 };
 
-// 
+// Maximum difference of zeros and ones in binary string
+
+class Solution{
+public:
+	int maxSubstring(string S)
+	{
+		int n = S.size();
+
+		int arr[n];
+		for(int i = 0; i < n; i++)
+			arr[i] = (S[i] == '0')?1:-1;
+
+		int cur = arr[0], ans = arr[0];
+
+		for (int i = 1; i < n; i++) 
+	   	{ 
+	        cur = max(arr[i], cur + arr[i]); 
+	        ans = max(ans, cur); 
+	   	} 
+	    return ans; 
+	}	 
+};
+
+// Minimum number of jumps
+
+class Solution{
+  public:
+    int minJumps(int arr[], int n) 
+    {
+        // The number of jumps needed to reach the starting index is 0 
+        if (n <= 1) 
+            return 0; 
+        // Return -1 if not possible to jump 
+        if (arr[0] == 0) 
+            return -1; 
+        // initialization 
+        int maxReach = arr[0];  // stores all time the maximal reachable index in the array. 
+        int step = arr[0];      // stores the number of steps we can still take 
+        int jump =1;//stores the number of jumps necessary to reach that maximal reachable position. 
+        // Start traversing array 
+        int i=1; 
+        for (i = 1; i < n; i++) 
+        { 
+            // Check if we have reached the end of the array 
+            if (i == n-1) 
+                return jump;
+            // updating maxReach 
+            maxReach = max(maxReach, i+arr[i]);
+            // we use a step to get to the current index 
+            step--;
+            // If no further steps left 
+            if (step == 0) 
+            { 
+                // we must have used a jump 
+                jump++;
+                // Check if the current index/position or lesser index 
+                // is the maximum reach point from the previous indexes 
+                if(i >= maxReach) 
+                    return -1;
+                // re-initialize the steps to the amount of steps to 
+                // reach maxReach from position i. 
+                step = maxReach - i; 
+            } 
+        }
+        return -1; 
+    }
+};
+
+// Minimum removals from array to make max – min <= K
+
+// Method-1
+class Solution{
+    public:
+    int removals(vector<int>& arr, int k){
+        sort(arr.begin(),arr.end());
+        int i=0;
+        int j=arr.size()-1;
+        int ans=0;
+        while(arr[j]-arr[i]>k){
+            int low=lower_bound(arr.begin(),arr.end(),k+arr[i])-arr.begin();
+            int high=lower_bound(arr.begin(),arr.end(),arr[j]-k)-arr.begin();
+            if(arr[low]>k+arr[i])low--;
+            if(j-low>high-i)i++;
+            else j--;
+            ans++;
+        }
+        return ans;
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+    
+    int solve(vector<int> &arr, int k, int i, int j, vector<vector<int>> &dp){
+        
+        if(i>=j)return 0;
+        if(arr[j]-arr[i]<=k) return 0;
+        if(dp[i][j]!= -1)return dp[i][j];
+        
+        if(arr[j]- arr[i] >k )
+        return dp[i][j] =  1+ min(solve(arr, k, i+1, j, dp), solve(arr, k, i, j-1, dp));
+    }
+    int removals(vector<int>& arr, int k){
+        int n = arr.size();
+        sort(arr.begin(), arr.end());
+        vector<vector<int>> dp(n, vector<int> (n, -1));
+        return solve(arr, k, 0, arr.size()-1, dp);
+    }
+};
+
+// Longest Common Substring
+
+// Method-1
+class Solution{
+    public:
+    int longestCommonSubstr (string S1, string S2, int n, int m)
+    {
+        int count=0;
+        int i=0;
+        int j=0;
+        string temp;
+        int ans=0;
+        while(i<m && j<m)
+        {
+            temp+=S2[j];
+            if(S1.find(temp)!= string::npos)
+            {
+                count++;
+                ans=max(count,ans);
+                j++;
+            }
+            else
+            {
+                count=0;
+                i++;
+                j=i;
+                temp="";
+            }
+            
+        }
+        return ans;
+    }
+};
+
+// Method-2
+class Solution{
+    public:
+     int longestCommonSubstr (string S1, string S2, int n, int m)
+    {
+       int dp[n+1][m+1];
+       int ans=0;
+       for(int i=0;i<n+1;i++)
+       {
+           for(int j=0;j<m+1;j++)
+           {
+               if(i==0 || j==0)
+               dp[i][j]=0;
+           }
+       }
+       for(int i=1;i<n+1;i++)
+       {
+           for(int j=1;j<m+1;j++)
+           {
+               if(S1[i-1] == S2[j-1])
+               {
+                   dp[i][j]=1+dp[i-1][j-1];
+                   ans=max(ans,dp[i][j]);
+               }
+               else
+               dp[i][j]=0;
+           }
+       }
+       return ans;
+    }
+};
+
+// Reach a given score
+
+// Method-1
+long long int solve(  vector<int> &arr , int idx , int s ){
+    if( s == 0 ) return 1 ;
+    if( idx == 2 ) return ( s % arr[idx]  == 0 ) ;
+    long long int take = 0 , ntake = 0 ; 
+    if( s - arr[idx] >= 0 ) take =  solve( arr , idx , s - arr[idx] ) ;
+    ntake = solve( arr , idx + 1 , s ) ;
+    return take + ntake ;
+}
+long long int count(long long int n)
+{
+    vector<int> arr = {3,5,10} ;
+    return solve(arr , 0 , n );
+}
+
+// Method-2
+long long numWays(long long n, int ch, long long dp[][3], int choice[]) {
+    if(n == 0)
+        return 1;
+    if(ch < 0 || n < 0)
+        return 0;
+    if(dp[n][ch] != -1)
+        return dp[n][ch];
+    long long take = numWays(n - choice[ch], ch, dp, choice);
+    long long skip = numWays(n, ch - 1, dp, choice);
+    return dp[n][ch] = take + skip;
+}
+long long int count(long long int n)
+{
+    int ch[3] = {3,5,10};
+	long long dp[n+1][3];
+	memset(dp, -1, sizeof(dp));
+	return numWays(n, 2, dp, ch);
+}
+
+// BBT counter
+
+// Method-1
+class Solution {
+  public:
+    long long int countBT(int h) { 
+        int dp[h+1];
+        dp[0]=1;
+        dp[1]=1;
+        int mod = (int) (pow(10,9)+ 7);
+        for(int i=2 ;i<=h; i++)
+        {
+            dp[i]=(int)( ( (long)(dp[i-1])*dp[i-1] )%mod + (2*(long)(dp[i-1])*dp[i-2])%mod) % mod;
+        }
+        return dp[h];
+    }
+};
+
+// Method-2
+class Solution {
+  public:
+    long long countBT(int h) {
+        long long a = 1, b = 1, c;
+        for (int i = 2; i <= h; i++) {
+            c = b * (b + (a<<1));
+            c %= 1000000007;
+            a = b, b = c;
+        }
+        return c;
+    }
+};
+
+// Kadane's Algorithm
+
+class Solution{
+    public:
+    // arr: input array
+    // n: size of array
+    //Function to find the sum of contiguous subarray with maximum sum.
+    long long maxSubarraySum(int a[], int n) {
+        long long maxSum = a[0];
+        long long currentSum = a[0];
+        for (int i = 1; i < n; i++) {
+            currentSum = max((long long)a[i], currentSum + a[i]);
+            if (currentSum > maxSum) {
+                maxSum = currentSum;
+            }
+        }
+        return maxSum;
+    }
+};
+
+// Smallest sum contiguous subarraySmallest sum contiguous subarray
+
+class Solution{
+  public:
+  int smallestSumSubarray(vector<int>& a){
+      int sum=0;
+      int mini=a[0];
+      for(int i=0;i<a.size();i++)
+      {
+          sum=sum+a[i];
+          mini=min(mini,sum);
+          if(sum>0)
+           sum=0;
+      }
+      return mini;
+  }
+};
+
+// Knapsack with Duplicate Items
+
+class Solution{
+public:
+    int knapSack(int N, int W, int val[], int wt[])
+    {
+        int dp[N+1][W+1];
+        for(int i=0;i<=N;i++){
+            for(int j=0;j<=W;j++){
+                if(i==0 || j==0){
+                    dp[i][j]=0;
+                }
+            }
+        }
+        for(int i=1;i<=N;i++){
+            for(int j=1;j<=W;j++){
+                if(wt[i-1]>j){
+                    dp[i][j]=dp[i-1][j];
+                }
+                else{
+                    dp[i][j]=max(val[i-1]+dp[i][j-wt[i-1]],dp[i-1][j]);
+                }
+            }
+        }
+      return dp[N][W];
+    }
+};
+
+// Word Break
+
+// Time Complexity : O(2^N), Given a string of length N, there are N+1 ways to split it into two parts. At each step, we have a choice: to split or not to split.
+// In the worse case, when all choices are to be checked, that results in O(2^N).
+// Space Complexity : O(N), The depth of the recursion tree can go upto N.
+// Solved using String + Backtracking + Hash Table.
+
+// Method-1
+class Solution {
+private:
+    bool wordBreak(string s, unordered_set<string> &set){
+        if(s.size() == 0){
+            return true;
+        }
+        for(int i=0; i<s.size(); i++){
+            if(set.count(s.substr(0, i+1)) && wordBreak(s.substr(i+1), set)){
+                return true;
+            }
+        }
+        return false;
+    }
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> set(wordDict.begin(), wordDict.end());
+        return wordBreak(s, set);
+    }
+};
+
+// Method-2
+class Solution {
+private:
+    bool wordBreak(string s, unordered_set<string> &set, int start){
+        if(start == s.size()){
+            return true;
+        }
+        for(int i=start; i<s.size(); i++){
+            if(set.count(s.substr(start, i+1-start)) && wordBreak(s, set, i+1)){
+                return true;
+            }
+        }
+        return false;
+    }
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> set(wordDict.begin(), wordDict.end());
+        return wordBreak(s, set, 0);
+    }
+};
+
+// Time Complexity : O(N^3), Size of recursion tree can go up to N^2.
+// Space Complexity : O(N), The depth of the recursion tree can go upto N.
+// Solved using String + DP(Memoisation) + Hash Table.
+
+// Method-3
+class Solution {
+private:
+    bool wordBreak(string s, unordered_set<string> &set, vector<int> &memo, int start){
+        if(start == s.size()){
+            return true;
+        }
+        if(memo[start] != -1){
+            return memo[start];
+        }
+        for(int i=start; i<s.size(); i++){
+            if(set.count(s.substr(start, i+1-start)) && wordBreak(s, set, memo, i+1)){
+                memo[start] = true;
+                return true;
+            }
+        }
+        return memo[start] = false;
+    }
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        vector<int> memo(s.size(), -1);
+        unordered_set<string> set(wordDict.begin(), wordDict.end());
+        return wordBreak(s, set, memo, 0);
+    }
+};
+
+// Time Complexity : O(N^3), There are two nested loops, and substring computation at each iteration. Overall that results in O(N^3) time complexity.
+// Space Complexity : O(N), Length of dp array is N+1. 
+// Solved using String + DP(Tabulation) + Hash Table.
+
+// Method-4
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        vector<bool> dp(s.size()+1, 0);
+        dp[0] = true;
+        unordered_set<string> set(wordDict.begin(), wordDict.end());
+        for(int i=1; i<=s.size(); i++){
+            for(int j=0; j<i; j++){
+                if(dp[j] && set.count(s.substr(j, i-j))){
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        return dp[s.size()];
+    }
+};
+
+// Largest Independent Set Problem using Dynamic Programming
+
+// Method-1
+pair<int,int> solve(Node *root)
+{    
+    if(!root) 
+       return make_pair(0,0);
+   // get values from both left subtree and right subtree
+   pair<int,int> l = solve(root->left);
+   pair<int,int> r = solve(root->right);
+   // For storing answer of current node
+   pair<int,int> ans;
+   // If we include the present node 
+   ans.first = 1 + l.second + r.second;
+   // if we don't include the present node
+   ans.second = max(l.first,l.second) + max(r.first,r.second);
+   return ans;
+}
+int LISS(Node *root)
+{
+  pair<int,int> ans = solve(root);
+  return max(ans.first,ans.second);
+}
+
+// Method-2
+void helper(Node *node,unordered_map<Node*,int> &dp){
+   if(!node){
+       dp[node] = 0;
+       return;
+   }
+   helper(node->left,dp);
+   helper(node->right,dp);
+   if(!node->left && !node->right){
+       dp[node] = 1;
+   }
+   else{
+       int res1 = dp[node->left] + dp[node->right];
+       int res2 = (node->left ? dp[node->left->left] + dp[node->left->right] : 0) + (node->right ? dp[node->right->left] + dp[node->right->right] : 0);
+       dp[node] = max(res1,1 + res2);
+   }
+}
+int LISS(Node *root){
+   unordered_map<Node*,int> dp;
+   helper(root,dp);
+   return dp[root];
+}
+
+// Partition Equal Subset Sum
+
+// Recursion+Memoization
+// Time complexity : O(N*(Sum of elements))
+// Space complexity : O(N*(Sum of elements) + N) extra O(N) for stack space
+class Solution {
+public:
+    int dp[201][20001];
+    bool solve(vector<int> &nums, int n, int sum)
+    {
+        if (n <= 0 || sum <= 0)
+            return sum == 0;
+        if (dp[n][sum] != -1)
+            return dp[n][sum];   
+        if (nums[n-1] > sum)
+            return dp[n][sum] = solve(nums, n-1, sum);
+        else
+            return dp[n][sum] = solve(nums, n-1, sum) || solve(nums, n-1, sum-nums[n-1]);
+    }
+    bool canPartition(vector<int>& nums) 
+    {
+        int sum = 0;
+        memset(dp, -1, sizeof(dp));
+        for(int i = 0; i < nums.size(); i++)
+            sum += nums[i];
+        if (sum % 2 != 0) 
+            return false;
+        return solve(nums, nums.size(), sum/2);
+    }
+};
+
+// Tabulation
+class Solution {
+public:
+    int subsetSum(vector<int> arr, int n, int total)
+    {
+        int t[n+1][total+1];
+        for(int i = 0; i < n+1; i++)
+        {
+            for(int j = 0; j < total+1; j++)
+            {
+                if(i == 0)
+                    t[i][j] = false;
+                if(j == 0)
+                    t[i][j] = true;
+            }
+        }   
+        for(int i = 1; i < n+1; i++)
+        {
+            for(int j = 1; j < total+1; j++)
+            {
+                if(arr[i-1] <= j)
+                    t[i][j] = t[i-1][j - arr[i-1]] || t[i-1][j];
+                else
+                    t[i][j] = t[i-1][j];
+            }
+        }
+        return t[n][total];
+    }
+    bool canPartition(vector<int>& nums) 
+    {    
+        int sum = 0;
+        for(int i = 0; i < nums.size(); i++)
+            sum += nums[i];
+        if(sum % 2 != 0)
+            return false;
+        return subsetSum(nums, nums.size(), sum/2);  
+    }
+};
+
+// Longest Palindromic Subsequence
+
+//RECURSION [TLE]
+class Solution {
+public:
+    int solve(string& s, int start, int end)
+    {
+        if (start == end) return 1;
+        if (start > end) return 0;
+        
+        if (s[start] == s[end]) return (2 + solve(s, start + 1, end - 1));
+        int leaveLeft = solve(s, start + 1, end);
+        int leaveRight = solve(s, start, end - 1);
+        return max(leaveLeft, leaveRight);
+    }
+    int longestPalindromeSubseq(string s) 
+    {
+        int ans = solve(s, 0, s.size() - 1);
+        return ans;
+    }
+};
+
+// TOP DOWN DP , MEMOIZATION
+class Solution {
+public:
+    int solve(string& s, vector<vector<int>>&dp, int start, int end)
+    {
+        if (start == end) return 1;
+        if (start > end) return 0;
+        if (dp[start][end] != -1) return dp[start][end];
+        
+        if (s[start] == s[end]) return (2 + solve(s, dp, start + 1, end - 1)); //directly return 
+        
+        int leaveLeft = solve(s, dp, start + 1, end);
+        int leaveRight = solve(s, dp, start, end - 1);
+        return dp[start][end] = max(leaveLeft, leaveRight); //store the ans
+    }
+    int longestPalindromeSubseq(string s) 
+    {
+        int n = s.size();
+        vector<vector<int>>dp(n, vector<int>(n, -1));
+        int ans = solve(s, dp, 0, n - 1);
+        return ans;
+    }
+};
+
+// BOTTOM UP DP 
+class Solution {
+public:
+    int longestPalindromeSubseq(string s) 
+    {
+        int n = s.size();
+        vector<vector<int>>dp(n, vector<int>(n, 0));
+        //for n length string we need LPS for string with length (n - 1) or (n - 2)
+        //We need to already have LPS for smaller lengths before moving to greater lengths
+        //so we need to go bottom up 
+        //Calculating LPS for all strings of length = 1 to length = n
+        for (int len = 1; len <= n; len++)
+        {
+            for (int start = 0; start <= (n - len); start++)
+            {
+                int end = start + len - 1; //[start, end] denotes the string under consideration
+                if (len == 1) { dp[start][end] = 1; continue; }
+                
+                if (s[start] == s[end]) dp[start][end] = 2 + dp[start + 1][end - 1];
+                else dp[start][end] = max(dp[start + 1][end], dp[start][end - 1]); 
+            }
+        }
+        return dp[0][n - 1];
+    }
+};
+
+// Count Palindromic Subsequences
+
+class Solution{
+    public:
+    long long int countPS(string str){
+        long long int mod = 1e9 + 7;
+        int n = str.size();
+        vector<vector<long long int>> dp(n, vector<long long int>(n));
+        for (int k = 0; k < n; k++){
+            for (int i = 0, j = k + i; i < n and j < n; i++, j++){
+                if (i == j)
+                    dp[i][j] = 1;
+                else if (j == i + 1){
+                    if (str[i] == str[j])
+                        dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + 1) % mod;
+                    else
+                        dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + mod) % mod;
+                }
+                else{
+                    if (str[i] == str[j])
+                        dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + 1) % mod;
+                    else
+                        dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod - (dp[i + 1][j - 1]) % mod + mod) % mod;
+                }
+            }
+        }
+        return (dp[0][n - 1]) % mod;
+    }
+};
+
+// Longest Palindromic Substring
+
+// Time Complexity : O(N^3), Here three nested loop creates the time complexity. Where N is the size of the string(s).
+// Space Complexity : O(1), Constant space.
+// Solved using string(Three Nested Loop). Brute Force Approach.
+// Note : this may give TLE.
+
+// Method-1
+class Solution {
+private: 
+    bool check(string &s, int i, int j){
+        while(i<j){
+            if(s[i] != s[j]){
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }            
+public:
+    string longestPalindrome(string s) {
+        int n = s.size();
+        int starting_index = 0;
+        int max_len = 0;
+        for(int i=0; i<n; i++){
+            for(int j=i; j<n; j++){
+                if(check(s, i, j)){
+                    if(j-i+1 > max_len){
+                        max_len = j-i+1;
+                        starting_index = i;
+                    }
+                }
+            }
+        }
+        return s.substr(starting_index, max_len);
+    }
+};
+
+// Time Complexity : O(N^2), Here Two nested loop creates the time complexity. Where N is the size of the string(s).
+// Space Complexity : O(N^2*N), vector(substring) space.
+// Solved using string(TwoNested Loop). Brute Force Approach.
+// Note : this may give TLE.
+
+// Method-2
+class Solution { 
+private: 
+    bool check(string &s, int i, int j){
+        while(i<j){
+            if(s[i] != s[j]){
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }
+public:
+    string longestPalindrome(string s) {
+        int n = s.size();
+        vector<string> substring;
+        for(int i=0; i<n; i++){
+            string temp = "";
+            for(int j=i; j<n; j++){
+                temp += s[j];
+                substring.push_back(temp);
+            }
+        }
+        int max_len = 0;
+        string finalans = substring[0];
+        int m = substring.size();
+        for(int i=0; i<m; i++){
+            int s = substring[i].size();
+            if(check(substring[i], 0, s-1)){
+                if(s > max_len){
+                    max_len = s;
+                    finalans = substring[i];
+                }
+            }       
+        }
+        return finalans;
+    }
+};
+
+// Time Complexity : O(N^2), The time complexity of the above code is O(N^2) because we are traversing over all
+// the substrings and then checking each substring if it is a palindrome or not. There are N^2 substrings and
+// checking a substring takes O(1) time, so total time complexity is O(N^2).
+// Space Complexity : (N^2), The space complexity of the above code is O(N^2) because we are using the dp array
+// in which we are storing whether a substring is a palindrome or not.
+// Solved using Dynamic Programming Approach(tabulation). Optimized Approach.
+
+// Method-3
+class Solution {
+private: 
+    bool solve(vector<vector<bool>> &dp, int i, int j, string &s){
+        if(i == j){
+            return dp[i][j] = true;
+        }
+        if(j-i == 1){
+            if(s[i] == s[j]){
+                return dp[i][j] = true;
+            }
+            else{
+                return dp[i][j] = false;
+            }
+        }
+        if(s[i] == s[j] && dp[i+1][j-1] == true){
+            return dp[i][j] = true;
+        } else {
+            return dp[i][j] = false;
+        }
+    }
+public:
+    string longestPalindrome(string s) {
+        int n = s.size();
+        int startIndex = 0; int maxlen = 0;
+        vector<vector<bool>> dp(n, vector<bool>(n, false));
+        for(int g=0; g<n; g++){
+            for(int i=0, j=g; j<n; i++, j++){
+                solve(dp, i, j, s);
+                if(dp[i][j] == true){
+                    if(j-i+1 > maxlen){
+                        startIndex = i;
+                        maxlen = j-i+1;
+                    }
+                }
+            }
+        }
+        return s.substr(startIndex, maxlen);
+    }
+};
+
+// Longest alternating subsequence
+
+// Method-1
+class Solution {
+	public:
+		int AlternatingaMaxLength(vector<int>&nums){
+		    int n = nums.size();
+		    int ma=1;
+		    int mi=1;
+		    for(int i=1;i<n;i++){
+		        if(nums[i]>nums[i-1])
+		        ma=mi+1;
+		        else if(nums[i]<nums[i-1])
+		        mi=ma+1;
+		        else
+		        continue;
+		    }
+		    return max(ma,mi);
+	    }
+};
+
+// Method-2
+class Solution {
+	public:
+		int AlternatingaMaxLength(vector<int>&nums){
+		    int n = nums.size();
+		    if(n==1){
+		        return 1;
+		    }
+		   vector<array<int,2>> dp(n+2);
+		  // > < > < > < > < > 
+		  // < > < > < > < > < 
+		   // zero is for 1st type of sequence and 1 is for the other 
+		   // these are the base cases // 
+		   dp[0][0] = 1;
+		   dp[0][1] = 1;
+		   // min ans can be 1 //
+		   int ans = 1;
+		  // dp[i][0]  here  represents the max. length of patten upto index i ending at 
+		  // > greater than sign 
+		  // dp[i][1] represents the max length of the pattern upto index i ending at 
+		  // < less than sign 
+		  for(int i=1;i<n;i++){
+		        
+		       if(nums[i-1]>nums[i]){
+		           dp[i][0] = dp[i-1][1] + 1;
+		       }
+		       if(nums[i-1]<nums[i]){
+		            dp[i][1] = dp[i-1][0] + 1;
+		       }
+		       dp[i][0] = max(dp[i][0],dp[i-1][0]);
+		       dp[i][1] = max(dp[i][1],dp[i-1][1]);
+		       
+		    }
+		
+		    return max(dp[n-1][0],dp[n-1][1]);
+		}
+};
+
+// Weighted Job Scheduling
+
+class Solution 
+{
+    public:
+    static bool comp(Job a, Job b){
+        return a.profit > b.profit;
+    }
+    //Function to find the maximum profit and the number of jobs done.
+    vector<int> JobScheduling(Job arr[], int n) 
+    { 
+        // your code here
+        sort(arr, arr+n, comp);
+        
+        int maxDead = INT_MIN;
+        for(int i=0; i<n; i++){
+            maxDead = max(maxDead, arr[i].dead);
+        }
+        
+        vector<int>scheduled(maxDead+1, -1);
+        
+        int count = 0;
+        int totalProfit = 0;
+        
+        for(int i=0; i<n; i++){
+            
+            int currProfit = arr[i].profit;
+            int currJobID = arr[i].id;
+            int currDead = arr[i].dead;
+            
+            for(int k = currDead; k>0; k--){
+                if(scheduled[k] == -1){
+                    count++;
+                    totalProfit += currProfit;
+                    scheduled[k] = currJobID;
+                    break;
+                }
+            }
+        }
+        vector<int>ans;
+        ans.push_back(count);
+        ans.push_back(totalProfit);
+        return ans;
+    }
+};
+
+// Coin game winner where every player has three choices
+
+// Method-1
+class Solution{
+	public:
+	int findWinner(int N, int X, int Y)
+	{
+		if(X==N || Y==N || N==1)return 1;
+		vector<bool> dp(N+1, false);
+		dp[0] = dp[1] = true;
+		for(int i=2; i<=N; ++i){
+		    if(i==X || i==Y)dp[i]=true;
+		    else if(i<X && i<Y){
+		        if(dp[i-1])dp[i]=false;
+		        else dp[i]=true;
+		    }
+		    else if(i>X && i>Y){
+		        if(!dp[i-1] || !dp[i-X] || !dp[i-Y])dp[i]=true;
+		        else dp[i]=false;
+		    }
+		    else if(i>X){
+		        if(!dp[i-1] || !dp[i-X])dp[i]=true;
+		        else dp[i]=false;
+		    }
+		    else{
+		        if(!dp[i-1] || !dp[i-Y])dp[i]=true;
+		        else dp[i]=false;
+		    }
+		}
+		return dp[N];
+	}
+};
+
+// Method-2
+class Solution{
+	public:
+	int dp[1000001];
+	int solve(int N,int x,int y)
+	{
+	    if(N==1 || N==x || N==y) return true;
+        if(dp[N]!=-1) return dp[N];
+	    int p = N>=x ? solve(N-x,x,y) : 1;//in p storing the win of opponent (if i choose x)
+	    int q = N>=y ? solve(N-y,x,y) : 1;//in q storing the win of opponent (if i choose x)    
+	    int r = N>=1 ? solve(N-1,x,y) : 1;//in r storing the win of opponet (if i choose 1)
+	    return dp[N] = (!p ||!q || !r);   
+	}
+	int findWinner(int N, int X, int Y)
+	{
+		memset(dp,-1,sizeof(dp));
+		return solve(N,X,Y);
+	}
+};
+
+// Count Derangements (Permutation such that no element appears in its original position)
+
+// Recursion
+class Solution{
+public:
+    #define mod 1000000007
+    long int solve(long int n,vector<long int> &dp){
+        if(n == 1) return 0;
+        if(n ==2) return 1;
+        if(dp[n] != -1) return dp[n];
+        int ans=((n-1)*(solve(n-1,dp)%mod+solve(n-2,dp)%mod)%mod)%mod;
+        dp[n] = ans;
+        return dp[n];
+    }
+    long int disarrange(int n){
+        vector<long int> dp(n+1,-1);
+        long int ans = solve(n,dp);
+        return ans;
+    }
+};
+
+// Tabulation
+class Solution{
+public:
+    #define mod 1000000007
+    long int tabu(long int n){
+        vector<long int> dp(n+1,-1);
+        dp[1]=0;
+        dp[2]=1;
+        int i;
+        for(i=3 ;i<=n;i++){
+            long int a1=dp[i-1]%mod;
+            long int a2=dp[i-2]%mod;
+            long int a3=(a1+a2)%mod;
+            a3=(a3*(i-1))%mod;
+            dp[i]=a3;
+        }
+        return dp[n];
+    }
+    long int disarrange(int n){
+        long int ans=tabu(n);
+        return ans;
+    }
+};
+
+// Space Optimized
+class Solution{
+public:
+    #define mod 1000000007
+    long int space_opt(long int n){
+        long int first=0;
+        long int second=1;
+        for(int i=3;i<=n;i++){
+            long int a1 =first%mod;
+            long int a2=second%mod;
+            long int a3=(a1+a2)%mod;
+            a3=(a3*(i-1))%mod;
+            first=second;
+            second=a3;
+        }
+        return second;
+    }
+    long int disarrange(int n){
+        long int ans=space_opt(n);
+        return ans;
+    }
+};
+
+// Maximum profit by buying and selling a share at most twice
+
+// Brute Force
+int maxProfit(vector<int>&arr){
+    int first_buy = INT_MIN;
+      int first_sell = 0;
+      int second_buy = INT_MIN;
+      int second_sell = 0;
+       
+      for(int i=0;i<arr.size();i++) {
+         
+          first_buy = max(first_buy,-arr[i]);//we set prices to negative, so the calculation of profit will be convenient
+          first_sell = max(first_sell,first_buy+arr[i]);
+          second_buy = max(second_buy,first_sell-arr[i]);//we can buy the second only after first is sold
+          second_sell = max(second_sell,second_buy+arr[i]);
+       
+    }
+     return second_sell;
+}
+
+// Memoization
+int f(vector<int>&prices, int n, int z, int buycount, int i, vector<vector<vector<int>>> &dp)
+{   
+    if(buycount==0&&z==1) return 0;
+    if(i==n) return 0;
+    if(dp[i][z][buycount]!=-1) return dp[i][z][buycount];
+    if(z&&buycount>0) return dp[i][z][buycount]=max(f(prices,n,0,buycount-1,i+1,dp)-prices[i],f(prices,n,1,buycount,i+1,dp));
+    if(z==0) return dp[i][z][buycount]=max(f(prices,n,1,buycount,i+1,dp)+prices[i],f(prices,n,0,buycount,i+1,dp));
+}
+int maxProfit(vector<int>&price){
+    int n=price.size();
+    vector<vector<vector<int>>> dp(n+1, vector<vector<int>>(2, vector<int> (3,-1)));
+    return f(price,n,1,2,0,dp);
+}
+
+// Tabulation
+int maxProfit(vector<int>&price){
+    int n=price.size();
+    vector<vector<int>>dp(2,vector<int>(3,0));
+    vector<vector<int>>next(2,vector<int>(3,0));
+    for(int idx=n-1;idx>=0;idx--){    
+        dp[0][0]=max(price[idx]+next[1][1],next[0][0]);
+        dp[0][1]=max(price[idx]+next[1][2],next[0][1]);
+        dp[1][0]=max(-price[idx]+next[0][0],next[1][0]);
+        dp[1][1]=max(-price[idx]+next[0][1],next[1][1]);
+        next=dp;
+    }
+    return dp[1][0];
+}
+
+// Optimal Strategy For A Game
+
+// Recursion+Memoization
+class Solution{
+    public:
+    long long int solve(int arr[], int i, int j) {
+        if(i > j) return 0;
+        long long int chooseFirst = arr[i] + min(solve(arr, i + 2, j), solve(arr, i + 1, j)); // This is the profit we wil get 
+        // Why min? b'coz opponent tend to minimize our outcome
+        long long int chooseLast = arr[j] + min(solve(arr, i, j - 2), solve(arr, i + 1, j - 1));
+        return max(chooseFirst, chooseLast);
+    }
+    long long maximumAmount(int arr[], int n) {
+        // recursive call
+        return solve(arr, 0, n - 1);
+    }
+};
+
+// Tabulation
+class Solution{
+    public:
+    long long maximumAmount(int arr[], int n) {
+        vector<vector<long long>> dp(n, vector<long long>(n, 0));
+        for(int i = 0; i < n - 1; i++) {
+            dp[i][i + 1] = max(arr[i], arr[i + 1]);
+        }
+        // Why Gap Method?
+        // b'coz of optimal substructure
+        // for calulation of 1 to 6 we need answer for 2 to 4 
+        // if we move using regular dp then we can't calculate for i = 2 before i = 1 but we need it so
+        // we have to go for diffenent method i.e. Gap Method
+        for(int g = 3; g < n; g += 2) {
+            for(int i = 0, j = g; j < n; i++, j++) {
+                long long first = arr[i] + min(dp[i + 2][j], dp[i + 1][j - 1]);
+                long long last = arr[j] + min(dp[i][j - 2], dp[i + 1][j - 1]);
+                dp[i][j] = max(first, last);
+            }
+        }
+        return dp[0][n - 1];
+    }
+};
+
+// Optimal Binary Search Tree 
+
+// Method-1
+#include <bits/stdc++.h>
+using namespace std;
+// A utility function to get sum of array elements freq[i] to freq[j]
+int sum(int freq[], int i, int j);
+// A recursive function to calculate cost of optimal binary search tree
+int optCost(int freq[], int i, int j)
+{
+	// Base cases
+	if (j < i) // no elements in this subarray
+		return 0;
+	if (j == i) // one element in this subarray
+		return freq[i];
+	// Get sum of freq[i], freq[i+1], ... freq[j]
+	int fsum = sum(freq, i, j);
+	// Initialize minimum value
+	int min = INT_MAX;
+	// One by one consider all elements as root and recursively find cost of the BST, compare the cost with min and update min if needed
+	for (int r = i; r <= j; ++r)
+	{
+		int cost = optCost(freq, i, r - 1) + optCost(freq, r + 1, j);
+		if (cost < min)
+			min = cost;
+	}	
+	// Return minimum value
+	return min + fsum;
+}
+// The main function that calculates minimum cost of a Binary Search Tree. It mainly uses optCost() to find the optimal cost.
+int optimalSearchTree(int keys[], int freq[], int n)
+{
+	// Here array keys[] is assumed to be sorted in increasing order. If keys[]
+	// is not sorted, then add code to sort keys, and rearrange freq[] accordingly.
+	return optCost(freq, 0, n - 1);
+}
+// A utility function to get sum of array elements freq[i] to freq[j]
+int sum(int freq[], int i, int j)
+{
+	int s = 0;
+	for (int k = i; k <= j; k++)
+	s += freq[k];
+	return s;
+}
+int main()
+{
+	int keys[] = {10, 12, 20};
+	int freq[] = {34, 8, 50};
+	int n = sizeof(keys) / sizeof(keys[0]);
+	cout << "Cost of Optimal BST is "
+		<< optimalSearchTree(keys, freq, n);
+	return 0;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+// A utility function to get sum of array elements freq[i] to freq[j]
+int sum(int freq[], int i, int j);
+int optimalSearchTree(int keys[], int freq[], int n)
+{
+	// Create an auxiliary 2D matrix to store results of subproblems 
+	int cost[n][n];
+	/* cost[i][j] = Optimal cost of binary search tree
+	that can be formed from keys[i] to keys[j].
+	cost[0][n-1] will store the resultant cost */
+	// For a single key, cost is equal to frequency of the key
+	for (int i = 0; i < n; i++)
+		cost[i][i] = freq[i];
+	// Now we need to consider chains of length 2, 3, ... . L is chain length.
+	for (int L = 2; L <= n; L++)
+	{
+		// i is row number in cost[][]
+		for (int i = 0; i <= n-L+1; i++)
+		{
+			// Get column number j from row number i and chain length L
+			int j = i+L-1;
+			cost[i][j] = INT_MAX;
+			int off_set_sum = sum(freq, i, j);
+			// Try making all keys in interval keys[i..j] as root
+			for (int r = i; r <= j; r++)
+			{
+                // c = cost when keys[r] becomes root of this subtree
+                int c = ((r > i)? cost[i][r-1]:0) + ((r < j)? cost[r+1][j]:0) + off_set_sum;
+                if (c < cost[i][j])
+                    cost[i][j] = c;
+            }
+		}
+	}
+	return cost[0][n-1];
+}
+// A utility function to get sum of array elementz freq[i] to freq[j]
+int sum(int freq[], int i, int j)
+{
+	int s = 0;
+	for (int k = i; k <= j; k++)
+	s += freq[k];
+	return s;
+}
+int main()
+{
+	int keys[] = {10, 12, 20};
+	int freq[] = {34, 8, 50};
+	int n = sizeof(keys)/sizeof(keys[0]);
+	cout << "Cost of Optimal BST is " << optimalSearchTree(keys, freq, n);
+	return 0;
+}
+
+// Method-3
+#include <bits/stdc++.h>
+using namespace std;
+#define MAX 1000
+// Declare global cost matrix
+int cost[MAX][MAX];
+// Helper function to calculate the sum of frequencies from index i to j
+int Sum(int freq[], int i, int j) {
+	int s = 0;
+	for (int k = i; k <= j; k++)
+		s += freq[k];
+	return s;
+}
+// Recursive function to find the optimal cost of a BST using memoization
+int optCost_memoized(int freq[], int i, int j) {
+	// Reuse cost already calculated for the subproblems. Since we initialize cost matrix with 0 and frequency for a tree of one node, it can be used as a stop condition
+	if (cost[i][j])
+		return cost[i][j];
+	// Get sum of freq[i], freq[i+1], ... freq[j]
+	int fsum = Sum(freq, i, j);
+	// Initialize minimum value
+	int Min = INT_MAX;
+	// One by one consider all elements as root and recursively find cost of the BST, compare the cost with min and update min if needed
+	for (int r = i; r <= j; r++) {
+		int c = optCost_memoized(freq, i, r - 1) + optCost_memoized(freq, r + 1, j) + fsum;
+		if (c < Min) {
+			Min = c;
+			// replace cost with new optimal calc
+			cost[i][j] = c;
+		}
+	}
+	// Return minimum value
+	return cost[i][j];
+}
+// Main function to calculate the minimum cost of a BST
+int optimalSearchTree(int keys[], int freq[], int n) {
+	// Here array keys[] is assumed to be sorted in increasing order. If keys[] is not sorted, then add code to sort keys, and rearrange freq[] accordingly.
+	return optCost_memoized(freq, 0, n - 1);
+}
+int main() {
+	int keys[] = {10, 12, 20};
+	int freq[] = {34, 8, 50};
+	int n = sizeof(keys) / sizeof(keys[0]);
+	// cost[i][j] = Optimal cost of binary search tree that can be formed from keys[i] to keys[j]. cost[0][n-1] will store the resultant cost
+	memset(cost, 0, sizeof(cost));
+	// For a single key, cost is equal to frequency of the key
+	for (int i = 0; i < n; i++)
+		cost[i][i] = freq[i];
+	cout << "Cost of Optimal BST is " << optimalSearchTree(keys, freq, n) << endl;
+	return 0;
+}
+
+// Palindrome Partioning
+
+// Recursion
+class Solution{
+public:
+    int t[501][501]; //Cache memory for fast response
+    // Just a normal function for checking palindrome
+    bool isPalin(string &s, int i, int j){
+        while(i <= j){
+            if(s[i++] != s[j--]) return false;
+        }
+        return true;
+    }
+    int helper(string &s, int i, int j){
+        if(i >= j) return 0; // If there are no elements, then no partition needed.
+        if(t[i][j] != -1) return t[i][j]; // If subproblem is already calculated, then that from there
+        if(isPalin(s, i, j)) return 0; // If already is a palindrome, then no need to partitioning.
+        int mini = INT_MAX; // Mini variable for calculating, the minimum value
+        // Checking for all possibilities of partitioning, like - MCM
+        for(int k=i;k<=j-1;k++){
+            // increament by '1', for the track the no. of partition
+            int ans = 1 + helper(s, i, k) + helper(s, k+1, j);
+            // Update Minimum Variable
+            mini =min(mini, ans);
+        }
+        return t[i][j] = mini; // Store and return our answer
+    }
+    int palindromicPartition(string str){
+        memset(t, -1, sizeof(t)); //Initialize cache memory with all '-1'
+        return helper(str, 0, str.size()-1);
+    }
+};
+
+// Recursive+Memoization
+class Solution{
+public:
+    int t[501][501]; //Cache memory for fast response
+    // Just a normal function for checking palindrome
+    bool isPalin(string &s, int i, int j){
+        while(i <= j){
+            if(s[i++] != s[j--]) return false;
+        }
+        return true;
+    }
+    int helper(string &s, int i, int j){
+        if(i >= j) return 0; // If there are no elements, then no partition needed.
+        if(t[i][j] != -1) return t[i][j]; // If subproblem is already calculated, then that from there
+        if(isPalin(s, i, j)) return 0; // If already is a palindrome, then no need to partitioning.
+        int mini = INT_MAX; // Mini variable for calculating, the minimum value
+        // Checking for all possibilities of partitioning, like - MCM
+        for(int k=i;k<=j-1;k++){
+            // increament by '1', for the track the no. of partition
+            int left = 0, right = 0;
+            if(t[i][k] != -1) left = t[i][k];
+            else{
+                left = helper(s, i, k);
+                t[i][k] = left;
+            }
+            if(t[k+1][j] != -1) right = t[k+1][j];
+            else{
+                right = helper(s, k+1, j);
+                t[k+1][j] = right;
+            }
+            int ans = 1 + left + right;
+            // Update Minimum Variable
+            mini = min(mini, ans);
+        }
+        return t[i][j] = mini; // Store and return our answer
+    }
+    int palindromicPartition(string str){
+        memset(t, -1, sizeof(t)); //Initialize cache memory with all '-1'
+        return helper(str, 0, str.size()-1);
+    }
+};
+
+// Tabulation
+class Solution{
+public:
+    // Just a normal function for checking palindrome
+    bool isPalin(string &s, int i, int j){
+        while(i <= j){
+            if(s[i++] != s[j--]) return false;
+        }
+        return true;
+    }
+    int palindromicPartition(string str){
+        int N = str.size();
+        int t[N+1] = {0};
+        t[N] = 0;
+        for(int i=N-1;i>=0;i--){
+            int mini = INT_MAX;
+            for(int j=i;j<N;j++){
+                if(isPalin(str, i, j)){
+                    int ans = 1 + t[j+1];
+                    mini = min(mini, ans);
+                }
+                t[i] = mini;
+            }
+        }
+        return t[0] - 1;
+    }
+};
+
+// Word Wrap
+
+class Solution{
+    public:
+      int solveWordWrap(vector<int>nums, int k){ 
+            int n=nums.size();
+            vector<int> dp(n,1000000000);
+            int ans[n];
+            int cost=0;
+            int curlen=0;
+            dp[n-1]=0;
+            ans[n-1]=n-1;
+            for(int i=n-2;i>=0;i--)
+            {
+                curlen=-1;
+                for(int j=i;j<n;j++)
+                {
+                    curlen+=nums[j]+1;
+                    if(curlen>k)
+                    break;
+                    if(j==n-1)
+                    cost=0;
+                    else
+                    {
+                        cost=pow(k-curlen,2)+dp[j+1];
+                    }
+                    if(cost<dp[i])
+                    {
+                        dp[i]=cost;
+                        ans[i]=j;
+                    }
+                }
+            }
+            return dp[0];
+        } 
+};
+
+// Mobile numeric keyboard
+
+class Solution{
+	public:
+	long long int f(int i,int j,vector<vector<int>> &ph,vector<vector<vector<long long int>>> &dp,int N){
+	    if(i<0 || j<0 || i>=4 || j>=3 || ph[i][j]==-1){
+	        return 0;
+	    }
+	    if(N==1){
+	        //as already current number in main fx
+	        return 1;
+	    }
+	    if(dp[i][j][N]!=-1){
+	        return dp[i][j][N];
+	    }
+	    long long int same=f(i,j,ph,dp,N-1);  // cases like 22 33 44......
+	    long long int up=f(i-1,j,ph,dp,N-1);
+	    long long int left=f(i,j-1,ph,dp,N-1);
+	    long long int down=f(i+1,j,ph,dp,N-1);
+	    long long int right=f(i,j+1,ph,dp,N-1);
+	    return dp[i][j][N]=up+down+left+right+same;
+	}
+	long long getCount(int N)
+	{
+	    vector<vector<int>> ph(4,vector<int>(3,-1));
+	    int in=1;
+	    for(int i=0;i<3;i++){
+	        for(int j=0;j<=2;j++){
+	            ph[i][j]=in;
+	            in++;
+	        }
+	    }
+	    ph[3][1]=0;   
+	    vector<vector<vector<long long int>>> dp(4,vector<vector<long long int>>(3,vector<long long int>(N+1,-1)));
+	    long long int ans=0;
+	     for(int i=0;i<=3;i++){
+	        for(int j=0;j<=2;j++){
+	            ans+=f(i,j,ph,dp,N);  //a number taken call fx to search other number in 4 dirn  
+	        }
+	    }
+	    return ans;
+	}
+};
+
+// Boolean Parenthesization
+
+// Recursion
+class Solution{
+public:
+    int t[201][201][2]; //Cache matrix for fast response, 3D Matrix = Nightmare
+    int helper(string &s, int i, int j, bool isTrue){
+        if(i > j) return 0; //If there are no elements then return 0
+        //If subproblem is already calculated then return from there
+        if(t[i][j][isTrue] != -1) return t[i][j][isTrue];
+        //Base case, if there is only one element
+        if(i == j){
+            if(isTrue) return s[i] == 'T';
+            else return s[i] == 'F';
+        }
+        int ans = 0;
+        // All possibilities for getting true and false as well
+        for(int k=i+1;k<=j-1;k+=2){
+            int LT = helper(s, i, k-1, true);
+            int LF = helper(s, i, k-1, false);
+            int RT = helper(s, k+1, j, true);
+            int RF = helper(s, k+1, j, false);
+            if(s[k] == '&'){
+                if(isTrue) ans += LT*RT; //'AND' operation for getting 'True' as answer
+                else ans += LF*RF + LF*RT + LT*RF; //'AND' operation for getting 'False' as answer
+            }
+            else if(s[k] == '|'){
+                if(isTrue) ans += LT*RT + LT*RF + LF*RT; //'OR' operation for getting 'True' as answer
+                else ans += LF*RF; //'OR' operation for getting 'False' as answer
+            }
+            else if(s[k] = '^'){
+                if(isTrue) ans += LT*RF + LF*RT; //'XOR' operation for getting 'True' as answer
+                else ans += LT*RT + LF*RF; //'XOR' operation for getting 'False' as answer
+            }
+        }
+        return t[i][j][isTrue] = ans%1003; //Store and return  the answer
+    }
+    int countWays(int N, string S){
+        memset(t, -1, sizeof(t)); //Initialize matrix with '-1'
+        return helper(S, 0, N-1, true);
+    }
+};
+
+// Memoization
+class Solution{
+public:
+    unordered_map<string, int> mp; // Cache memory for fast response, 3D Matrix was a Nightmare, that's why we're using a map here
+    int helper(string &s, int i, int j, bool isTrue){
+        if(i > j) return 0; // If there are no elements then return 0
+        // Base case, if there is only one element
+        if(i == j){
+            if(isTrue) return s[i] == 'T';
+            else return s[i] == 'F';
+        }
+        // Create pattern for store in the map 
+        string temp = to_string(i);
+        temp.push_back(' ');
+        temp.append(to_string(j));
+        temp.push_back(' ');
+        temp.append(to_string(isTrue));
+        //If subproblem is already calculated then return from there
+        if(mp.find(temp) != mp.end()) return mp[temp];
+        int ans = 0;
+        // All possibilities for getting true and false as well
+        for(int k=i+1;k<=j-1;k+=2){
+            int LT = helper(s, i, k-1, true);
+            int LF = helper(s, i, k-1, false);
+            int RT = helper(s, k+1, j, true);
+            int RF = helper(s, k+1, j, false);
+            if(s[k] == '&'){
+                if(isTrue) ans += LT*RT; //'AND' operation for getting 'True' as answer
+                else ans += LF*RF + LF*RT + LT*RF; //'AND' operation for getting 'False' as answer
+            }
+            else if(s[k] == '|'){
+                if(isTrue) ans += LT*RT + LT*RF + LF*RT; //'OR' operation for getting 'True' as answer
+                else ans += LF*RF; //'OR' operation for getting 'False' as answer
+            }   
+            else if(s[k] = '^'){
+                if(isTrue) ans += LT*RF + LF*RT; //'XOR' operation for getting 'True' as answer
+                else ans += LT*RT + LF*RF; //'XOR' operation for getting 'False' as answer
+            }
+        }    
+        return mp[temp] = ans%1003; //Store and return  the answer
+    }
+    int countWays(int N, string S){
+        return helper(S, 0, N-1, true);
+    }
+};
+
+// Tabulation
+#define ll long long 
+int mod = 1000000007;
+class Solution{
+public:
+    int countWays(int n, string S){
+        vector<vector<vector<ll>>> dp(n, vector<vector<ll>> (n, vector<ll> (2, 0)));
+        for(int i=0; i<n; i++){
+            dp[i][i][1] = (S[i] == 'T');
+            dp[i][i][0] = (S[i] == 'F');
+        }
+        for(int i=n-1; i>=0; i--){
+            for(int j=i+1; j<n; j++){
+                for(int isTrue=0; isTrue <=1; isTrue++){
+                    ll ans=0;
+                    for(int ind =i+1; ind <= j-1; ind=ind+2){
+                        ll LT = dp[i][ind-1][1];
+                        ll LF = dp[i][ind-1][0];
+                        ll RT = dp[ind+1][j][1];
+                        ll RF = dp[ind+1][j][0];
+                        if(S[ind] == '&'){
+                            if(isTrue) ans = (ans + (LT * RT)%mod)%mod;
+                            else ans = (ans + (LT*RF)%mod + (LF*RF)%mod + (LF*RT)%mod)%mod;
+                        }
+                        else if(S[ind] == '|'){
+                            if(isTrue) ans = (ans + (LT*RT)%mod + (LT*RF)%mod + (LF*RT)%mod)%mod;
+                            else ans = (ans + (LF*RF)%mod)%mod;
+                        }
+                        else{
+                            if(isTrue) ans = (ans + (LT*RF)%mod + (LF*RT)%mod)%mod;
+                            else ans = (ans + (LT*RT)%mod + (LF*RF)%mod)%mod;
+                        }
+                    }
+                    dp[i][j][isTrue] = ans % 1003;
+                }
+            }
+        }
+        return dp[0][n-1][1];
+    }
+};
+
+// Largest rectangular sub-matrix whose sum is 0
+
+1] Largest Sum Contiguous Subarray
+2] Find the length of largest subarray with 0 sum
+3] Maximum sum rectangle in a 2D matrix
+// Understand these 3 problems and then solve this problem. You'll be able to solve it.
+
+class Solution
+{
+public:
+    pair<int, int> longestSumZeroIndex(vector<int> &arr)
+    {
+        unordered_map<long long, int> mp;
+        mp[0] = -1;
+        int l = 0, r = 0;
+        long long sum = 0;
+        for (int i = 0; i < arr.size(); i++)
+        {
+            sum += arr[i];
+            if (mp.count(sum))
+            {
+                if (i - mp[sum] > (r - l))
+                {
+                    l = mp[sum] + 1;
+                    r = i + 1;
+                }
+            }
+            else
+            {
+                mp[sum] = i;
+            }
+        }
+        return {l, r};
+    }
+    vector<vector<int>> sumZeroMatrix(vector<vector<int>> mat)
+    {
+        int R = mat.size();
+        int C = mat[0].size();
+        vector<vector<int>> ans;
+        int left = 0, right = 0, up = 0, down = 0;
+        for (int startc = 0; startc < C; startc++)
+        {
+            vector<int> sum(R, 0);
+            for (int endc = startc; endc < C; endc++)
+            {
+                for (int r = 0; r < R; r++)
+                {
+                    sum[r] += mat[r][endc];
+                }
+                auto it = longestSumZeroIndex(sum);
+                int l = it.first;
+                int r = it.second;
+                if ((endc - startc + 1) * (r - l) > (right - left) * (down - up))
+                {
+                    up = l;
+                    down = r;
+                    left = startc;
+                    right = endc + 1;
+                }
+            }
+        }
+        for (int i = up; i < down; i++)
+        {
+            vector<int> temp;
+            for (int j = left; j < right; j++)
+            {
+                temp.push_back(mat[i][j]);
+            }
+            ans.push_back(temp);
+        }
+        return ans;
+    }
+};
+
+// Largest area rectangular sub-matrix with equal number of 1’s and 0’s
+
+#include <bits/stdc++.h>
+using namespace std;
+#define MAX_ROW 10
+#define MAX_COL 10
+// This function basically finds largest 0 sum subarray in arr[0..n-1]. If 0 sum doesn't exist, then it returns false. Else it returns true and sets starting and ending indexes as start and end.
+bool subArrWithSumZero(int arr[], int& start, int& end, int n)
+{
+	// to store cumulative sum
+	int sum[n];
+	// Initialize all elements of sum[] to 0
+	memset(sum, 0, sizeof(sum));
+	// map to store the indexes of sum
+	unordered_map<int, int> um;
+	// build up the cumulative sum[] array
+	sum[0] = arr[0];
+	for (int i = 1; i < n; i++)
+		sum[i] = sum[i - 1] + arr[i];
+	// to store the maximum length subarray with sum equal to 0
+	int maxLen = 0;
+	// traverse to the sum[] array
+	for (int i = 0; i < n; i++) {
+		// if true, then there is a subarray with sum equal to 0 from the beginning up to index 'i'
+		if (sum[i] == 0) {
+			// update the required variables
+			start = 0;
+			end = i;
+			maxLen = (i + 1);
+		}
+		// else if true, then sum[i] has not seen before in 'um'
+		else if (um.find(sum[i]) == um.end())
+			um[sum[i]] = i;
+		// sum[i] has been seen before in the unordered_map 'um'
+		else {
+			// if previous subarray length is smaller than the current subarray length, then update the required variables
+			if (maxLen < (i - um[sum[i]])) {
+				maxLen = (i - um[sum[i]]);
+				start = um[sum[i]] + 1;
+				end = i;
+			}
+		}
+	}
+	// if true, then there is no subarray with sum equal to 0
+	if (maxLen == 0)
+		return false;
+	// else return true
+	return true;
+}
+// function to find largest area rectangular submatrix with equal number of 1's and 0's
+void maxAreaRectWithSumZero(int mat[MAX_ROW][MAX_COL], int row, int col)
+{
+	// to store intermediate values
+	int temp[row], startRow, endRow;
+	// to store the final outputs
+	int finalLeft, finalRight, finalTop, finalBottom;
+	finalLeft = finalRight = finalTop = finalBottom = -1;
+	int maxArea = 0;
+	// Set the left column
+	for (int left = 0; left < col; left++) {
+		// Initialize all elements of temp as 0
+		memset(temp, 0, sizeof(temp));
+		// Set the right column for the left column set by outer loop
+		for (int right = left; right < col; right++) {
+			// Calculate sum between current left and right for every row 'i' consider value '1' as '1' and value '0' as '-1'
+			for (int i = 0; i < row; i++)
+				temp[i] += mat[i][right] ? 1 : -1;
+			// Find largest subarray with 0 sum in temp[]. The subArrWithSumZero() function also sets values of finalTop, finalBottom, finalLeft and finalRight if there exists a subarray with sum 0 in temp
+			if (subArrWithSumZero(temp, startRow, endRow, row)) {
+				int area = (right - left + 1) * (endRow - startRow + 1);
+				// Compare current 'area' with previous area and accordingly update final values
+				if (maxArea < area) {
+					finalTop = startRow;
+					finalBottom = endRow;
+					finalLeft = left;
+					finalRight = right;
+					maxArea = area;
+				}
+			}
+		}
+	}
+	// if true then there is no rectangular submatrix with equal number of 1's and 0's
+	if (maxArea == 0)
+		cout << "No such rectangular submatrix exists:";
+	// displaying the top left and bottom right boundaries with the area of the rectangular submatrix
+	else {
+		cout << "(Top, Left): "
+			<< "(" << finalTop << ", " << finalLeft << ")"
+			<< endl;
+		cout << "(Bottom, Right): "
+			<< "(" << finalBottom << ", " << finalRight
+			<< ")" << endl;
+		cout << "Area: " << maxArea << " sq.units";
+	}
+}
+int main()
+{
+	int mat[MAX_ROW][MAX_COL] = { { 0, 0, 1, 1 },
+								{ 0, 1, 1, 0 },
+								{ 1, 1, 1, 0 },
+								{ 1, 0, 0, 1 } };
+	int row = 4, col = 4;
+	maxAreaRectWithSumZero(mat, row, col);
+	return 0;
+}
+
+// Maximum sum Rectangle
+
+class Solution {
+  public:
+    int getMaxSum(vector<int>& input){
+        int currSum = 0, maxSum = INT_MIN;
+        for(int i = 0; i<input.size(); i++){
+            currSum += input[i];
+            maxSum = max(maxSum, currSum);
+            if(currSum < 0) currSum = 0;
+        }
+        return maxSum;
+    }
+    int maximumSumRectangle(int n, int m, vector<vector<int>> arr) {
+        int result = INT_MIN;
+        for(int i = 1; i<n; i++)
+            for(int j = 0; j<m; j++)
+                arr[i][j] += arr[i-1][j];
+        for(int i = 0; i<n-1; i++){
+            for(int j = i+1; j<n; j++){
+                vector<int> currVector;
+                for(int k = 0; k<m; k++)
+                    currVector.push_back(arr[j][k] - arr[i][k]);
+                result = max(result,getMaxSum(currVector));
+            }
+        }
+        for(int i = 0; i<n; i++)
+            result = max(result,getMaxSum(arr[i]));
+        return result;
+    }
+};
+
+// Maximum Profit
+
+// Reecursion+Memoization
+class Solution {
+  public:
+    int f(int prices[], int n, int z, int buycount, int i, vector<vector<vector<int>>> &dp)
+    {   
+        if(buycount==0&&z==1) return 0;
+        if(i==n) return 0;
+        if(dp[i][z][buycount]!=-1) return dp[i][z][buycount];
+        if(z&&buycount>0) return dp[i][z][buycount]=max(f(prices,n,0,buycount-1,i+1,dp)-prices[i],f(prices,n,1,buycount,i+1,dp));
+        if(z==0) return dp[i][z][buycount]=max(f(prices,n,1,buycount,i+1,dp)+prices[i],f(prices,n,0,buycount,i+1,dp));
+    }
+    int maxProfit(int K, int N, int A[]) {
+        vector<vector<vector<int>>> dp(N+1, vector<vector<int>>(2, vector<int> (K+1,-1)));
+        return f(A,N,1,K,0,dp);
+    }
+};
+
+// Space Optimized
+class Solution {
+  public:
+    int maxProfit(int k, int n, int arr[]) {
+        vector<int>prev(n,0);
+        vector<int>curr(n,0);
+        for(int i=1; i<=k;i++){
+            for(int j=1;j<n;j++){
+                curr[j] = curr[j-1];
+                for(int m=0;m<j;m++){
+                    curr[j] = max(curr[j],prev[m]+arr[j]-arr[m]);
+                }
+            }
+            for(int i=0; i<n;i++){
+                prev[i] = curr[i];
+            }
+        }
+        return curr[n-1];
+    }
+};
+
+// Interleaved Strings
+
+// Method-1
+class Solution{
+  public:
+    bool solve(string A,string B,string C,int a,int b,int c,vector<vector<int>>&dp)
+    {
+        //base case
+        if(c>=C.size() && a>=A.size() && b>=B.size()){
+            return true;
+        }
+        if(dp[a][b]!=-1)
+            return dp[a][b];
+        bool x=false,y=false;
+        if(A[a]==C[c] && a<A.size() && c<C.size()){
+            x = solve(A,B,C,a+1,b,c+1,dp);
+        }
+        if(B[b]==C[c] && b<B.size() && c<C.size()){
+            y = solve(A,B,C,a,b+1,c+1,dp);
+        }
+        int ans = x||y;
+        dp[a][b] = ans;
+        return ans;
+    }
+    bool isInterleave(string A, string B, string C) {
+        vector<vector<int>>dp(A.size()+1,vector<int>(B.size()+1,-1));
+        return solve(A,B,C,0,0,0,dp);
+    }
+};
+
+// Method-2
+class Solution{
+  public:
+    bool isInterleave(string A, string B, string C) 
+    {
+        int n = A.size();
+        int m = B.size();
+        vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+        dp[n][m] = 1;
+        for(int i=n;i>=0;i--){
+            for(int j=m;j>=0;j--){
+                if(i==n&&j==m){
+                    continue;
+                }
+                bool ans = false;
+                int k = i + j;
+                if(i!=n&&A[i]==C[k]){
+                    ans = ans || dp[i+1][j];
+                }
+                if(j!=m&&B[j]==C[k]){
+                    ans = ans || dp[i][j+1];
+                }
+                dp[i][j]=ans;
+            }
+        }
+        return dp[0][0];
+    }
+};
+
+// Maximum Length of Pair Chain
+
+// Method -1 [Recursion]
+// T->O(Expo) && S->O(n) [Recursion Stack Space]
+class Solution {
+public:
+	int f(int i,int prev,vector<vector<int>>& pairs,int n){
+		if(i==n) return 0;
+		int pick=INT_MIN;
+		if(prev==-1 || pairs[prev][1]<pairs[i][0])pick=1+f(i+1,i,pairs,n);
+		int notpick=f(i+1,prev,pairs,n);
+		return max(pick,notpick);
+	}
+
+	int findLongestChain(vector<vector<int>>& pairs) {
+		int n=pairs.size();
+		sort(pairs.begin(),pairs.end());
+		return f(0,-1,pairs,n);
+	}
+};
+
+// Method - 2 [Memoization]
+// T->O(n^2) && S->O(n^2) + O(n) [Recursion Stack Space]
+class Solution {
+public:
+	int f(int i,int prev,vector<vector<int>>& pairs,int n,vector<vector<int>>& dp){
+		if(i==n) return 0;
+		if(dp[i][prev+1]!=-1) return dp[i][prev+1];
+		int pick=INT_MIN;
+		if(prev==-1 || pairs[prev][1]<pairs[i][0])pick=1+f(i+1,i,pairs,n,dp);
+		int notpick=f(i+1,prev,pairs,n,dp);
+		return dp[i][prev+1]=max(pick,notpick);
+	}
+	int findLongestChain(vector<vector<int>>& pairs) {
+		int n=pairs.size();
+		sort(pairs.begin(),pairs.end());
+		vector<vector<int>> dp(n,vector<int>(n+1,-1));
+		return f(0,-1,pairs,n,dp);
+	}
+};
+
+// Method - 3 [Tabulation]
+// T->O(n^2) && S->O(n^2)
+class Solution {
+public:
+	int findLongestChain(vector<vector<int>>& pairs) {
+		int n=pairs.size();
+		sort(pairs.begin(),pairs.end());
+		vector<vector<int>> dp(n+1,vector<int>(n+2,0));
+		for(int i=n-1;i>=0;i--){
+			for(int prev=i-1;prev>=-1;prev--){
+				int pick=INT_MIN;
+				if(prev==-1 || pairs[prev][1]<pairs[i][0])pick=1+dp[i+1][i+1];
+				int notpick=dp[i+1][prev+1];
+				dp[i][prev+1]=max(pick,notpick);
+			}
+		}
+		return dp[0][0];
+	}
+};
+
+// Method - 4 [Space Optimization]
+// T->O(n^2) && S->O(n)
+class Solution {
+public:
+	int findLongestChain(vector<vector<int>>& pairs) {
+		int n=pairs.size();
+		sort(pairs.begin(),pairs.end());
+		vector<int> last(n+1,0),curr(n+1,0);
+		for(int i=n-1;i>=0;i--){
+			for(int prev=i-1;prev>=-1;prev--){
+				int pick=INT_MIN;
+				if(prev==-1 || pairs[prev][1]<pairs[i][0])pick=1+last[i+1];
+				int notpick=last[prev+1];
+				curr[prev+1]=max(pick,notpick);
+			}
+			last=curr;
+		}
+		return last[0];
+	}
+};
