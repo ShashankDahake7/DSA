@@ -1,0 +1,1278 @@
+// N meetings in one room
+
+class Solution
+{
+    public:
+    static bool cmp(pair<int,int>a, pair<int,int>b){
+        return a.second < b.second;
+    }
+    int maxMeetings(int start[], int end[], int n)
+    {
+        vector<pair<int,int>>v;
+        for(int i=0; i<n; i++){
+            pair<int,int>p = make_pair(start[i],end[i]);
+            v.push_back(p);
+        }
+        sort(v.begin(), v.end(), cmp);
+        int cnt = 1;
+        int ansEnd = v[0].second;
+        for(int i=1; i<n; i++){
+            if(v[i].first > ansEnd){
+                cnt++;
+                ansEnd = v[i].second;
+            }
+        }
+        return cnt;
+    }
+};
+
+// Job Sequencing Problem
+
+class Solution 
+{
+    public:
+    static bool comp(Job a, Job b){
+        return a.profit > b.profit;
+    }
+    vector<int> JobScheduling(Job arr[], int n) 
+    { 
+        sort(arr, arr+n, comp); 
+        int maxDead = INT_MIN;
+        for(int i=0; i<n; i++){
+            maxDead = max(maxDead, arr[i].dead);
+        }
+        vector<int>scheduled(maxDead+1, -1);
+        int count = 0;
+        int totalProfit = 0;
+        for(int i=0; i<n; i++){
+            int currProfit = arr[i].profit;
+            int currJobID = arr[i].id;
+            int currDead = arr[i].dead;
+            for(int k = currDead; k>0; k--){
+                if(scheduled[k] == -1){
+                    count++;
+                    totalProfit += currProfit;
+                    scheduled[k] = currJobID;
+                    break;
+                }
+            }
+        }
+        vector<int>ans;
+        ans.push_back(count);
+        ans.push_back(totalProfit);
+        return ans;
+    }
+};
+
+// Huffman Encoding
+
+class Node{
+  public:
+    int data;
+    Node* left;
+    Node* right;
+    
+    Node(int d){
+        data = d;
+        left = NULL;
+        right = NULL;
+    }
+};
+class cmp{
+    public:
+        bool operator()(Node* a, Node* b){
+            return a->data > b->data;
+        }
+};
+class Solution
+{
+    public:
+    void traverse(Node* root, vector<string>&ans, string temp){
+        if(root->left == NULL && root->right == NULL){
+            ans.push_back(temp);
+            return;
+        }
+        
+        traverse(root->left, ans, temp+'0');
+        traverse(root->right, ans, temp+'1');
+    }
+        vector<string> huffmanCodes(string S,vector<int> f,int N)
+        {
+            priority_queue<Node*, vector<Node*>, cmp> pq;
+            
+            for(int i=0; i<N; i++){
+                Node* temp = new Node(f[i]);
+                pq.push(temp);
+            }
+            
+            
+            while(pq.size() > 1){
+                Node* left = pq.top();
+                pq.pop();
+                
+                Node* right = pq.top();
+                pq.pop();
+                
+                Node* newNode = new Node(left->data + right->data);
+                newNode->left = left;
+                newNode->right = right;
+                pq.push(newNode);
+            }
+            Node* root = pq.top();
+            vector<string>ans;
+            string temp = "";
+            traverse(root, ans, temp);
+            return ans;
+        }
+};     
+
+// Water Connection Problem
+
+class Solution
+{
+    public:
+    vector<vector<int>> solve(int n,int p,vector<int> a,vector<int> b,vector<int> d)
+    {
+        vector<int> inDeg(n+1, 0);
+        vector<pair<int, int>> adj(n+1, {-1, -1});
+        for(int i=0; i<p; i++){
+            adj[a[i]] = {b[i], d[i]};
+            inDeg[b[i]]++;
+        }
+        vector<vector<int>> ans;
+        for(int i=1; i<=n; i++){
+            if(inDeg[i]==0 && adj[i].first != -1){
+                int lastNode = adj[i].first;
+                int minDia = adj[i].second;
+                while(adj[lastNode].first!=-1){
+                    minDia = min(minDia, adj[lastNode].second);
+                    lastNode = adj[lastNode].first;
+                }
+                ans.push_back({i, lastNode, minDia});
+            }
+        }
+        return ans;
+    }
+};
+
+// Fractional Knapsack
+
+class Solution
+{
+    public:
+    static bool comp(pair<double, Item> a, pair<double, Item> b){
+        return a.first > b.first;
+    }
+    double fractionalKnapsack(int W, Item arr[], int n)
+    {
+        vector<pair<double, Item> > v;
+        for(int i=0; i<n; i++){
+            double perUnitValue = (1.0 * arr[i].value) / arr[i].weight;
+            pair<double, Item>p = make_pair(perUnitValue, arr[i]);
+            v.push_back(p);
+        }
+        
+        sort(v.begin(), v.end(), comp);
+        
+        double totalValue = 0;
+        for(int i=0; i<n; i++){
+            if(v[i].second.weight > W){
+                totalValue += W*v[i].first;
+                W = 0;
+            }
+            else{
+                totalValue += v[i].second.value;
+                W -= v[i].second.weight;
+            }
+        }
+        return totalValue;
+    }  
+};
+
+// Choose and Swap
+
+// Method-1
+class Solution{
+    public:
+    string chooseandswap(string a){
+        string b = a;
+        sort(b.begin(),b.end());
+        int i = 0, j = 0, n = a.length();
+        while(i<n && j<n){
+            if(a[i]==b[j]){
+                while(a[i]==b[j]) j++;
+                i++;
+            }
+            else if(a[i]<b[j]) i++;
+            else break;
+        }
+        if(i>=n || j>=n) return a;
+        
+        string str = "";
+        for(int k=0;k<n;k++){
+            if(a[k]==a[i]) str += b[j];
+            else if(a[k]==b[j]) str += a[i];
+            else str += a[k];
+        }
+        return str;
+    }
+};
+
+// Method-2
+class Solution{
+public:
+    string chooseandswap(string a){
+        set<char>s;
+        for(int i=0; i<a.length(); i++)s.insert(a[i]);
+        
+        for(int i=0; i<a.length(); i++){
+            s.erase(a[i]);
+            if(s.empty())break;
+            char ch = *s.begin();
+            if(ch<a[i]){
+                int ch2 = a[i];
+                for(int j=0; j<a.length(); j++){
+                    if(a[j] == ch)a[j] = ch2;
+                    else if(a[j] == ch2) a[j] = ch;
+                }
+                break;
+            }
+        }
+        return a;
+    }
+};
+
+// Maximum trains for which stoppage can be provided
+
+#include <bits/stdc++.h>
+using namespace std;
+// number of platforms and trains
+#define n 2
+#define m 5
+// function to calculate maximum trains stoppage
+int maxStop(int arr[][3])
+{
+	// declaring vector of pairs for platform
+	vector<pair<int, int> > vect[n + 1];
+	// Entering values in vector of pairs as per platform number make departure time first element of pair
+	for (int i = 0; i < m; i++)
+		vect[arr[i][2]].push_back(
+			make_pair(arr[i][1], arr[i][0]));
+	// sort trains for each platform as per dept. time
+	for (int i = 0; i <= n; i++)
+		sort(vect[i].begin(), vect[i].end());
+	// perform activity selection approach
+	int count = 0;
+	for (int i = 0; i <= n; i++) {
+		if (vect[i].size() == 0)
+			continue;
+		// first train for each platform will also be selected
+		int x = 0;
+		count++;
+		for (int j = 1; j < vect[i].size(); j++) {
+			if (vect[i][j].second >= vect[i][x].first) {
+				x = j;
+				count++;
+			}
+		}
+	}
+	return count;
+}
+int main()
+{
+	int arr[m][3] = { 1000, 1030, 1,
+					1010, 1020, 1,
+					1025, 1040, 1,
+					1130, 1145, 2,
+					1130, 1140, 2 };
+	cout << "Maximum Stopped Trains = " << maxStop(arr);
+	return 0;
+}
+
+// Minimum Platforms
+
+class Solution{
+    public:
+    int findPlatform(int arr[], int dep[], int n)
+    {   
+        int ans=0;
+        map<int,int> mp;
+        for(int i=0;i<n;i++)
+        {
+            mp[arr[i]]++;
+            mp[dep[i]+1]--;
+        }
+        int sum=0;
+        for(auto x:mp)
+        {
+           sum+=x.second;
+           ans=max(ans,sum);
+        }
+        return ans;
+    }
+};
+
+// Buy Maximum Stocks if i stocks can be bought on i-th day
+
+class Solution {
+public:
+    int buyMaximumProducts(int n, int k, int price[]){
+        map<int , int> mp;
+       int ans=0;
+       for(int i=0; i<n; i++){
+           if(mp.find(price[i])!=mp.end()){
+               mp[price[i]]+=i+1;
+           }
+           else mp[price[i]]=i+1;
+       }
+       for(auto i : mp){
+           int x=i.second;
+           while(k-i.first>=0 && x>0){
+               ans++; 
+               x--;
+               k-=i.first;
+           }
+           if(k<0) break;
+       }
+       return ans;
+    }
+};
+
+// Shop in Candy Store
+
+class Solution
+{
+public:
+    vector<int> candyStore(int candies[], int N, int K)
+    {
+        sort(candies, candies + N);
+        int buyCandy = 0;
+        int freeCandy = N-1;
+        int minAmount = 0;
+        while(buyCandy <= freeCandy)
+        {
+            minAmount = minAmount + candies[buyCandy++];
+            freeCandy = freeCandy - K; 
+        }
+        int maxAmount = 0;
+        buyCandy = N-1;
+        freeCandy = 0;
+        while(freeCandy <= buyCandy)
+        {
+            maxAmount = maxAmount + candies[buyCandy--];
+            freeCandy = freeCandy + K;
+        }
+        return {minAmount, maxAmount};
+    }
+};
+
+// Minimize Cash Flow among a given set of friends who have borrowed money from each other
+
+#include<iostream>
+using namespace std;
+// Number of persons (or vertices in the graph)
+#define N 3
+// A utility function that returns index of minimum value in arr[]
+int getMin(int arr[])
+{
+	int minInd = 0;
+	for (int i=1; i<N; i++)
+		if (arr[i] < arr[minInd])
+			minInd = i;
+	return minInd;
+}
+// A utility function that returns index of maximum value in arr[]
+int getMax(int arr[])
+{
+	int maxInd = 0;
+	for (int i=1; i<N; i++)
+		if (arr[i] > arr[maxInd])
+			maxInd = i;
+	return maxInd;
+}
+// A utility function to return minimum of 2 values
+int minOf2(int x, int y)
+{
+	return (x<y)? x: y;
+}
+// amount[p] indicates the net amount to be credited/debited
+// to/from person 'p'
+// If amount[p] is positive, then i'th person will amount[i]
+// If amount[p] is negative, then i'th person will give -amount[i]
+void minCashFlowRec(int amount[])
+{
+	// Find the indexes of minimum and maximum values in amount[]
+	// amount[mxCredit] indicates the maximum amount to be given
+	//				 (or credited) to any person .
+	// And amount[mxDebit] indicates the maximum amount to be taken
+	//				 (or debited) from any person.
+	// So if there is a positive value in amount[], then there must be a negative value
+	int mxCredit = getMax(amount), mxDebit = getMin(amount);
+	// If both amounts are 0, then all amounts are settled
+	if (amount[mxCredit] == 0 && amount[mxDebit] == 0)
+		return;
+	// Find the minimum of two amounts
+	int min = minOf2(-amount[mxDebit], amount[mxCredit]);
+	amount[mxCredit] -= min;
+	amount[mxDebit] += min;
+	// If minimum is the maximum amount to be
+	cout << "Person " << mxDebit << " pays " << min
+		<< " to " << "Person " << mxCredit << endl;
+	// Recur for the amount array. Note that it is guaranteed that the recursion would terminate as either amount[mxCredit] or amount[mxDebit] becomes 0
+	minCashFlowRec(amount);
+}
+// Given a set of persons as graph[] where graph[i][j] indicates the amount that person i needs to pay person j, this function finds and prints the minimum 
+// cash flow to settle all debts.
+void minCashFlow(int graph[][N])
+{
+	// Create an array amount[], initialize all value in it as 0.
+	int amount[N] = {0};
+	// Calculate the net amount to be paid to person 'p', and stores it in amount[p]. The value of amount[p] can be calculated by subtracting debts of 'p' from 
+  // credits of 'p'
+	for (int p=0; p<N; p++)
+	for (int i=0; i<N; i++)
+		amount[p] += (graph[i][p] - graph[p][i]);
+	minCashFlowRec(amount);
+}
+int main()
+{
+	// graph[i][j] indicates the amount that person i needs to pay person j
+	int graph[N][N] = { {0, 1000, 2000},
+						{0, 0, 5000},
+						{0, 0, 0},};
+
+	// Print the solution
+	minCashFlow(graph);
+	return 0;
+}
+
+// Minimum Cost to cut a board into squares
+
+class Solution {
+public:
+    int minimumCostOfBreaking(vector<int> X, vector<int> Y, int M, int N){
+        sort(X.begin(),X.end(),greater<int>());
+        sort(Y.begin(),Y.end(),greater<int>());
+        int answer = 0;
+        int i = 0;
+        int j = 0;
+        int hzc=1;
+        int vc = 1;
+        while(i<M-1 && j< N-1){
+            if(X[i]>Y[j]){
+                answer += X[i]*vc;
+                i++;
+                hzc++;
+            }
+            else{
+                answer+= Y[j]*hzc;
+                vc++;
+                j++;
+            }
+        }
+        while(i<M-1){
+            answer+=X[i]*vc;
+            i++;
+            hzc++;
+            
+        }
+         while(j<N-1){
+            answer+=Y[j]*hzc;
+            j++;
+            vc++;
+            
+        }
+        return answer;
+    }
+};
+
+// Check if it is possible to survive on Island
+
+class Solution{
+public:
+    int minimumDays(int S, int N, int M){
+        int sunday=S/7;
+        int buyingDays=S-sunday;
+        int totalFood=S*M;
+        int ans=0;
+        if(totalFood%N==0){
+            ans=totalFood/N;
+        }
+        else{
+            ans=totalFood/N+1;
+        }
+        if(ans<=buyingDays){
+            return ans;
+        }
+        else{
+            return -1;
+        }
+    }
+};
+
+// Find maximum meetings in one room
+
+class Solution
+{
+    public:
+    static bool cmp(pair<int,int>a, pair<int,int>b){
+        return a.second < b.second;
+    }
+    int maxMeetings(int start[], int end[], int n)
+    {
+        vector<pair<int,int>>v;
+        for(int i=0; i<n; i++){
+            pair<int,int>p = make_pair(start[i],end[i]);
+            v.push_back(p);
+        }
+        sort(v.begin(), v.end(), cmp);
+        int cnt = 1;
+        int ansEnd = v[0].second;
+        for(int i=1; i<n; i++){
+            if(v[i].first > ansEnd){
+                cnt++;
+                ansEnd = v[i].second;
+            }
+        }
+        return cnt;
+    }
+};
+
+// Maximum product subset of an array
+
+class Solution{
+    public:
+    const int mod = 1e9 + 7;
+    long long int findMaxProduct(vector<int>&a, int n){
+        // check for single element
+        if(n == 1) return a[0];
+        int neg = 0;
+        int mini = INT_MAX;
+        // check that if all elements of the array are zero then maximum product will also be zero
+        int cnt0 = 0;
+        for(auto i : a) if(i == 0) cnt0++;
+        if(cnt0 == a.size()) return 0;
+        // store the largest negative value and keep track of number of negative elements in the array
+        for(int i=0;i<n;i++) {
+            if(a[i] < 0) {
+                neg++;
+                mini = min(mini, abs(a[i]));
+            }
+        }
+        long long int pro = 1;
+        // if number of negative elements are even then it is clear that the over all product of the all the elements of the array is positive and hence maximum
+        if(neg%2 == 0) {
+            for(int i=0;i<n;i++) if(a[i] != 0) pro = (pro%mod*a[i]%mod)%mod;
+            return pro;
+        }
+        // if number of negatives are odd then divide it with the largest negative value stored in mini
+        else {
+            // base case if there is only 1 negative elements present and rest all are zeroes then maximum product we can get is zero
+            if(neg == 1 && cnt0 == n - 1) return 0;
+            for(int i=0;i<n;i++) if(a[i] != 0) pro = (pro%mod*a[i]%mod)%mod;
+            pro = pro/(-1*mini);
+            return pro;
+        }
+        return 0;
+    }
+};
+
+// Maximize sum after K negations
+
+class Solution{
+    public:
+    long long int maximizeSum(long long int a[], int n, int k)
+    {
+        sort(a, a+n);
+        int i=0;
+        while(a[i]<0&&i<k){
+            if(a[i]<0){
+                a[i]=-a[i];
+            }
+            i++;
+        }
+        sort(a, a+n);
+        if(i<k){
+            for(int j=0; j<k-i; j++){
+                a[0]=-a[0];
+            }
+        }
+        int sum=0;
+        for(int j=0; j<n; j++){
+            sum+=a[j];
+        }
+        return sum;
+    }
+};
+
+// Maximize sum(arr[i]*i) of an Array
+
+class Solution{
+    public:
+    int Maximize(int a[],int n)
+    {
+        const int MOD = 1000000007;
+        int ans=0; //intializing a temporary variable to that we can store the answer
+        sort( a , a+n); //sorting the array
+        for(int i =0 ; i<n;i++){
+            // ans += a[i]*i; //<--can not use this as the answer will overflow
+            ans = (ans + ((long long)a[i] * i) % MOD) % MOD;
+        }
+        return ans;
+    }
+};
+
+// Maximum sum of absolute difference of any permutation
+
+#include <bits/stdc++.h>
+using namespace std;
+int MaxSumDifference(int a[], int n)
+{
+	// final sequence stored in the vector
+	vector<int> finalSequence;
+	// sort the original array
+	// so that we can retrieve
+	// the large elements from
+	// the end of array elements
+	sort(a, a + n);
+	// In this loop first we will insert
+	// one smallest element not entered
+	// till that time in final sequence
+	// and then enter a highest element
+	// (not entered till that time) in
+	// final sequence so that we
+	// have large difference value. This
+	// process is repeated till all array
+	// has completely entered in sequence.
+	// Here, we have loop till n/2 because we are inserting two elements at a time in loop.
+	for (int i = 0; i < n / 2; ++i) {
+		finalSequence.push_back(a[i]);
+		finalSequence.push_back(a[n - i - 1]);
+	}
+	// If there are odd elements, push the middle element at the end.
+	if (n % 2 != 0)
+		finalSequence.push_back(a[n/2]);
+	// variable to store the maximum sum of absolute difference
+	int MaximumSum = 0;
+	// In this loop absolute difference of elements for the final sequence is calculated.
+	for (int i = 0; i < n - 1; ++i) {
+		MaximumSum = MaximumSum + abs(finalSequence[i] - finalSequence[i + 1]);
+	}
+	// absolute difference of last element and 1st element
+	MaximumSum = MaximumSum + abs(finalSequence[n - 1] - finalSequence[0]);
+	// return the value
+	return MaximumSum;
+}
+int main()
+{
+	int a[] = { 1, 2, 4, 8 };
+	int n = sizeof(a) / sizeof(a[0]);
+
+	cout << MaxSumDifference(a, n) << endl;
+}
+
+// Swap and Maximize
+
+long long int maxSum(int arr[], int n)
+{
+     long long int ans = 0;
+     sort(arr, arr+n);
+     int st = 0, end = n-1;
+     int count = 0;
+     while(st < end)
+     {
+         ans += abs(arr[end] - arr[st]);
+         st++;
+         count++;
+         if(count == 2)
+         {
+             st--;
+             end--;
+             count = 0;
+         }   
+     }
+     ans += abs(arr[end] - arr[0]);
+     return ans;
+}
+
+// Minimum Sum of Absolute Differences of Pairs
+
+class Solution{
+public:
+    long long findMinSum(vector<int> &A,vector<int> &B,int N){
+        long long sum=0;
+        sort(B.begin(),B.end());
+        sort(A.begin(),A.end());
+        
+        for(int i=0;i<N;i++){
+            sum+=abs(B[i]-A[i]);
+        }
+        
+        return sum;
+    }
+};
+
+// Program for Shortest Job First (or SJF) CPU Scheduling | Set 1 (Non- preemptive)
+
+#include <iostream>
+using namespace std;
+int main() {
+	// Matrix for storing Process Id, Burst Time, Average Waiting Time & Average Turn Around Time.
+	int A[100][4];
+	int i, j, n, total = 0, index, temp;
+	float avg_wt, avg_tat;
+	cout << "Enter number of process: ";
+	cin >> n;
+	cout << "Enter Burst Time:" << endl;
+	// User Input Burst Time and alloting Process Id.
+	for (i = 0; i < n; i++) {
+		cout << "P" << i + 1 << ": ";
+		cin >> A[i][1];
+		A[i][0] = i + 1;
+	}
+	// Sorting process according to their Burst Time.
+	for (i = 0; i < n; i++) {
+		index = i;
+		for (j = i + 1; j < n; j++)
+			if (A[j][1] < A[index][1])
+				index = j;
+		temp = A[i][1];
+		A[i][1] = A[index][1];
+		A[index][1] = temp;
+		temp = A[i][0];
+		A[i][0] = A[index][0];
+		A[index][0] = temp;
+	}
+	A[0][2] = 0;
+	// Calculation of Waiting Times
+	for (i = 1; i < n; i++) {
+		A[i][2] = 0;
+		for (j = 0; j < i; j++)
+			A[i][2] += A[j][1];
+		total += A[i][2];
+	}
+	avg_wt = (float)total / n;
+	total = 0;
+	cout << "P	 BT	 WT	 TAT" << endl;
+	// Calculation of Turn Around Time and printing the data.
+	for (i = 0; i < n; i++) {
+		A[i][3] = A[i][1] + A[i][2];
+		total += A[i][3];
+		cout << "P" << A[i][0] << "	 " << A[i][1] << "	 " << A[i][2] << "	 " << A[i][3] << endl;
+	}
+	avg_tat = (float)total / n;
+	cout << "Average Waiting Time= " << avg_wt << endl;
+	cout << "Average Turnaround Time= " << avg_tat << endl;
+}
+
+// Page Faults in LRU
+
+class Solution{
+    public:
+    int pageFaults(int N, int C, int pages[]){
+        unordered_set<int> st;
+        unordered_map<int, int> index;
+        int page_fault = 0;
+        for(int i = 0; i<N; i++)
+        {
+            if(st.size() < C)
+            {
+                if(st.find(pages[i]) == st.end())
+                {
+                    st.insert(pages[i]);   
+                    page_fault++;
+                }   
+                index[pages[i]] = i;
+            }
+            else
+            {
+                if(st.find(pages[i]) == st.end())
+                {
+                    int LRUIndx = INT_MAX, data;
+                    for(auto it = st.begin(); it != st.end(); it++)
+                    {
+                        if(index[*it] < LRUIndx)
+                        {
+                            LRUIndx = index[*it];       
+                            data = *it;
+                        }
+                    }
+                    st.erase(data);
+                    st.insert(pages[i]);   
+                    page_fault++;
+                }       
+                index[pages[i]] = i;
+            }
+        }   
+        return page_fault;
+    }
+};
+
+// Smallest subset with sum greater than all other elements
+
+class Solution{
+    public:
+    int minSubset(vector<int> &Arr,int N){
+         if(N == 1)
+          return 1;
+        long long int sum = 0;
+        for(int i = 0; i<N; i++)
+           sum += Arr[i];
+        sort(Arr.begin(), Arr.end());
+        long long int halfSum = sum/2;
+        int ans = 0;
+        sum = 0;
+        int end = N-1;
+        while(end)
+        {
+            sum += Arr[end--];
+            ans++;
+            if(sum > halfSum)
+              return ans;   
+        }
+        return ans;
+    }
+};
+
+// Chocolate distribution problem
+
+#include <bits/stdc++.h> 
+int findMinDiff(int n, int m, vector<int> chocolates) {
+    sort(chocolates.begin(),chocolates.end());
+    int i=0,j=m-1;
+    int mini=INT_MAX;
+    while(j<chocolates.size()){
+        int diff=chocolates[j]-chocolates[i];
+        mini=min(mini,diff);
+        i++;
+        j++;
+    }
+    return mini;
+}
+
+// DEFKIN - Defense of a Kingdom
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+vector<int> x, y;
+int main() {
+    int t;
+    cin >> t;
+    int n, m, q;
+    while(t--) {
+        cin >> n >> m >> q;
+        x.clear();
+        x.resize(q + 2);
+        y.clear();
+        y.resize(q + 2);
+        x[0] = 0;
+        y[0] = 0;
+        for(int i = 1; i <= q; i++)
+            cin >> x[i] >> y[i];
+        x[x.size() - 1] = n + 1;
+        y[y.size() - 1] = m + 1;
+        sort(x.begin(), x.end());
+        sort(y.begin(), y.end());
+        int mxx = 0, mxy = 0;
+        for(int i = 0; i < x.size() - 1; i++) {
+            mxx = max(mxx, x[i+1] - x[i] - 1);
+            mxy = max(mxy, y[i+1] - y[i] - 1);
+        }   
+        cout << mxx * mxy << endl;
+    }   
+    return 0;
+}
+
+// DIEHARD - DIE HARD
+
+#include<bits/stdc++.h>
+using namespace std;
+int dp[1010][1010];
+int solve(int h, int a, int cnt,bool f)
+{
+    if( h<=0 || a<=0) return cnt;
+    if(dp[h][a] != -1) return dp[h][a];
+    if(f) dp[h][a] = max(dp[h][a], solve(h+3,a+2,cnt+1,!f));
+    return dp[h][a] = max(dp[h][a], max(solve(h-5,a-10,cnt+1,!f),solve(h-20,a+5,cnt+1,!f)));
+}
+int main()
+{   int tc;
+    cin >> tc;
+    int h,a;
+    while(tc--){
+    bool f=true;
+    memset(dp,-1,sizeof dp);
+    cin >> h >> a;
+    cout << solve(h,a,-1,f) << endl;
+}
+   return 0;
+}
+
+// GERGOVIA - Wine trading in Gergovia
+
+#include<bits/stdc++.h>
+using  namespace  std;
+typedef  long long ll;
+#define MAX 100007
+#define PI acos(-1.0)
+#define mem(a,b) memset(a,b,sizeof(a))
+#define gcd(a,b) __gcd(a,b)
+#define ppr(a) cout<<a.x<<" "<<a.y<<"\n"
+ll a[MAX];
+//int dx[]={1,0,-1,0};int dy[]={0,1,0,-1}; //4 Direction
+//int dx[]={1,1,0,-1,-1,-1,0,1};
+//int dy[]={0,1,1,1,0,-1,-1,-1};//8 direction
+//int dx[]={2,1,-1,-2,-2,-1,1,2};
+//int dy[]={1,2,2,1,-1,-2,-2,-1};//Knight Direction
+int main()
+{
+    //READ("in.in");
+    //WRITE("out.out");
+        int T,n,b,d,f;
+    while(1)
+    {
+        scanf("%d",&n);
+        if(n==0)break;
+        for(int i=0;i<=n-1;i++)
+        scanf("%lld",&a[i]);
+        ll ans=0,sum=0;
+        for(int i=0;i<=n-1;i++)
+        {
+            sum+=a[i];
+            ans+=abs(sum);
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+
+// GCJ101BB - Picking Up Chicks
+
+#include <bits/stdc++.h>
+using namespace std;
+#define endl "\n"
+int main()
+{
+   ios_base::sync_with_stdio(false);
+   cin.tie(NULL);cout.tie(NULL);
+   long long int t,j;
+   cin>>t;
+   for(j=1;j<=t;++j)
+   {
+       long long int n,k,b,time;
+       cin>>n>>k>>b>>time;
+       long long int x[n],v[n],i;
+       for(i=0;i<n;++i)
+           cin>>x[i];
+       for(i=0;i<n;++i)
+           cin>>v[i];
+        int count=0,swaps=0,not_possible=0;   
+       for(i=n-1;i>=0;--i)
+       {
+           int distance_needed=b-x[i];
+           int distance_possible=v[i]*time;
+           if(distance_possible>=distance_needed)
+           {
+               count++;
+               if(not_possible>0)
+                   swaps+=not_possible;
+           }
+           else
+             not_possible++;
+           if(count>=k)
+              break;
+       }
+       if(count>=k)
+          cout<<"Case #"<<j<<": "<<swaps<<endl;
+       else
+         cout<<"Case #"<<j<<": "<<"IMPOSSIBLE"<<endl;
+    }
+     return 0;
+}
+
+// CHOCOLA - Chocolate
+
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+/* SPOJ: CHOCOLA
+Idea: Greedy Algorithm Stays Ahead
+The number of breaks needed is always the same.
+#Proof:
+C(n,m) = n + m + n*m
+C(0,0) = 0 (a single box choclate needs 0 cut)
+Cut horizontally:
+C(n,m) = 1 + C(a,m) + C(b,m) such that a+b+1 = n
+C(n,m) = 1 + a+m+a*m + b+m+b*m
+       = 1 + (n-1) + 2*m + (n-1)*m
+       = n + m + n*m   :)
+equally for vertical cut
+#
+Observation: the problem is similar to weight distribution problem
+Observation: each cut will happen sooner or later
+Observation: the "weight" of a cut is non decreasing
+Observation: if a vertical and horizontal cost are equal, cutting 
+order does not matter. Proof?
+So we greedily choose the largest cut-cost each time
+*/
+
+int x[1003], y[1003];
+
+int main(){
+    int tc;
+    cin >> tc;
+    while(tc--){
+        int m,n;
+        cin >> m >> n;
+        for(int i=1;i<m;++i){
+            cin >> x[i];
+        }
+        for(int i=1;i<n;++i){
+            cin >> y[i];
+        }
+        int h = 1,v=1;
+        sort(x+1,x+m);
+        reverse(x+1,x+m);
+        sort(y+1,y+n);
+        reverse(y+1,y+n);
+        int i=1,j=1;
+        int ans = 0;
+        while(i<m && j<n){
+            if(x[i] > y[j]){
+                ans += x[i]*v;
+                ++h;
+                ++i;
+            } else {
+                ans += y[j]*h;
+                ++v;
+                ++j;
+            }
+        }
+        if(i<m){
+            int sum = 0;
+            while(i<m){
+                sum += x[i];
+                ++i;
+            }
+            ans += sum*v;
+        } else {
+            int sum = 0;
+            while(j<n){
+                sum += y[j];
+                ++j;
+            }
+            ans += sum*h;
+        }
+        cout << ans << endl;
+    }
+    return 0;
+}
+
+// ARRANGE - Arranging Amplifiers
+
+#include<bits/stdc++.h>
+using namespace std;
+int main(){
+	int a[100000], n, t;
+	scanf("%d", &t);
+	while(t--){
+		scanf("%d", &n);
+		for(int i=0;i<n;i++)
+			scanf("%d", &a[i]);
+		sort(a, a+n);
+		int j = 0;
+		while(a[j] == 1){
+			printf("1 ");
+			j++;
+		}
+		if(j == n-2 && a[j] == 2 && a[j+1] == 3)
+			printf("2 3");
+		else{
+			for(int k=n-1;k>=j;k--)
+				printf("%d ", a[k]);
+		}
+		printf("\n");
+	}
+    return 0;
+}
+
+// Greedy Approximate Algorithm for K Centers Problem
+
+#include <bits/stdc++.h>
+using namespace std;
+int maxindex(int* dist, int n)
+{
+	int mi = 0;
+	for (int i = 0; i < n; i++) {
+		if (dist[i] > dist[mi])
+			mi = i;
+	}
+	return mi;
+}
+void selectKcities(int n, int weights[4][4], int k)
+{
+	int* dist = new int[n];
+	vector<int> centers;
+	for (int i = 0; i < n; i++) {
+		dist[i] = INT_MAX;
+	}
+	// index of city having the maximum distance to it's closest center
+	int max = 0;
+	for (int i = 0; i < k; i++) {
+		centers.push_back(max);
+		for (int j = 0; j < n; j++) {
+			// updating the distance of the cities to their closest centers
+			dist[j] = min(dist[j], weights[max][j]);
+		}
+		// updating the index of the city with the maximum distance to it's closest center
+		max = maxindex(dist, n);
+	}
+	// Printing the maximum distance of a city to a center that is our answer
+	cout << endl << dist[max] << endl;
+	// Printing the cities that were chosen to be made centers
+	for (int i = 0; i < centers.size(); i++) {
+		cout << centers[i] << " ";
+	}
+	cout << endl;
+}
+int main()
+{
+	int n = 4;
+	int weights[4][4] = { { 0, 4, 8, 5 },
+						{ 4, 0, 10, 7 },
+						{ 8, 10, 0, 9 },
+						{ 5, 7, 9, 0 } };
+	int k = 2;
+	selectKcities(n, weights, k);
+}
+
+// Minimum Cost of ropes
+
+class Solution
+{
+    public:
+    long long minCost(long long arr[], long long n) {
+        long long cost=0;
+        priority_queue<long long,vector<long long>,greater<long long>> pq;
+        for(int i=0;i<n;i++){
+            pq.push(arr[i]);
+        }
+        while(pq.size()>1){
+            long long a=pq.top();
+            pq.pop();
+            long long b=pq.top();
+            pq.pop();
+            long long sum=a+b;
+            cost+=sum;
+            pq.push(sum);   
+        }
+        return cost;
+    }
+};
+
+// Smallest number
+
+class Solution{   
+public:
+    string smallestNumber(int s, int d){
+        string ans(d,'0');
+        if(d*9 <s)
+            return "-1";
+        int i=d-1;
+        ans[0]='1';
+        s-=1;
+        while(i>=0 && s>0)
+        {
+            if(s>9)
+            {
+                ans[i]='9';
+                s-=9;
+                i--;
+            }
+            else
+            {
+                if(i==0)
+                {
+                    s++;
+                }
+                string str=to_string(s);
+                ans[i--]=str[0];
+                s-=s;
+            }
+        }
+        return ans;
+    }
+};
+
+// Rearrange characters in a string such that no two are adjacent
+
+class Solution
+{
+    public:
+    string rearrangeString(string str)
+    {
+        string res = "";
+        priority_queue<pair<int, char>> pq; //max heap
+        int freq[26] = {0};
+        for(int i=0; i<str.size(); i++){
+            freq[str[i] - 'a']++;
+        }
+        for(int i=0; i<26; i++){
+            if(freq[i]){
+                pq.push({freq[i], 'a' + i});
+            }
+        }
+        pair<int,char> dummy(-1,'&');
+        while(!pq.empty()){
+            auto top = pq.top();
+            pq.pop();
+            res += top.second;
+            top.first--;
+            if(dummy.first > 0){
+                pq.push(dummy);
+            }
+            dummy = top;
+        }
+        int n = res.size(), m = str.size();
+        return (n == m) ? res : "-1";
+    }
+};
+
+// Find maximum equal sum of every three stacks
+
+class Solution{
+public:
+    int maxEqualSum(int N1,int N2,int N3,vector<int> &S1,vector<int> &S2,vector<int> &S3){
+        int sum1 = 0;
+        int sum2 = 0;
+        int sum3 = 0;
+        for(int i = 0; i < N1; i++){
+            sum1 += S1[i];
+        }
+        for(int i = 0; i < N2; i++){
+            sum2 += S2[i];
+        }
+        for(int i = 0; i < N3; i++){
+            sum3 += S3[i];
+        }
+        int mini = min(sum1, min(sum2, sum3));
+        if(sum1 == sum2 && sum2 == sum3)
+            return sum1;
+        int i = 0, j = 0, k = 0;
+        while(i < N1 && j < N2 && k < N3){
+            if(sum1 == sum2 && sum2 == sum3)
+                return sum1;
+        if(sum1 >= sum2 && sum1 >= sum3)
+            sum1 -= S1[i++];   
+        else if(sum2 >= sum3 && sum2 >= sum1)
+            sum2 -= S2[j++];
+        else
+            sum3 -= S3[k++];
+        }
+        return 0;
+    }
+};
