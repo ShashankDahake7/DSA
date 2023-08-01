@@ -168,7 +168,7 @@ class Solution{
     // l : starting index of the array i.e 0
     // r : ending index of the array i.e size-1
     // k : find kth smallest element and return using this function
-    int kthSmallest(int arr[], int l, int r, int k) {
+    int kthLargest(int arr[], int l, int r, int k) {
         //code here
         sort(arr,arr+r+1);
         return arr[r+1-k];
@@ -193,7 +193,7 @@ int main()
         int k;
         cin>>k;
         Solution ob;
-        cout<<ob.kthSmallest(a, 0, number_of_elements-1, k)<<endl;
+        cout<<ob.kthLargest(a, 0, number_of_elements-1, k)<<endl;
     }
     return 0;
 }
@@ -237,10 +237,8 @@ class Solution
 
 //{ Driver Code Starts.
 int main() {
-
     int t;
     cin >> t;
-
     while(t--){
         int n;
         cin >>n;
@@ -248,80 +246,63 @@ int main() {
         for(int i=0;i<n;i++){
             cin >> a[i];
         }
-
         Solution ob;
         ob.sort012(a, n);
-
         for(int i=0;i<n;i++){
             cout << a[i]  << " ";
         }
-
         cout << endl;
-        
-        
     }
     return 0;
 }
-
-
 // } Driver Code Ends
 
-//Move all negative numbers of the array to one side
+// Move all negative numbers of the array to one side
 
-/#include <iostream>
+#include <iostream>
+#include <algorithm>
 using namespace std;
-// Function to shift all the negative elements on left side
-void shiftall(int arr[], int left,int right)
+int main()
 {
-    // Loop to iterate over the array from left to the right
-    while (left <= right)
+    int n, i, l, r;
+    cout << "Enter the size of the Array: ";
+    cin >> n;
+    int arr[n];
+    cout << "Enter the elements: ";
+    for (i = 0; i < n; i++)
     {
-        // Condition to check if the left element is negative
-        if (arr[left] < 0 )
-            left++;
-        // Condition to check if the left pointer element is positive and the right pointer element is negative
-        else if (arr[left] > 0 && arr[right] < 0)
+        cin >> arr[i];
+    }
+    l = 0;
+    r = n - 1;
+    while (l <= r)
+    {
+        if (arr[l] < 0 && arr[r] < 0)
         {
-            int temp = arr[left];
-            arr[left] = arr[right];
-            arr[right] = temp;
-            left++;
-            right--;
+            l += 1;
         }
-        // Condition to check if right element are positive
-        else if (arr[right] > 0)
-            right--;
+        else if (arr[l] > 0 && arr[r] > 0)
+        {
+            r -= 1;
+        }
+        else if (arr[l] > 0 && arr[r] < 0)
+        {
+            swap(arr[l], arr[r]);
+            l += 1;
+            r -= 1;
+        }
         else
         {
-            left++;
-            right--;
+            l += 1;
+            r -= 1;
         }
     }
-}
-// Function to print the array
-void display(int arr[], int right)
-{
-    // Loop to iterate over the element of the given array
-    for (int i = 0; i < right; ++i)
+    cout << "The resultant Array: ";
+    for (i = 0; i < n; i++)
     {
         cout << arr[i] << " ";
     }
     cout << endl;
-}
-
-int main()
-{
-    int n;
-    cin>>n;
-    int arr[n] ;
-    for (int i = 0; i < n; i++)
-    {
-        cin>>arr[i];
-    }
-    // Function Call
-    shiftall(arr, 0, n-1);
-    display(arr, n);
-    return 0;
 }
 
 // Union of two sorted arrays
@@ -350,7 +331,6 @@ void reverse(int arr[],int start,int end){
         arr[j]=temp;
     }
 }
-
 void rotate(int arr[], int n)
 {
     reverse(arr,0,n-1);
@@ -366,7 +346,6 @@ class Solution{
     // n: size of array
     //Function to find the sum of contiguous subarray with maximum sum.
     long long maxSubarraySum(int arr[], int n){
-        
         int sum=0;
         int maximum=arr[0];
         for(int i=0;i<n;i++){
