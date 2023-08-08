@@ -21,7 +21,6 @@
 //     for(int i=0;i<n;i++){
 //         cin>>arr[i];
 //     }
-    
 //     reverse(arr,n);
 //     cout<<"Reversed array is:";
 //     for(int i=0;i<n;i++){
@@ -34,7 +33,6 @@
 
 #include<iostream>
 using namespace std;
-
 int maximum(int arr[],int size){
     int max=arr[0];
     for (int i = 0; i < size; i++)
@@ -44,7 +42,6 @@ int maximum(int arr[],int size){
     } 
     return max;
 }
-
 int minimum(int arr[],int size){
     int min=arr[0];
     for (int i = 0; i < size; i++)
@@ -54,7 +51,6 @@ int minimum(int arr[],int size){
     } 
     return min;
 }
-
 int main(){
     int n;
     cout<<"Enter the size of the array:";
@@ -75,8 +71,7 @@ int main(){
 class Solution
 {
    public:
-   
-    int maximum(int arr[],int size){
+      int maximum(int arr[],int size){
         int max=arr[0];
         for (int i = 0; i < size; i++)
         {
@@ -85,7 +80,6 @@ class Solution
         } 
         return max;
         }
-
     int minimum(int arr[],int size){
         int min=arr[0];
         for (int i = 0; i < size; i++)
@@ -95,7 +89,6 @@ class Solution
         } 
         return min;
     }
-    
     int findSum(int A[], int N)
     {
     	int c=maximum(A,N)+minimum(A,N);
@@ -110,7 +103,6 @@ class Solution
 
 #include<bits/stdc++.h>
 using namespace std;
-
 // } Driver Code Ends
 //User function template for C++
 
@@ -186,10 +178,8 @@ int main()
         int number_of_elements;
         cin>>number_of_elements;
         int a[number_of_elements];
-        
         for(int i=0;i<number_of_elements;i++)
-            cin>>a[i];
-            
+            cin>>a[i]; 
         int k;
         cin>>k;
         Solution ob;
@@ -199,7 +189,7 @@ int main()
 }
 // } Driver Code Ends
 
-// Sort 0s,1s and 2s
+// Sort 0s, 1s and 2s
 
 //{ Driver Code Starts
 #include<bits/stdc++.h>
@@ -214,27 +204,24 @@ class Solution
         x=y;
         y=temp;
     }
-    void sort012(int arr[], int n)
-    {
-    int a0=0,b1=0,c2=n-1;
-    while(b1<=c2){
-        if(arr[b1]==0){
-            swap(arr[b1],arr[a0]);
-            a0++;
-            b1++;
-        }
-        else if(arr[b1]==1){
-            b1++;
-        }
-        else{
-            swap(arr[b1],arr[c2]);
-            c2--;
-        }
-    }
-    
-}
+    void sort012(int arr[], int n) {
+	    int a0=0,b1=0,c2=n-1;
+	    while(b1<=c2){
+	        if(arr[b1]==0){
+	            swap(arr[b1],arr[a0]);
+	            a0++;
+	            b1++;
+	        }
+	        else if(arr[b1]==1){
+	            b1++;
+	        }
+	        else{
+	            swap(arr[b1],arr[c2]);
+	            c2--;
+	        }
+	    } 
+  }
 };
-
 //{ Driver Code Starts.
 int main() {
     int t;
@@ -344,7 +331,7 @@ class Solution{
     public:
     // arr: input array
     // n: size of array
-    //Function to find the sum of contiguous subarray with maximum sum.
+    // Function to find the sum of contiguous subarray with maximum sum.
     long long maxSubarraySum(int arr[], int n){
         int sum=0;
         int maximum=arr[0];
@@ -416,7 +403,6 @@ class Solution{
                 slow=nums[slow];
                 fast=nums[nums[fast]];
             }while(slow!=fast);
-            
             fast=nums[0];
             while(slow!=fast){
                 slow=nums[slow];
@@ -435,13 +421,13 @@ class Solution{
         { 
             int i = 0, j = 0, k = n - 1;
             while (i <= k && j < m) {
-                if (arr1[i] < arr2[j])
+                if (arr1[i] < arr2[j]){
                     i++;
+		}
                 else {
                     swap(arr2[j++], arr1[k--]);
                 }
             }
-
             sort(arr1, arr1 + n);
             sort(arr2, arr2 + m);
         } 
@@ -453,25 +439,22 @@ class Solution {
 public:
     vector<vector<int>> merge(vector<vector<int>>& interval) {
         vector<vector<int>> result;
-        
-        //base case when there are no intervals
+        // base case when there are no intervals
         if(interval.size()==0){
             return result;
         } 
         sort(interval.begin(),interval.end());
-        //insert the the the first interval in the result
+        // insert the the the first interval in the result
         result.push_back(interval[0]);
         int j=0;
-        
-        for(int i=1;i<interval.size();i++)
+        for(int i = 1; i < interval.size(); i++)
         {
-            //if intevals are overlapping
-            if(result[j][1]>=interval[i][0]){
-                result[j][1]=max(result[j][1],interval[i][1]);
+            // if intevals are overlapping
+            if(result[j][1] >= interval[i][0]){
+                result[j][1] = max(result[j][1],interval[i][1]);
             }
-            //else they are not overlapping
-            else
-            {
+            // else they are not overlapping
+            else{
                 j++;
                 result.push_back(interval[i]);
             }
@@ -485,8 +468,8 @@ public:
 class Solution {
 public:
     void nextPermutation(vector<int>& nums) {
-        int n=nums.size();
-        if(n==1){
+        int n = nums.size();
+        if(n == 1){
             return;
         }
         int idx1;
@@ -512,6 +495,7 @@ public:
         }
     }
 };
+
 // Count Inversions
 
 class Solution{
@@ -668,7 +652,6 @@ void rearrange(int arr[], int n){
 		k = k + 2;
 	}
 }
-
 // Utility function to print an array
 void printArray(int arr[], int n)
 {
@@ -676,7 +659,6 @@ void printArray(int arr[], int n)
 	cout << arr[i] << " ";
 	cout << endl;
 }
-
 int main()
 {
 	int arr[] = {2, 3, -4, -1, 6, -9};
@@ -904,7 +886,6 @@ class Solution{
 };
 
 // Trapping Rainwater
-
 
 class Solution{
     public:
