@@ -1,221 +1,242 @@
 // Reverse string
 
-class Solution {
+class Solution
+{
 public:
-    void reverseString(vector<char>& s) {
-        int i=0,j=s.size()-1;
-        while(i<j){
-            swap(s[i++],s[j--]);
+    void reverseString(vector<char> &s)
+    {
+        int i = 0, j = s.size() - 1;
+        while (i < j)
+        {
+            swap(s[i++], s[j--]);
         }
-    }    
+    }
 };
 
 // Palindrome String
 
-class Solution{
+class Solution
+{
 public:
-	int isPalindrome(string S)
-	{
-        int start=0;
-        int end=S.length()-1;
-        while(start<=end){
-             if(S[start++]!=S[end--]){
+    int isPalindrome(string S)
+    {
+        int start = 0;
+        int end = S.length() - 1;
+        while (start <= end)
+        {
+            if (S[start++] != S[end--])
+            {
                 return 0;
-             }
+            }
         }
         return 1;
-	}
+    }
 };
 
 // Print all the duplicates in the input string
 
-// C++ program to count all duplicates
-// from string using maps
 #include <bits/stdc++.h>
 using namespace std;
 void printDups(string str)
 {
-	map<char, int> count;
-	for (int i = 0; i < str.length(); i++) {
-		count[str[i]]++;
-	}
+    map<char, int> count;
+    for (int i = 0; i < str.length(); i++)
+    {
+        count[str[i]]++;
+    }
 
-	for (auto it : count) {
-		if (it.second > 1)
-			cout << it.first << ", count = " << it.second
-				<< "\n";
-	}
+    for (auto it : count)
+    {
+        if (it.second > 1)
+            cout << it.first << ", count = " << it.second << "\n";
+    }
 }
 /* Driver code*/
 int main()
 {
-	string str = "test string";
-	printDups(str);
-	return 0;
+    string str = "test string";
+    printDups(str);
+    return 0;
 }
 
 // Why Java Strings are Immutable?
 
-https://www.geeksforgeeks.org/java-string-is-immutable-what-exactly-is-the-meaning/
+https : // www.geeksforgeeks.org/java-string-is-immutable-what-exactly-is-the-meaning/
 
 // Check if given strings are rotations of each other or not
 
 #include <bits/stdc++.h>
-using namespace std;
-/* Function checks if passed strings (str1 and str2) are rotations of each other */
+        using namespace std;
+// Function checks if passed strings (str1 and str2) are rotations of each other
 bool areRotations(string str1, string str2)
 {
-	/* Check if sizes of two strings are same */
-	if (str1.length() != str2.length())
-		return false;
-
-	string temp = str1 + str1;
-	return (temp.find(str2) != string::npos);
+    // Check if sizes of two strings are same
+    if (str1.length() != str2.length())
+        return false;
+    string temp = str1 + str1;
+    return (temp.find(str2) != string::npos); // npos means no position ( string::npos = -1 )
 }
 /* Driver code */
 int main()
 {
-	string str1 = "AACD", str2 = "ACDA";
-
-	// Function call
-	if (areRotations(str1, str2))
-		printf("Strings are rotations of each other");
-	else
-		printf("Strings are not rotations of each other");
-	return 0;
+    string str1 = "AACD", str2 = "ACDA";
+    // Function call
+    if (areRotations(str1, str2))
+        printf("Strings are rotations of each other");
+    else
+        printf("Strings are not rotations of each other");
+    return 0;
 }
 
 // Check if a string is a valid shuffle of two distinct strings
 
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 using namespace std;
-int main(){
-    string s1,s2;
-    cin>>s1>>s2;
+int main()
+{
+    string s1, s2;
+    cin >> s1 >> s2;
     string res;
-    cin>>res;
-    int l1=s1.length();
-    int l2=s2.length();
-    int lr=res.length();
-    if((l1+l2)!=lr){
-        cout<<"No";
+    cin >> res;
+    int l1 = s1.length();
+    int l2 = s2.length();
+    int lr = res.length();
+    if ((l1 + l2) != lr)
+    {
+        cout << "No";
     }
-    else{
-        int f=0,i=0,j=0,k=0;
-        while(k<lr){
-            if(i<l1 && s1[i]==res[k]){
+    else
+    {
+        int f = 0, i = 0, j = 0, k = 0; // i for s1, j for s2, k for res
+        while (k < lr)
+        {
+            if (i < l1 && s1[i] == res[k])
+            {
                 i++;
             }
-            else if(j<l2 && s2[j]==res[k]){
+            else if (j < l2 && s2[j] == res[k])
+            {
                 j++;
             }
-            else{
-                f=1;
+            else
+            {
+                f = 1;
                 break;
             }
             k++;
         }
-        if(i<l1 || j<l2){
-            cout<<"No";
+        if (i < l1 || j < l2)
+        {
+            cout << "No";
         }
-        else{
-            cout<<"Yes";
+        else
+        {
+            cout << "Yes";
         }
     }
 }
 
 // Count and Say
 
-class Solution {
+class Solution
+{
 public:
-    string countAndSay(int n) {
-        if(n==1){
+    string countAndSay(int n)
+    {
+        if (n == 1)
+        {
             return "1";
         }
-        if(n==2){
+        if (n == 2)
+        {
             return "11";
         }
-        string s="11";
-        for(int i=3;i<=n;i++){
-            string t="";
-            s=s+'&';
-            int c=1;
-            for(int j=1;j<s.length();j++){
-                if(s[j]!=s[j-1]){
-                    t=t+to_string(c);
-                    t=t+s[j-1];
-                    c=1;
+        string s = "11";
+        for (int i = 3; i <= n; i++)
+        {
+            string t = "";
+            s = s + '&';
+            int c = 1;
+            for (int j = 1; j < s.length(); j++)
+            {
+                if (s[j] != s[j - 1])
+                {
+                    t = t + to_string(c);
+                    t = t + s[j - 1];
+                    c = 1;
                 }
-                else{
+                else
+                {
                     c++;
                 }
             }
-            s=t;
+            s = t;
         }
         return s;
     }
 };
 
-// Longest plaindrome in a string
+// Longest palindrome in a string
 
-string longestPalin (string S) {
-        // code here
-        int start = 0;
-        int end = 1;
-        for(int i=1;i<S.size();i++)
+string longestPalin(string S)
+{
+    int start = 0, end = 1;
+    for (int i = 1; i < S.size(); i++)
+    {
+        int low = i - 1;
+        int high = i;
+        while (low >= 0 && high < S.size() && S[low] == S[high])
         {
-            int low = i-1;
-            int high = i;
-            while(low>=0 && high<S.size()&& S[low]==S[high])
+            if (high - low + 1 > end)
             {
-                if(high-low+1>end)
-                {
-                    start = low;
-                    end = high-low+1;
-                }
-
-                low--;
-                high++;
+                start = low;
+                end = high - low + 1;
             }
-            low = i-1;
-            high = i+1;
-            while(low>=0 && high<S.size()&& S[low]==S[high])
-            {
-                if(high-low+1>end)
-                {
-                    start = low;
-                    end = high-low+1;
-                }
-
-                low--;
-                high++;
-            }
-
+            low--;
+            high++;
         }
-
-        string ans = "";
-        for(int i=start;i<=start+end-1;i++)
+        low = i - 1;
+        high = i + 1;
+        while (low >= 0 && high < S.size() && S[low] == S[high])
         {
-            ans = ans+S[i];
+            if (high - low + 1 > end)
+            {
+                start = low;
+                end = high - low + 1;
+            }
+            low--;
+            high++;
         }
-   return ans;
+    }
+    string ans = "";
+    for (int i = start; i <= start + end - 1; i++)
+    {
+        ans = ans + S[i];
+    }
+    return ans;
 }
 
 // Longest Repeating subsequence
 
-class Solution {
-    public:
-    int LongestRepeatingSubsequence(string str){
+class Solution
+{
+public:
+    int LongestRepeatingSubsequence(string str)
+    {
         int n = str.size();
-        vector <vector <int>> dp(n + 1,vector <int> (n + 1,0));
-        for(int i = 1;i <= n;i++){
-            for(int j = 1;j <=n;j++){
-                if(str[i - 1] == str[j - 1] and i != j){
-                    dp[i][j] = 1 + dp[i-1][j-1];
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                if (str[i - 1] == str[j - 1] and i != j)
+                {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
                 }
-                else{
-                    dp[i][j] = max(dp[i-1][j],dp[i][j-1]);
+                else
+                {
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
                 }
             }
         }
@@ -225,144 +246,162 @@ class Solution {
 
 // Print all subsequences of a string
 
-#include<iostream>
+#include <iostream>
 using namespace std;
-void func(string str,int start,int n,string s){
-    if(start==n){
-        cout<<str<<endl;
+void func(string str, int start, int n, string s)
+{
+    if (start == n)
+    {
+        cout << str << endl;
     }
-    else{
-        func(str,start+1,n,s);
-        str=str+s[start];
-        func(str,start+1,n,s);
+    else
+    {
+        func(str, start + 1, n, s);
+        str = str + s[start];
+        func(str, start + 1, n, s);
     }
 }
-int main(){
+int main()
+{
     string s;
-    cin>>s;
-    func("",0,s.length(),s);
+    cin >> s;
+    func("", 0, s.length(), s);
     return 0;
 }
 
 // Permutations of a given string
 
-(Method-1 => Using next_permutation stl)
-class Solution{
-	public:
-		vector<string>find_permutation(string s)
-		{
-		    sort(s.begin(),s.end());
-            vector<string>ans;
-            do{
-                ans.push_back(s);
-            }
-            while(next_permutation(s.begin(),s.end()));
-            return ans;
-        }
-};
-
-(Method-2)
-class Solution{
-    public:
-    void solve(string s,int n,set<string>&st){
-        if(n==0){
-            st.insert(s);
-            return;
-        }
-        
-        for(int i=n;i>=0;i--){
-            string temp=s;
-            swap(temp[i],temp[n]);
-            solve(temp,n-1,st);
-        }
-    }
-    vector<string> find_permutation(string s){
-        int n=s.size();
-        set<string>st;
-            
-        solve(s,n-1,st);
-        vector<string>ans;
-        for(auto i:st){
-            ans.push_back(i);
-        }
-        sort(ans.begin(),ans.end());
+// Method - 1 = > Using next_permutation stl
+class Solution
+{
+public:
+    vector<string> find_permutation(string s)
+    {
+        sort(s.begin(), s.end());
+        vector<string> ans;
+        do
+        {
+            ans.push_back(s);
+        } while (next_permutation(s.begin(), s.end()));
         return ans;
     }
 };
 
+// Method - 2
+class Solution
+{
+public:
+    void solve(string s, int n, set<string> &st)
+    {
+        if (n == 0)
+        {
+            st.insert(s);
+            return;
+        }
+        for (int i = n; i >= 0; i--)
+        {
+            string temp = s;
+            swap(temp[i], temp[n]);
+            solve(temp, n - 1, st);
+        }
+    }
+    vector<string> find_permutation(string s)
+    {
+        int n = s.size();
+        set<string> st;
+        solve(s, n - 1, st);
+        vector<string> ans;
+        for (auto i : st)
+        {
+            ans.push_back(i);
+        }
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+};
 
 // Split the binary string into substrings with equal number of 0s and 1s
 
-class Solution {
+class Solution
+{
 public:
-    int maxSubStr(string str){
-        int n= str.length();
-        int count=0;
-        int ans=0;
-        for(int i=0;i<n;i++){
-            if(str[i]=='0'){
-                count++;    
-            } 
-            if(str[i]=='1'){
+    int maxSubStr(string str)
+    {
+        int n = str.length();
+        int count = 0;
+        int ans = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (str[i] == '0')
+            {
+                count++;
+            }
+            if (str[i] == '1')
+            {
                 count--;
-            } 
-            if(count==0){
+            }
+            if (count == 0)
+            {
                 ans++;
-            }  
+            }
         }
-        if(count!=0){
-            return -1;    
-        } 
+        if (count != 0)
+        {
+            return -1;
+        }
         return ans;
     }
 };
 
 // Word Wrap
 
-class Solution{
-    public:
-      int solveWordWrap(vector<int>nums, int k){ 
-            int n=nums.size();
-            vector<int> dp(n,1000000000);
-            int ans[n];
-            int cost=0;
-            int curlen=0;
-            dp[n-1]=0;
-            ans[n-1]=n-1;
-            for(int i=n-2;i>=0;i--)
+class Solution
+{
+public:
+    int solveWordWrap(vector<int> nums, int k)
+    {
+        int n = nums.size();
+        vector<int> dp(n, 1000000000);
+        int ans[n];
+        int cost = 0;
+        int curlen = 0;
+        dp[n - 1] = 0;
+        ans[n - 1] = n - 1;
+        for (int i = n - 2; i >= 0; i--)
+        {
+            curlen = -1;
+            for (int j = i; j < n; j++)
             {
-                curlen=-1;
-                for(int j=i;j<n;j++)
-                {
-                    curlen+=nums[j]+1;
-                    if(curlen>k)
+                curlen += nums[j] + 1;
+                if (curlen > k)
                     break;
-                    if(j==n-1)
-                    cost=0;
-                    else
-                    {
-                        cost=pow(k-curlen,2)+dp[j+1];
-                    }
-                    if(cost<dp[i])
-                    {
-                        dp[i]=cost;
-                        ans[i]=j;
-                    }
+                if (j == n - 1)
+                    cost = 0;
+                else
+                {
+                    cost = pow(k - curlen, 2) + dp[j + 1];
+                }
+                if (cost < dp[i])
+                {
+                    dp[i] = cost;
+                    ans[i] = j;
                 }
             }
-            return dp[0];
-        } 
+        }
+        return dp[0];
+    }
 };
 
 // Edit Distance
 
-class Solution{
-    public:
+class Solution
+{
+public:
     int editDistance(string s, string t)
     {
         int m = s.length();
         int n = t.length();
-        vector<vector<int>> dp(m+1, vector<int>(n+1));
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1));
         for (int i = 0; i <= m; i++)
         {
             for (int j = 0; j <= n; j++)
@@ -375,13 +414,13 @@ class Solution{
                 {
                     dp[i][j] = i;
                 }
-                else if (s[i-1] == t[j-1]) 
+                else if (s[i - 1] == t[j - 1])
                 {
-                    dp[i][j] = dp[i-1][j-1];
+                    dp[i][j] = dp[i - 1][j - 1];
                 }
                 else
                 {
-                    dp[i][j] = 1 + min(dp[i-1][j-1], min(dp[i-1][j], dp[i][j-1]));
+                    dp[i][j] = 1 + min(dp[i - 1][j - 1], min(dp[i - 1][j], dp[i][j - 1]));
                 }
             }
         }
@@ -391,31 +430,38 @@ class Solution{
 
 // Next Permutation
 
-class Solution{
+class Solution
+{
 public:
-    vector<int> nextPermutation(int N, vector<int> arr){
+    vector<int> nextPermutation(int N, vector<int> arr)
+    {
         int i;
-        int index=-1;
-        for(int i=N-2;i>=0;i--){ // piche se dekho increasing order pe hai array.
-           if(arr[i]<arr[i+1]){  // pehle wo index dhundho jahape ye order break ho raha (BREAKPOINT).
-               index=i;          // agar nehi mila index to index= -1 hi rahega.
-               break;
-           }
+        int index = -1;
+        for (int i = N - 2; i >= 0; i--)
+        { // piche se dekho increasing order pe hai array.
+            if (arr[i] < arr[i + 1])
+            {              // pehle wo index dhundho jahape ye order break ho raha (BREAKPOINT).
+                index = i; // agar nahi mila index to index= -1 hi rahega.
+                break;
+            }
         }
-        // EDGE CASE 
-        if(index==-1){   
-            reverse(arr.begin(),arr.end()); // nahi mila matlab yeh last permutation hai 
-            return arr;                     // so reverse karke return kar do pehla permutation
-        }  
-        
-        for(int i=N-1;i>index;i--){ // ab piche se check karo konsa wala element just
-            if(arr[i]>arr[index]){  // greater hai breakpoint wala element se. array
-                swap(arr[i],arr[index]); // piche se increasing order main hai. so
-                break;  // loop chalake easily find out kar liya konsa just greater hai.
-            }  // ab dono element ko swap kardo.
+        // EDGE CASE
+        if (index == -1)
+        {
+            reverse(arr.begin(), arr.end()); // nahi mila matlab yeh last permutation hai
+            return arr;                      // so reverse karke return kar do pehla permutation
         }
-        reverse(arr.begin()+(index+1),arr.end()); // ab jaha pe array ka breakpoint
-        return arr;// mila useke baadke index se baki ka array sort ya reverse kar do.
+
+        for (int i = N - 1; i > index; i--)
+        { // ab piche se check karo konsa wala element just
+            if (arr[i] > arr[index])
+            {                             // greater hai breakpoint wala element se. array
+                swap(arr[i], arr[index]); // piche se increasing order main hai. so
+                break;                    // loop chalake easily find out kar liya konsa just greater hai.
+            }                             // ab dono element ko swap kardo.
+        }
+        reverse(arr.begin() + (index + 1), arr.end()); // ab jaha pe array ka breakpoint
+        return arr;                                    // mila useke baadke index se baki ka array sort ya reverse kar do.
     }
 };
 
@@ -423,25 +469,32 @@ public:
 
 class Solution
 {
-    public:
+public:
     bool ispar(string x)
     {
         stack<char> st;
-        for(int i=0; i < x.length(); i++){
+        for (int i = 0; i < x.length(); i++)
+        {
             char a = x[i];
-            if(a == '[' || a == '(' || a == '{'){
+            if (a == '[' || a == '(' || a == '{')
+            {
                 st.push(a);
             }
-            else{
-                if(st.empty()){
+            else
+            {
+                if (st.empty())
+                {
                     return false;
                 }
-                else{
+                else
+                {
                     char t = st.top(); // for the top element of the stack
-                    if(t == '(' && a == ')' || t == '[' && a == ']' || t == '{' && a == '}'){
+                    if (t == '(' && a == ')' || t == '[' && a == ']' || t == '{' && a == '}')
+                    {
                         st.pop();
                     }
-                    else{
+                    else
+                    {
                         return false;
                     }
                 }
@@ -453,27 +506,34 @@ class Solution
 
 // Word Break
 
-class Solution{
+class Solution
+{
 public:
-// A : given string to search
-// B : vector of available strings
-    int func(int id,string &A,vector<string> &B){
+    // A : given string to search
+    // B : vector of available strings
+    int func(int id, string &A, vector<string> &B)
+    {
         string ans = "";
-        if(id >= A.size()){
+        if (id >= A.size())
+        {
             return 1;
         }
-        for(int i = id;i<A.size();i++){
+        for (int i = id; i < A.size(); i++)
+        {
             ans += A[i];
-            if(find(B.begin(),B.end(),ans) != B.end()){
-                if(1 and func(i+1,A,B)){
+            if (find(B.begin(), B.end(), ans) != B.end())
+            {
+                if (1 and func(i + 1, A, B))
+                {
                     return true;
                 }
             }
         }
         return 0;
     }
-    int wordBreak(string A, vector<string> &B) {
-       return func(0,A,B);
+    int wordBreak(string A, vector<string> &B)
+    {
+        return func(0, A, B);
     }
 };
 
@@ -481,78 +541,87 @@ public:
 
 #include <bits/stdc++.h>
 using namespace std;
-
 // d is the number of characters in the input alphabet
 #define d 256
-
-// pat -> pattern , txt -> text , q -> A prime number 
-
-void search(char pat[], char txt[], int q){
-	int M = strlen(pat);
-	int N = strlen(txt);
-	int i, j;
-	int p = 0; // hash value for pattern
-	int t = 0; // hash value for txt
-	int h = 1; // The value of h would be "pow(d, M-1)%q"
-	for (i = 0; i < M - 1; i++)
-		h = (h * d) % q;
-	// Calculate the hash value of pattern and first window of text
-	for (i = 0; i < M; i++) {
-		p = (d * p + pat[i]) % q;
-		t = (d * t + txt[i]) % q;
-	}
-	// Slide the pattern over text one by one
-	for (i = 0; i <= N - M; i++) {
-		// Check the hash values of current window of text and pattern. If the hash values match then only check for characters one by one
-		if (p == t) {
-			/* Check for characters one by one */
-			for (j = 0; j < M; j++) {
-				if (txt[i + j] != pat[j]) {
-					break;
-				}
-			}
-			// if p == t and pat[0...M-1] = txt[i, i+1,...i+M-1]
-			if (j == M)
-				cout << "Pattern found at index " << i
-					<< endl;
-		}
-		// Calculate hash value for next window of text: Remove leading digit, add trailing digit
-		if (i < N - M) {
-			t = (d * (t - txt[i] * h) + txt[i + M]) % q;
-			// We might get negative value of t, converting it to positive
-			if (t < 0)
-				t = (t + q);
-		}
-	}
+// pat -> pattern , txt -> text , q -> A prime number
+void search(char pat[], char txt[], int q)
+{
+    int M = strlen(pat);
+    int N = strlen(txt);
+    int i, j;
+    int p = 0; // hash value for pattern
+    int t = 0; // hash value for txt
+    int h = 1; // The value of h would be "pow(d, M-1)%q"
+    for (i = 0; i < M - 1; i++)
+        h = (h * d) % q;
+    // Calculate the hash value of pattern and first window of text
+    for (i = 0; i < M; i++)
+    {
+        p = (d * p + pat[i]) % q;
+        t = (d * t + txt[i]) % q;
+    }
+    // Slide the pattern over text one by one
+    for (i = 0; i <= N - M; i++)
+    {
+        // Check the hash values of current window of text and pattern. If the hash values match then only check for characters one by one
+        if (p == t)
+        {
+            /* Check for characters one by one */
+            for (j = 0; j < M; j++)
+            {
+                if (txt[i + j] != pat[j])
+                {
+                    break;
+                }
+            }
+            // if p == t and pat[0...M-1] = txt[i, i+1,...i+M-1]
+            if (j == M)
+                cout << "Pattern found at index " << i
+                     << endl;
+        }
+        // Calculate hash value for next window of text: Remove leading digit, add trailing digit
+        if (i < N - M)
+        {
+            t = (d * (t - txt[i] * h) + txt[i + M]) % q;
+            // We might get negative value of t, converting it to positive
+            if (t < 0)
+                t = (t + q);
+        }
+    }
 }
 int main()
 {
-	char txt[] = "GEEKS FOR GEEKS";
-	char pat[] = "GEEK";
-	// we mod to avoid overflowing of value but we should take as big q as possible to avoid the collison
-	int q = INT_MAX;
-	// Function Call
-	search(pat, txt, q);
-	return 0;
+    char txt[] = "GEEKS FOR GEEKS";
+    char pat[] = "GEEK";
+    // we mod to avoid overflowing of value but we should take as big q as possible to avoid the collison
+    int q = INT_MAX;
+    // Function Call
+    search(pat, txt, q);
+    return 0;
 }
 
 // Longest Prefix Suffix(KMP Algorithm)
 
-class Solution{
-  public:		
-	int lps(string s) {
-        int i=0,j=1,k=1,count=0,n=s.size(); // i : string index , j : pattern index
-        while(i < n-1 and j < n){
-            if(s[i]==s[j]){
+class Solution
+{
+public:
+    int lps(string s)
+    {
+        int i = 0, j = 1, k = 1, count = 0, n = s.size(); // i : string index , j : pattern index
+        while (i < n - 1 and j < n)
+        {
+            if (s[i] == s[j])
+            {
                 count++;
                 i++;
                 j++;
             }
-            else if(s[i]!=s[j]){
-                i=0;
+            else if (s[i] != s[j])
+            {
+                i = 0;
                 k++;
-                count=0;
-                j=k;
+                count = 0;
+                j = k;
             }
         }
         return count;
@@ -568,12 +637,15 @@ string printSequence(string arr[], string input)
     string output = "";
     // length of input string
     int n = input.length();
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         // Checking for space
         if (input[i] == ' ')
+        {
             output = output + "0";
-
-        else {
+        }
+        else
+        {
             // Calculating index for each character
             int position = input[i] - 'A';
             output = output + arr[position];
@@ -584,10 +656,10 @@ string printSequence(string arr[], string input)
 int main()
 {
     // storing the sequence in array
-    string str[]= { "2",   "22",  "222", "3",   "33",   "333", "4",
-                    "44",  "444", "5",   "55",  "555",  "6",   "66",
-                    "666", "7",   "77",  "777", "7777", "8",   "88",
-                    "888", "9",   "99",  "999", "9999" };
+    string str[] = {"2", "22", "222", "3", "33", "333", "4",
+                    "44", "444", "5", "55", "555", "6", "66",
+                    "666", "7", "77", "777", "7777", "8", "88",
+                    "888", "9", "99", "999", "9999"};
     string input = "GEEKSFORGEEKS";
     cout << printSequence(str, input);
     return 0;
@@ -595,51 +667,62 @@ int main()
 
 // Count the Reversals
 
-int countRev (string s)
+int countRev(string s)
 {
-    if(s.size()%2!=0){
+    if (s.size() % 2 != 0)
+    {
         return -1;
     }
     stack<char> st;
-    int c2=0;
-    int c1=0;
-    for(int i=0;i<s.size();i++){
-        if(s[i]=='{'){
+    int c2 = 0;
+    int c1 = 0;
+    for (int i = 0; i < s.size(); i++)
+    {
+        if (s[i] == '{')
+        {
             st.push(s[i]);
             c2++;
         }
-        else if(s[i]=='}' && !st.empty() && st.top()=='{'){
+        else if (s[i] == '}' && !st.empty() && st.top() == '{')
+        {
             st.pop();
             c2--;
         }
-        else{
+        else
+        {
             c1++;
         }
     }
-    int ans1 = (c1+1)/2;
-    int ans2 = (c2+1)/2;
-    return (ans1+ans2);
+    int ans1 = (c1 + 1) / 2;
+    int ans2 = (c2 + 1) / 2;
+    return (ans1 + ans2);
 }
 
 // Count Palindromic Subsequence
 
-class Solution{
-    public:
-    long long int countPS(string str){
+class Solution
+{
+public:
+    long long int countPS(string str)
+    {
         long long int mod = 1e9 + 7;
         int n = str.size();
         vector<vector<long long int>> dp(n, vector<long long int>(n));
-        for (int k = 0; k < n; k++){
-            for (int i = 0, j = k + i; i < n and j < n; i++, j++){
+        for (int k = 0; k < n; k++)
+        {
+            for (int i = 0, j = k + i; i < n and j < n; i++, j++)
+            {
                 if (i == j)
                     dp[i][j] = 1;
-                else if (j == i + 1){
+                else if (j == i + 1)
+                {
                     if (str[i] == str[j])
                         dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + 1) % mod;
                     else
                         dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + mod) % mod;
                 }
-                else{
+                else
+                {
                     if (str[i] == str[j])
                         dp[i][j] = ((dp[i + 1][j]) % mod + (dp[i][j - 1]) % mod + 1) % mod;
                     else
@@ -658,203 +741,222 @@ using namespace std;
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*a))
 
-int internalSearch(string needle, int row, int col, string hay[], int row_max, int col_max, int xx){
-	int found = 0;
-	if (row >= 0 && row <= row_max && col >= 0 && col <= col_max && needle[xx] == hay[row][col]){
-		char match = needle[xx];
-		xx += 1;
-		hay[row][col] = 0;
-		if (needle[xx] == 0){
-			found = 1;
-		}
-		else{
-			// through Backtrack searching in every directions
-			found += internalSearch(needle, row, col + 1, hay, row_max, col_max,xx);
-			found += internalSearch(needle, row, col - 1, hay, row_max, col_max,xx);
-			found += internalSearch(needle, row + 1, col, hay, row_max, col_max,xx);
-			found += internalSearch(needle, row - 1, col,hay, row_max, col_max,xx);
-		}
-		hay[row][col] = match;
-	}
-	return found;
+int internalSearch(string needle, int row, int col, string hay[], int row_max, int col_max, int xx)
+{
+    int found = 0;
+    if (row >= 0 && row <= row_max && col >= 0 && col <= col_max && needle[xx] == hay[row][col])
+    {
+        char match = needle[xx];
+        xx += 1;
+        hay[row][col] = 0;
+        if (needle[xx] == 0)
+        {
+            found = 1;
+        }
+        else
+        {
+            // through Backtrack searching in every directions
+            found += internalSearch(needle, row, col + 1, hay, row_max, col_max, xx);
+            found += internalSearch(needle, row, col - 1, hay, row_max, col_max, xx);
+            found += internalSearch(needle, row + 1, col, hay, row_max, col_max, xx);
+            found += internalSearch(needle, row - 1, col, hay, row_max, col_max, xx);
+        }
+        hay[row][col] = match;
+    }
+    return found;
 }
 
 // Function to search the string in 2d array
 int searchString(string needle, int row, int col, string str[], int row_count, int col_count)
 {
-	int found = 0;
-	int r, c;
-	for (r = 0; r < row_count; ++r)
-	{
-		for (c = 0; c < col_count; ++c)
-		{
-			found += internalSearch(needle, r, c, str, row_count - 1, col_count - 1, 0);
-		}
-	}
-	return found;
+    int found = 0;
+    int r, c;
+    for (r = 0; r < row_count; ++r)
+    {
+        for (c = 0; c < col_count; ++c)
+        {
+            found += internalSearch(needle, r, c, str, row_count - 1, col_count - 1, 0);
+        }
+    }
+    return found;
 }
-
 // Driver code
 int main()
 {
-	string needle = "MAGIC";
-	string input[] = { "BBABBM","CBMBBA","IBABBG","GOZBBI","ABBBBC","MCIGAM" };
-	string str[ARRAY_SIZE(input)];
-	int i;
-	for (i = 0; i < ARRAY_SIZE(input); ++i){
-		str[i] = input[i];
-	}
-	cout << "count: " << searchString(needle, 0, 0, str, ARRAY_SIZE(str), str[0].size()) << endl;
-	return 0;
+    string needle = "MAGIC";
+    string input[] = {"BBABBM", "CBMBBA", "IBABBG", "GOZBBI", "ABBBBC", "MCIGAM"};
+    string str[ARRAY_SIZE(input)];
+    int i;
+    for (i = 0; i < ARRAY_SIZE(input); ++i)
+    {
+        str[i] = input[i];
+    }
+    cout << "count: " << searchString(needle, 0, 0, str, ARRAY_SIZE(str), str[0].size()) << endl;
+    return 0;
 }
 
 // Find the string in the grid
 
-class Solution {
-    public:
-	 bool dfs(int i, int j,int d1, int d2, vector<vector<char>> &grid, string &word, int indx) {
-        if(indx == word.size()) {
+class Solution
+{
+public:
+    bool dfs(int i, int j, int d1, int d2, vector<vector<char>> &grid, string &word, int indx)
+    {
+        if (indx == word.size())
+        {
             return true;
         }
-        if(i<0 or j<0 or i>= grid.size() or j>= grid[0].size() or grid[i][j] != word[indx]) {
+        if (i < 0 or j < 0 or i >= grid.size() or j >= grid[0].size() or grid[i][j] != word[indx])
+        {
             return false;
         }
-        return dfs(i+d1, j+d2, d1, d2, grid, word, indx + 1);
+        return dfs(i + d1, j + d2, d1, d2, grid, word, indx + 1);
     }
-	vector<vector<int>>searchWord(vector<vector<char>>grid, string word){
-	    // Code here
-	    vector<vector<int>> ans;
-        int x[8] = {0,-1,-1,-1,0,1,1,1};
-        int y[8] = {-1,-1,0,1,1,1,0,-1};
-        
-	    for(int i=0;i<grid.size();i++) {
-	        for(int j=0;j<grid[0].size();j++) {
-	            if(grid[i][j] == word[0]){
-                    for(int k = 0;k < 8; k++) {
-                        if(dfs(i, j, x[k], y[k], grid, word, 0)){
+    vector<vector<int>> searchWord(vector<vector<char>> grid, string word)
+    {
+        vector<vector<int>> ans;
+        int x[8] = {0, -1, -1, -1, 0, 1, 1, 1};
+        int y[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+
+        for (int i = 0; i < grid.size(); i++)
+        {
+            for (int j = 0; j < grid[0].size(); j++)
+            {
+                if (grid[i][j] == word[0])
+                {
+                    for (int k = 0; k < 8; k++)
+                    {
+                        if (dfs(i, j, x[k], y[k], grid, word, 0))
+                        {
                             ans.push_back({i, j});
                             break;
                         }
                     }
-	            }
-	        }
-	    }
-	    return ans;
-	}
+                }
+            }
+        }
+        return ans;
+    }
 };
 
 // Boyer Moore Algorithm for Pattern Searching
 
 #include <bits/stdc++.h>
 using namespace std;
-# define NO_OF_CHARS 256
+#define NO_OF_CHARS 256
 
 // The preprocessing function for Boyer Moore's bad character heuristic
-void badCharHeuristic( string str, int size, int badchar[NO_OF_CHARS])
+void badCharHeuristic(string str, int size, int badchar[NO_OF_CHARS])
 {
-	int i;
-	// Initialize all occurrences as -1
-	for (i = 0; i < NO_OF_CHARS; i++){
-		badchar[i] = -1;
-	}
-	// Fill the actual value of last occurrence of a character
-	for (i = 0; i < size; i++){
-		badchar[(int) str[i]] = i;
-	}
+    int i;
+    // Initialize all occurrences as -1
+    for (i = 0; i < NO_OF_CHARS; i++)
+    {
+        badchar[i] = -1;
+    }
+    // Fill the actual value of last occurrence of a character
+    for (i = 0; i < size; i++)
+    {
+        badchar[(int)str[i]] = i;
+    }
 }
 
-void search( string txt, string pat)
+void search(string txt, string pat)
 {
-	int m = pat.size();
-	int n = txt.size();
-	int badchar[NO_OF_CHARS];
-	// Fill the bad character array by calling the preprocessing function badCharHeuristic() for given pattern 
-	badCharHeuristic(pat, m, badchar);
-	int s = 0; // s is shift of the pattern with respect to text
-	while(s <= (n - m)) {
-		int j = m - 1;
-		// Keep reducing index j of pattern while characters of pattern and text are matching at this shift s 
-		while(j >= 0 && pat[j] == txt[s + j]){
-			j--;
-		}
-		// If the pattern is present at current shift, then index j will become -1 after the above loop 
-		if (j < 0){
-			cout << "pattern occurs at shift = " << s << endl;
-
-			/* Shift the pattern so that the next character in text aligns with the last occurrence of it in pattern.The condition s+m < n is necessary for
-			the case when pattern occurs at the end of text */
-			s += (s + m < n)? m-badchar[txt[s + m]] : 1;
-		}
-		else{
-			/* Shift the pattern so that the bad character in text aligns with the last occurrence of it in pattern. The max function is used to
-			make sure that we get a positive shift. We may get a negative shift if the last occurrence of bad character in pattern
-			is on the right side of the current character. */
-			s += max(1, j - badchar[txt[s + j]]);
-		}
-	}
+    int m = pat.size();
+    int n = txt.size();
+    int badchar[NO_OF_CHARS];
+    // Fill the bad character array by calling the preprocessing function badCharHeuristic() for given pattern
+    badCharHeuristic(pat, m, badchar);
+    int s = 0; // s is shift of the pattern with respect to text
+    while (s <= (n - m))
+    {
+        int j = m - 1;
+        // Keep reducing index j of pattern while characters of pattern and text are matching at this shift s
+        while (j >= 0 && pat[j] == txt[s + j])
+        {
+            j--;
+        }
+        // If the pattern is present at current shift, then index j will become -1 after the above loop
+        if (j < 0)
+        {
+            cout << "pattern occurs at shift = " << s << endl;
+            // Shift the pattern so that the next character in text aligns with the last occurrence of it in pattern.
+            // The condition s+m < n is necessary for the case when pattern occurs at the end of text
+            s += (s + m < n) ? m - badchar[txt[s + m]] : 1;
+        }
+        else
+        {
+            // Shift the pattern so that the bad character in text aligns with the last occurrence of it in pattern.
+            // The max function is used to make sure that we get a positive shift. We may get a negative shift if the
+            // last occurrence of bad character in pattern is on the right side of the current character.
+            s += max(1, j - badchar[txt[s + j]]);
+        }
+    }
 }
-/* Driver code */
 int main()
 {
-	string txt= "ABAAABCD";
-	string pat = "ABC";
-	search(txt, pat);
-	return 0;
+    string txt = "ABAAABCD";
+    string pat = "ABC";
+    search(txt, pat);
+    return 0;
 }
 
 // Roman number to Integer
 
-class Solution {
-  public:
-    int solve(char c){
+class Solution
+{
+public:
+    int solve(char c)
+    {
         int result;
-        switch(c){
-            
-            case 'I':
+        switch (c)
+        {
+        case 'I':
             result = 1;
             break;
-            
-            case 'V':
+        case 'V':
             result = 5;
             break;
-            
-            case 'X':
+        case 'X':
             result = 10;
             break;
-            
-            case 'L':
+        case 'L':
             result = 50;
             break;
-            
-            case 'C':
+        case 'C':
             result = 100;
             break;
-            
-            case 'D':
+        case 'D':
             result = 500;
             break;
-            
-            case 'M':
+        case 'M':
             result = 1000;
             break;
         }
         return result;
     }
-    int romanToDecimal(string &str) {
-        int ans=0;
-        for(int i=0;i<str.length();i++){
-            int c=solve(str[i]);
-            if(i+1<str.length()){
-                int curr=solve(str[i+1]);
-                if(c>=curr){
-                    ans+=c;
+    int romanToDecimal(string &str)
+    {
+        int ans = 0;
+        for (int i = 0; i < str.length(); i++)
+        {
+            int c = solve(str[i]);
+            if (i + 1 < str.length())
+            {
+                int curr = solve(str[i + 1]);
+                if (c >= curr)
+                {
+                    ans += c;
                 }
-                else{
-                    ans-=c;
+                else
+                {
+                    ans -= c;
                 }
             }
-            else{
-                ans+=c;
+            else
+            {
+                ans += c;
             }
         }
         return ans;
@@ -863,123 +965,152 @@ class Solution {
 
 // Longest Common Prefix
 
-class Solution {
+class Solution
+{
 public:
-    string longestCommonPrefix(vector<string>& strs) {
-        sort(strs.begin(),strs.end());
-        int a=strs.size();
-        string n=strs[0],m=strs[a-1],ans="";
-        for(int i=0;i<n.size();i++){
-            if(n[i]==m[i]){
-                ans+=n[i];
+    string longestCommonPrefix(vector<string> &strs)
+    {
+        sort(strs.begin(), strs.end());
+        int a = strs.size();
+        string n = strs[0], m = strs[a - 1], ans = "";
+        for (int i = 0; i < n.size(); i++)
+        {
+            if (n[i] == m[i])
+            {
+                ans += n[i];
             }
-            else{
+            else
+            {
                 break;
             }
         }
-        return ans;   
+        return ans;
     }
 };
 
 // Minimum number of flips
 
-int minFlips (string s){ 
-    int c=0;
-    for(int i=0;i<s.size();i++){
-        if(i%2==0 && s[i]!='1'){
+int minFlips(string s)
+{
+    int c = 0;
+    for (int i = 0; i < s.size(); i++)
+    {
+        if (i % 2 == 0 && s[i] != '1')
+        {
             c++;
         }
-        else if( i%2==1 && s[i]!='0'){ 
+        else if (i % 2 == 1 && s[i] != '0')
+        {
             c++;
         }
     }
-    int c1=0;
-    for(int i=0;i<s.size();i++){
-        if(i%2==0 && s[i]!='0'){ 
+    int c1 = 0;
+    for (int i = 0; i < s.size(); i++)
+    {
+        if (i % 2 == 0 && s[i] != '0')
+        {
             c1++;
         }
-        else if( i%2==1 && s[i]!='1'){ 
+        else if (i % 2 == 1 && s[i] != '1')
+        {
             c1++;
         }
     }
-    return min(c1,c);
+    return min(c1, c);
 }
 
 // Second most repeated string in a sequence
 
-class Solution{
-    public:
-    string secFrequent (string arr[], int n){
-       sort(arr,arr+n);
-       int mxcnt=0,mxcnt1=0,cnt=1;
-       sort(arr,arr+n);
-       string curstr1="",curstr2="";
-       string curr = arr[0];
-       for(int i=1;i<n;i++){
-           if(curr==arr[i]){
-               cnt++;
-               if(cnt>mxcnt){
-                   mxcnt = cnt;
-                   curstr1 = curr;
-               }
-           }else{
-               cnt=1;
-               curr = arr[i];
-           }
-       }
-       
-       if(mxcnt==n){        // if all the string are of same type:{aaa,aaa}
-           return "";
-       }
-     
-       string curr1 = curstr1;
-       cnt=1;
-       curr = arr[n-1];
-       bool v = false;  // if second most is only one i.e all other are same type
-       for(int i=n-2;i>=0;i--){
-           if(curr == arr[i]&&curr!=curr1){
-               cnt++;
-               v = true;
-               if(cnt<mxcnt&&cnt>=mxcnt1){
-                //   cout<<curr<<cnt;
-                   curstr2 = curr;
-                   mxcnt1 = cnt;
-               }
+class Solution
+{
+public:
+    string secFrequent(string arr[], int n)
+    {
+        sort(arr, arr + n);
+        int mxcnt = 0, mxcnt1 = 0, cnt = 1;
+        sort(arr, arr + n);
+        string curstr1 = "", curstr2 = "";
+        string curr = arr[0];
+        for (int i = 1; i < n; i++)
+        {
+            if (curr == arr[i])
+            {
+                cnt++;
+                if (cnt > mxcnt)
+                {
+                    mxcnt = cnt;
+                    curstr1 = curr;
+                }
             }
-            else{
-               cnt=1;
-               curr = arr[i];
+            else
+            {
+                cnt = 1;
+                curr = arr[i];
             }
-       }
-       if(!v){
-          curstr2 = curr;
         }
-      return curstr2;
+        if (mxcnt == n)
+        { // if all the string are of same type:{aaa,aaa}
+            return "";
+        }
+        string curr1 = curstr1;
+        cnt = 1;
+        curr = arr[n - 1];
+        bool v = false; // if second most is only one i.e all other are same type
+        for (int i = n - 2; i >= 0; i--)
+        {
+            if (curr == arr[i] && curr != curr1)
+            {
+                cnt++;
+                v = true;
+                if (cnt < mxcnt && cnt >= mxcnt1)
+                {
+                    //   cout<<curr<<cnt;
+                    curstr2 = curr;
+                    mxcnt1 = cnt;
+                }
+            }
+            else
+            {
+                cnt = 1;
+                curr = arr[i];
+            }
+        }
+        if (!v)
+        {
+            curstr2 = curr;
+        }
+        return curstr2;
     }
-};  
+};
 
 // Minimum number of swaps for brackets balancing
 
-class Solution{   
+class Solution
+{
 public:
-    int minimumNumberOfSwaps(string S){
-        int count =0;
-        int n=S.size();
-        int open =0;
-        int close =0;
-        int fault=0;
-        for(int i=0;i<n;i++){
-           if(S[i]==']'){
-               close++;
-               fault=close-open;
-           }
-           else{
-               open++;
-               if(fault>0){
-                   count+=fault;
-                   fault--;
-               }
-           }
+    int minimumNumberOfSwaps(string S)
+    {
+        int count = 0;
+        int n = S.size();
+        int open = 0;
+        int close = 0;
+        int fault = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (S[i] == ']')
+            {
+                close++;
+                fault = close - open;
+            }
+            else
+            {
+                open++;
+                if (fault > 0)
+                {
+                    count += fault;
+                    fault--;
+                }
+            }
         }
         return count;
     }
@@ -987,25 +1118,32 @@ public:
 
 // Longest common subsequence
 
-class Solution{
-    public:
-    int solve(int x,int y, string s1,string s2,vector<vector<int>> &dp){
-        if(x==0 || y==0){
+class Solution
+{
+public:
+    int solve(int x, int y, string s1, string s2, vector<vector<int>> &dp)
+    {
+        if (x == 0 || y == 0)
+        {
             return 0;
         }
-        if(dp[x][y]!=-1){
+        if (dp[x][y] != -1)
+        {
             return dp[x][y];
         }
-        if(s1[x-1]==s2[y-1]){
-            return dp[x][y]=1+solve(x-1,y-1,s1,s2,dp);
+        if (s1[x - 1] == s2[y - 1])
+        {
+            return dp[x][y] = 1 + solve(x - 1, y - 1, s1, s2, dp);
         }
-        else{
-            return dp[x][y]=max(solve(x-1,y,s1,s2,dp),solve(x,y-1,s1,s2,dp));
+        else
+        {
+            return dp[x][y] = max(solve(x - 1, y, s1, s2, dp), solve(x, y - 1, s1, s2, dp));
         }
     }
-    int lcs(int x, int y, string s1, string s2){
-        vector<vector<int>> dp(x+1,vector<int>(y+1, -1));
-        return solve(x,y,s1,s2,dp);
+    int lcs(int x, int y, string s1, string s2)
+    {
+        vector<vector<int>> dp(x + 1, vector<int>(y + 1, -1));
+        return solve(x, y, s1, s2, dp);
     }
 };
 
@@ -1014,58 +1152,64 @@ class Solution{
 #include <iostream>
 #include <vector>
 using namespace std;
-void solve(string s, int i, int j, int level, string temp, vector<string>& res){
-	if (i == (j + 1) && level == 5) {
-		res.push_back(temp.substr(1));
-	}
-	// Digits of a number ranging 0-255 can lie only between 0-3
-	for (int k = i; k < i + 3 && k <= j; k++) {
-		string ad = s.substr(i, k - i + 1);
-		// Return if string starting with '0' or it is greater than 255.
-		if ((s[i] == '0'&&ad.size()>1) || stol(ad) > 255){
-			return;
-		}
-		// Recursively call for another level.
-		solve(s, k + 1, j, level + 1, temp + '.' + ad, res);
-	}
+void solve(string s, int i, int j, int level, string temp, vector<string> &res)
+{
+    if (i == (j + 1) && level == 5)
+    {
+        res.push_back(temp.substr(1));
+    }
+    // Digits of a number ranging 0-255 can lie only between 0-3
+    for (int k = i; k < i + 3 && k <= j; k++)
+    {
+        string ad = s.substr(i, k - i + 1);
+        // Return if string starting with '0' or it is greater than 255.
+        if ((s[i] == '0' && ad.size() > 1) || stol(ad) > 255)
+        {
+            return;
+        }
+        // Recursively call for another level.
+        solve(s, k + 1, j, level + 1, temp + '.' + ad, res);
+    }
 }
 int main()
 {
-	string s = "25525511135";
-	int n = s.length();
-	vector<string> ans;
-	solve(s, 0, n - 1, 1, "", ans);
-	for (string s : ans){
-		cout << s << endl;
-	}
-	return 0;
+    string s = "25525511135";
+    int n = s.length();
+    vector<string> ans;
+    solve(s, 0, n - 1, 1, "", ans);
+    for (string s : ans)
+    {
+        cout << s << endl;
+    }
+    return 0;
 }
 
 // Smallest distinct window
 
-class Solution{
-    public:
+class Solution
+{
+public:
     int findSubString(string str)
     {
-        set<char>s;
-        for(int i=0;i<str.size();i++)
-        s.insert(str[i]);
-        unordered_map<char,int>m;
-        int i=0;
-        int j=0;
-        int ans =str.size();
-        int n=s.size();
-        while(i<str.size())
+        set<char> s;
+        for (int i = 0; i < str.size(); i++)
+            s.insert(str[i]);
+        unordered_map<char, int> m;
+        int i = 0;
+        int j = 0;
+        int ans = str.size();
+        int n = s.size();
+        while (i < str.size())
         {
             m[str[i]]++;
-            if(m.size()==n)
+            if (m.size() == n)
             {
-               while(m[str[j]]>1)
-               {
-                   m[str[j]]--;
-                   j++;
-               }
-               ans=min(ans,i-j+1);
+                while (m[str[j]] > 1)
+                {
+                    m[str[j]]--;
+                    j++;
+                }
+                ans = min(ans, i - j + 1);
             }
             i++;
         }
@@ -1077,44 +1221,55 @@ class Solution{
 
 class Solution
 {
-    public:
+public:
     string rearrangeString(string str)
     {
-        int n=str.size();
-        int i=0,j=i+1,flag=0;
-        while(i<n and j<n){
-            if((str[i]!=str[j]) and flag==0){
-                i++,j++;
+        int n = str.size();
+        int i = 0, j = i + 1, flag = 0;
+        while (i < n and j < n)
+        {
+            if ((str[i] != str[j]) and flag == 0)
+            {
+                i++, j++;
             }
-            else if(str[i]==str[j]){
-                flag=1;
+            else if (str[i] == str[j])
+            {
+                flag = 1;
                 j++;
             }
-            else if((str[i]!=str[j]) and flag==1){
-                swap(str[i+1],str[j]);
-                i++,j=i+1;
-                flag=0;
+            else if ((str[i] != str[j]) and flag == 1)
+            {
+                swap(str[i + 1], str[j]);
+                i++, j = i + 1;
+                flag = 0;
             }
         }
-        if(str[n-2]==str[n-1]){
-            i=n-1,j=n-2,flag=0;
-            while(i>=0 and j>=0){
-                if((str[i]!=str[j]) and flag==0){
-                    i--,j--;
+        if (str[n - 2] == str[n - 1])
+        {
+            i = n - 1, j = n - 2, flag = 0;
+            while (i >= 0 and j >= 0)
+            {
+                if ((str[i] != str[j]) and flag == 0)
+                {
+                    i--, j--;
                 }
-                else if(str[i]==str[j]){
-                    flag=1;
+                else if (str[i] == str[j])
+                {
+                    flag = 1;
                     j--;
                 }
-                else if((str[i]!=str[j]) and flag==1){
-                    swap(str[i-1],str[j]);
-                    i--,j=i-1;
-                    flag=0;
+                else if ((str[i] != str[j]) and flag == 1)
+                {
+                    swap(str[i - 1], str[j]);
+                    i--, j = i - 1;
+                    flag = 0;
                 }
             }
         }
-        for(int i=0;i<n-1;i++){
-            if(str[i]==str[i+1]){
+        for (int i = 0; i < n - 1; i++)
+        {
+            if (str[i] == str[i + 1])
+            {
                 return "-1";
             }
         }
@@ -1124,44 +1279,54 @@ class Solution
 
 // Minimum characters to be added at front to make string palindrome
 
-class Solution {
-    public:
-    int lps(string s) {
-        int n=s.length();
-        vector<int>dp(n,0);
-        for(int i=1;i<n;i++){
-            int j=dp[i-1];
-            while(j>0 && s[i]!=s[j]){
-                j=dp[j-1];
+class Solution
+{
+public:
+    int lps(string s)
+    {
+        int n = s.length();
+        vector<int> dp(n, 0);
+        for (int i = 1; i < n; i++)
+        {
+            int j = dp[i - 1];
+            while (j > 0 && s[i] != s[j])
+            {
+                j = dp[j - 1];
             }
-            if(s[i]==s[j]){
-                 j++;
+            if (s[i] == s[j])
+            {
+                j++;
             }
-            dp[i]=j;
+            dp[i] = j;
         }
-        return dp[n-1];
+        return dp[n - 1];
     }
-    int minChar(string s){
-        string rev=s;
-        reverse(rev.begin(),rev.end());
-        string str=s+rev;
-        return s.length()-lps(str);
+    int minChar(string s)
+    {
+        string rev = s;
+        reverse(rev.begin(), rev.end());
+        string str = s + rev;
+        return s.length() - lps(str);
     }
 };
 
 // Print Anagrams Together
 
-class Solution{
-  public:
-    vector<vector<string> > Anagrams(vector<string>& strs) {
-        vector<vector<string>>v;
-        unordered_map<string,vector<string>>m;
-        for(auto x:strs){
-            string temp=x;
-            sort(x.begin(),x.end());
+class Solution
+{
+public:
+    vector<vector<string>> Anagrams(vector<string> &strs)
+    {
+        vector<vector<string>> v;
+        unordered_map<string, vector<string>> m;
+        for (auto x : strs)
+        {
+            string temp = x;
+            sort(x.begin(), x.end());
             m[x].push_back(temp);
         }
-        for(auto x:m){
+        for (auto x : m)
+        {
             v.push_back(x.second);
         }
         return v;
@@ -1172,80 +1337,72 @@ class Solution{
 
 class Solution
 {
-    public:
-     string smallestWindow (string s, string p)
+public:
+    string smallestWindow(string s, string p)
     {
-        //sliding window approach
+        // sliding window approach
         int n = s.size();
         int m = p.size();
-        
-        if(n<m)
+        if (n < m)
             return "-1";
-        
-        int count  = 0;
-        
-        int len = INT_MAX; //length of ans string
-        int start = 0; // start of ans string
-        
-        unordered_map<char,int>mp;
-        
-        for(char c:p){
-            if(mp[c]== 0)
-            count++;
-            
+        int count = 0;
+        int len = INT_MAX; // length of ans string
+        int start = 0;     // start of ans string
+        unordered_map<char, int> mp;
+        for (char c : p)
+        {
+            if (mp[c] == 0)
+                count++;
             mp[c]++;
         }
-        
-        int i = 0;//start of window
-        int j = 0;//end of window
-        
-        while(j<s.size()){
+        int i = 0; // start of window
+        int j = 0; // end of window
+        while (j < s.size())
+        {
             mp[s[j]]--;
-            
-            if(mp[s[j]]==0)
-            count--;
-            
-            
-            if(count==0){
-                while(count==0){
-                    if(len>j-i+1){
-                        len = min(len,j-i+1); //updating length
-                        start = i; //updating new start
+            if (mp[s[j]] == 0)
+                count--;
+            if (count == 0)
+            {
+                while (count == 0)
+                {
+                    if (len > j - i + 1)
+                    {
+                        len = min(len, j - i + 1); // updating length
+                        start = i;                 // updating new start
                     }
-                    
                     mp[s[i]]++;
-                    
-                    if(mp[s[i]]>0)
-                    
-                    count++;
-                    
+                    if (mp[s[i]] > 0)
+                        count++;
                     i++;
                 }
             }
             j++;
         }
-        
-        if(len!=INT_MAX)
-        return s.substr(start,len);
-        
+        if (len != INT_MAX)
+            return s.substr(start, len);
         else
-        return "-1";
+            return "-1";
     }
 };
 
 // Remove Consecutive Characters
 
-class Solution{
-    public:
+class Solution
+{
+public:
     string removeConsecutiveCharacter(string s)
     {
-        if(s.size() == 0){
+        if (s.size() == 0)
+        {
             return s;
         }
-        if(s[0] == s[1]){
+        if (s[0] == s[1])
+        {
             return removeConsecutiveCharacter(s.substr(1));
         }
-        else{
+        else
+        {
             return s[0] + removeConsecutiveCharacter(s.substr(1));
         }
     }
@@ -1253,11 +1410,14 @@ class Solution{
 
 // Wildcard string matching
 
-class Solution{
-    public:
-    bool allStars(string &p, int i) {
-        for(int k = 0; k < i; k++)
-            if(p[k] != '*') return 0;
+class Solution
+{
+public:
+    bool allStars(string &p, int i)
+    {
+        for (int k = 0; k < i; k++)
+            if (p[k] != '*')
+                return 0;
         return 1;
     }
     bool match(string wild, string pattern)
@@ -1265,109 +1425,114 @@ class Solution{
         int n = wild.size(), m = pattern.size();
         vector<int> prev(m + 1, 0), curr(m + 1, 0);
         prev[0] = 1;
-        
-        for(int i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++)
+        {
             curr[0] = allStars(wild, i); // j becomes 0
-            for(int j = 1; j <= m; j++) {
-                if(wild[i - 1] == pattern[j - 1] or wild[i - 1] == '?')
+            for (int j = 1; j <= m; j++)
+            {
+                if (wild[i - 1] == pattern[j - 1] or wild[i - 1] == '?')
                     curr[j] = prev[j - 1];
-                else if(wild[i - 1] == '*')
+                else if (wild[i - 1] == '*')
                     curr[j] = prev[j] or curr[j - 1];
-                else 
+                else
                     curr[j] = 0;
             }
             prev = curr;
         }
-        
         return prev[m];
     }
 };
 
 // Function to find Number of customers who could not get a computer
 
-#include<iostream>
-#include<cstring>
+#include <iostream>
+#include <cstring>
 using namespace std;
 #define MAX_CHAR 26
 // n is number of computers in cafe.
 // 'seq' is given sequence of customer entry, exit events
-int runCustomerSimulation(int n, const char *seq){
-	// seen[i] = 0, indicates that customer 'i' is not in cafe
-	// seen[1] = 1, indicates that customer 'i' is in cafe but computer is not assigned yet.
-	// seen[2] = 2, indicates that customer 'i' is in cafe and has occupied a computer.
-	char seen[MAX_CHAR] = {0};
-	// Initialize result which is number of customers who could not get any computer.
-	int res = 0;
-	int occupied = 0; // To keep track of occupied computers
-	// Traverse the input sequence
-	for (int i=0; seq[i]; i++){
-		// Find index of current character in seen[0...25]
-		int ind = seq[i] - 'A';
-		// If First occurrence of 'seq[i]'
-		if (seen[ind] == 0)
-		{
-			// set the current character as seen
-			seen[ind] = 1;
-			// If number of occupied computers is less than n, then assign a computer to new customer
-			if (occupied < n){
-				occupied++;
-				// Set the current character as occupying a computer
-				seen[ind] = 2;
-			}
-			// Else this customer cannot get a computer, increment result
-			else{
-				res++;
-			}
-		}
-		// If this is second occurrence of 'seq[i]'
-		else
-		{
-		// Decrement occupied only if this customer was using a computer
-			if (seen[ind] == 2){
-				occupied--;
-			}
-		seen[ind] = 0;
-		}
-	}
-	return res;
+int runCustomerSimulation(int n, const char *seq)
+{
+    // seen[i] = 0, indicates that customer 'i' is not in cafe
+    // seen[1] = 1, indicates that customer 'i' is in cafe but computer is not assigned yet.
+    // seen[2] = 2, indicates that customer 'i' is in cafe and has occupied a computer.
+    char seen[MAX_CHAR] = {0};
+    // Initialize result which is number of customers who could not get any computer.
+    int res = 0;
+    int occupied = 0; // To keep track of occupied computers
+    // Traverse the input sequence
+    for (int i = 0; seq[i]; i++)
+    {
+        // Find index of current character in seen[0...25]
+        int ind = seq[i] - 'A';
+        // If First occurrence of 'seq[i]'
+        if (seen[ind] == 0)
+        {
+            // set the current character as seen
+            seen[ind] = 1;
+            // If number of occupied computers is less than n, then assign a computer to new customer
+            if (occupied < n)
+            {
+                occupied++;
+                // Set the current character as occupying a computer
+                seen[ind] = 2;
+            }
+            // Else this customer cannot get a computer, increment result
+            else
+            {
+                res++;
+            }
+        }
+        // If this is second occurrence of 'seq[i]'
+        else
+        {
+            // Decrement occupied only if this customer was using a computer
+            if (seen[ind] == 2)
+            {
+                occupied--;
+            }
+            seen[ind] = 0;
+        }
+    }
+    return res;
 }
-// Driver program
 int main()
 {
-	cout << runCustomerSimulation(2, "ABBAJJKZKZ") << endl;
-	cout << runCustomerSimulation(3, "GACCBDDBAGEE") << endl;
-	cout << runCustomerSimulation(3, "GACCBGDDBAEE") << endl;
-	cout << runCustomerSimulation(1, "ABCBCA") << endl;
-	cout << runCustomerSimulation(1, "ABCBCADEED") << endl;
-	return 0;
+    cout << runCustomerSimulation(2, "ABBAJJKZKZ") << endl;
+    cout << runCustomerSimulation(3, "GACCBDDBAGEE") << endl;
+    cout << runCustomerSimulation(3, "GACCBGDDBAEE") << endl;
+    cout << runCustomerSimulation(1, "ABCBCA") << endl;
+    cout << runCustomerSimulation(1, "ABCBCADEED") << endl;
+    return 0;
 }
 
 // Transform One String to Another using Minimum Number of Given Operation
 
 class Solution
 {
-    public:
-    int transform (string A, string B)
+public:
+    int transform(string A, string B)
     {
-        string a=A;
-        string b=B;
-        sort(a.begin(),a.end());
-        sort(b.begin(),b.end());
-        for(int i=0;i<a.length();i++)
+        string a = A;
+        string b = B;
+        sort(a.begin(), a.end());
+        sort(b.begin(), b.end());
+        for (int i = 0; i < a.length(); i++)
         {
-            if(a[i]!=b[i]) return -1;
+            if (a[i] != b[i])
+                return -1;
         }
-        int j=B.length()-1;
-        int i=A.length()-1;
-        int count=0;
-        while(i>=0 && j >=0)
+        int j = B.length() - 1;
+        int i = A.length() - 1;
+        int count = 0;
+        while (i >= 0 && j >= 0)
         {
-            if(A[i]==B[j])
+            if (A[i] == B[j])
             {
                 i--;
                 j--;
             }
-            else if(A[i]!=B[j])
+            else if (A[i] != B[j])
             {
                 i--;
                 count++;
@@ -1381,28 +1546,35 @@ class Solution
 
 class Solution
 {
-    public:
-    //Function to check if two strings are isomorphic.
+public:
+    // Function to check if two strings are isomorphic.
     bool areIsomorphic(string str1, string str2)
     {
-        if(str1.size() != str2.size()){
+        if (str1.size() != str2.size())
+        {
             return false;
         }
-        vector<int> m(256,-1);
-        for(int i=0;i<str1.size();i++){
-            if(m[str1[i]] == -1){
-                m[str1[i]]=str2[i];
+        vector<int> m(256, -1);
+        for (int i = 0; i < str1.size(); i++)
+        {
+            if (m[str1[i]] == -1)
+            {
+                m[str1[i]] = str2[i];
             }
-            else if(m[str1[i]] != str2[i]){
+            else if (m[str1[i]] != str2[i])
+            {
                 return false;
             }
         }
-        m=vector<int>(256,-1);
-        for(int i=0;i<str1.size();i++){
-            if(m[str2[i]] == -1){
-                m[str2[i]]=str1[i];
+        m = vector<int>(256, -1);
+        for (int i = 0; i < str1.size(); i++)
+        {
+            if (m[str2[i]] == -1)
+            {
+                m[str2[i]] = str1[i];
             }
-            else if(m[str2[i]] != str1[i]){
+            else if (m[str2[i]] != str1[i])
+            {
                 return false;
             }
         }
@@ -1420,36 +1592,40 @@ using namespace std;
 // A recursive function to print all possible sentences that can be formed from a list of word list
 void printUtil(string arr[R][C], int m, int n, string output[R])
 {
-	// Add current word to output array
-	output[m] = arr[m][n];
-	// If this is last word of current output sentence, then print the output sentence
-	if (m==R-1){
-		for (int i=0; i<R; i++)
-		cout << output[i] << " ";
-		cout << endl;
-		return;
-	}
-	// Recur for next row
-	for (int i=0; i<C; i++){
-		if (arr[m+1][i] != ""){
-			printUtil(arr, m+1, i, output);
-		}
-	}
+    // Add current word to output array
+    output[m] = arr[m][n];
+    // If this is last word of current output sentence, then print the output sentence
+    if (m == R - 1)
+    {
+        for (int i = 0; i < R; i++)
+            cout << output[i] << " ";
+        cout << endl;
+        return;
+    }
+    // Recur for next row
+    for (int i = 0; i < C; i++)
+    {
+        if (arr[m + 1][i] != "")
+        {
+            printUtil(arr, m + 1, i, output);
+        }
+    }
 }
 // A wrapper over printUtil()
 void print(string arr[R][C])
 {
-	// Create an array to store sentence
-	string output[R];
-	// Consider all words for first row as starting points and print all sentences
-	for (int i=0; i<C; i++)
-		if (arr[0][i] != ""){
-			printUtil(arr, 0, i, output);
-		}
-	}
-// Driver code
-int main(){
-	string arr[R][C] = {{"you", "we"},{"have", "are"},{"sleep", "eat", "drink"}};
-	print(arr);
-	return 0;
+    // Create an array to store sentence
+    string output[R];
+    // Consider all words for first row as starting points and print all sentences
+    for (int i = 0; i < C; i++)
+        if (arr[0][i] != "")
+        {
+            printUtil(arr, 0, i, output);
+        }
+}
+int main()
+{
+    string arr[R][C] = {{"you", "we"}, {"have", "are"}, {"sleep", "eat", "drink"}};
+    print(arr);
+    return 0;
 }
