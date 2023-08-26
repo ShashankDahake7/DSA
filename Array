@@ -778,6 +778,7 @@ public:
 
 // Common elements
 
+// GFG
 class Solution
 {
 public:
@@ -830,6 +831,44 @@ public:
         return ans;
     }
 };
+
+// CN
+#include <bits/stdc++.h>
+vector<int> findCommonElements(vector<int> &a, vector<int> &b, vector<int> &c)
+{
+  vector<int> ans;
+  set<int> s;
+  int i, j, k;
+  i = j = k = 0;
+  int n1 = a.size();
+  int n2 = b.size();
+  int n3 = c.size();
+  while (i < n1 && j < n2 && k < n3)
+  {
+    if (a[i] == b[j] && b[j] == c[k])
+    {
+      s.insert(a[i]);
+      i++, j++, k++;
+    }
+    else if (a[i] < b[j])
+    {
+      i++;
+    }
+    else if (b[j] < c[k])
+    {
+      j++;
+    }
+    else
+    {
+      k++;
+    }
+  }
+  for (auto i : s)
+  {
+    ans.push_back(i);
+  }
+  return ans;
+}
 
 // Rearrange array in alternating positive & negative items with O(1) extra space ( Following proper order )
 
