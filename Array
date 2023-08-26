@@ -300,6 +300,7 @@ int main()
 
 // Union of two sorted arrays
 
+// Method-1
 class Solution
 {
 public:
@@ -318,6 +319,139 @@ public:
         return st.size();
     }
 };
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+vector<int> FindUnion(int arr1[], int arr2[], int n, int m)
+{
+    int i = 0, j = 0;  // pointers
+    vector<int> Union; // Uninon vector
+    while (i < n && j < m)
+    {
+        if (arr1[i] <= arr2[j]) // Case 1 and 2
+        {
+            if (Union.size() == 0 || Union.back() != arr1[i])
+                Union.push_back(arr1[i]);
+            i++;
+        }
+        else // case 3
+        {
+            if (Union.size() == 0 || Union.back() != arr2[j])
+                Union.push_back(arr2[j]);
+            j++;
+        }
+    }
+    while (i < n) // IF any element left in arr1
+    {
+        if (Union.back() != arr1[i])
+            Union.push_back(arr1[i]);
+        i++;
+    }
+    while (j < m) // If any elements left in arr2
+    {
+        if (Union.back() != arr2[j])
+            Union.push_back(arr2[j]);
+        j++;
+    }
+    return Union;
+}
+int main()
+{
+    int n = 10, m = 7;
+    int arr1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int arr2[] = {2, 3, 4, 4, 5, 11, 12};
+    vector<int> Union = FindUnion(arr1, arr2, n, m);
+    cout << "Union of arr1 and arr2 is  " << endl;
+    for (auto &val : Union)
+        cout << val << " ";
+    return 0;
+}
+
+// Intersection of two sorted arrays
+
+// Method-1
+#include <bits/stdc++.h>
+using namespace std;
+vector<int> intersectionOfArrays(vector<int> A, vector<int> B)
+{
+    vector<int> ans;
+    // to maintain visited
+    vector<int> visited(B.size(), 0);
+    int i = 0, j = 0;
+    for (i = 0; i < A.size(); i++)
+    {
+        for (j = 0; j < B.size(); j++)
+        {
+            if (A[i] == B[j] && visited[j] == 0)
+            {
+                // if element matches and has not been matched with any other before
+                ans.push_back(B[j]);
+                visited[j] = 1;
+                break;
+            }
+            else if (B[j] > A[i])
+                break;
+            // because array is sorted , element will not be beyond this
+        }
+    }
+    return ans;
+}
+int main()
+{
+    // Array Initialisation.
+    vector<int> A{1, 2, 3, 3, 4, 5, 6, 7};
+    vector<int> B{3, 3, 4, 4, 5, 8};
+    vector<int> ans = intersectionOfArrays(A, B);
+    for (int i = 0; i < ans.size(); i++)
+    {
+        cout << ans[i] << " ";
+    }
+    return 0;
+}
+
+// Method-2
+#include <bits/stdc++.h>
+using namespace std;
+vector<int> intersectionOfArrays(vector<int> A, vector<int> B)
+{
+    // Declare ans array.
+    vector<int> ans;
+    int i = 0, j = 0;
+    // to traverse the arrays
+    while (i < A.size() && j < B.size())
+    {
+        // if current element in i is smaller
+        if (A[i] < B[j])
+        {
+            i++;
+        }
+        else if (B[j] < A[i])
+        {
+            j++;
+        }
+        else
+        {
+            // both elements are equal
+            ans.push_back(A[i]);
+            i++;
+            j++;
+        }
+    }
+    return ans;
+}
+int main()
+{
+    // Array Initialisation.
+    vector<int> A{1, 2, 3, 3, 4, 5, 6, 7};
+    vector<int> B{3, 3, 4, 4, 5, 8};
+    vector<int> ans = intersectionOfArrays(A, B);
+    for (int i = 0; i < ans.size(); i++)
+    {
+        cout << ans[i] << " ";
+    }
+    return 0;
+}
 
 // Cyclically Rotate an Array by one
 
@@ -955,45 +1089,52 @@ int main()
 // Longest Subarray with sum k
 
 // Method-1
-class Solution{
-    public:
-    int lenOfLongSubarr(int arr[],  int n, int k) 
-    { 
-        unordered_map<int, int> um; 
+class Solution
+{
+public:
+    int lenOfLongSubarr(int arr[], int n, int k)
+    {
+        unordered_map<int, int> um;
         int sum = 0, maxLen = 0;
-        // traverse the given array 
-        for (int i = 0; i < n; i++) {
-            // accumulate sum 
+        // traverse the given array
+        for (int i = 0; i < n; i++)
+        {
+            // accumulate sum
             sum += arr[i];
-            // when subarray starts from index '0' 
-            if (sum == k) 
+            // when subarray starts from index '0'
+            if (sum == k)
                 maxLen = i + 1;
-            // make an entry for 'sum' if it is not present in 'um' 
-            if (um.find(sum) == um.end()) 
+            // make an entry for 'sum' if it is not present in 'um'
+            if (um.find(sum) == um.end())
                 um[sum] = i;
-            // check if 'sum-k' is present in 'um' or not 
-            if (um.find(sum - k) != um.end()) {
-                // update maxLength 
-                if (maxLen < (i - um[sum - k])) 
-                    maxLen = i - um[sum - k]; 
-            } 
+            // check if 'sum-k' is present in 'um' or not
+            if (um.find(sum - k) != um.end())
+            {
+                // update maxLength
+                if (maxLen < (i - um[sum - k]))
+                    maxLen = i - um[sum - k];
+            }
         }
-        // required maximum length 
-        return maxLen; 
+        // required maximum length
+        return maxLen;
     }
 };
 
 // Method-2
-class Solution {
+class Solution
+{
 public:
-    int subarraySum(vector<int>& nums, int k) {
-        unordered_map<int,int> mp;
-        int sum=0,ans=0;
+    int subarraySum(vector<int> &nums, int k)
+    {
+        unordered_map<int, int> mp;
+        int sum = 0, ans = 0;
         mp[sum] = 1;
-        for(auto it:nums){
+        for (auto it : nums)
+        {
             sum += it;
             int find = sum - k;
-            if(mp.find(find) != mp.end()){
+            if (mp.find(find) != mp.end())
+            {
                 ans += mp[find];
             }
             mp[sum]++;
@@ -1152,7 +1293,8 @@ public:
 
 // Maximum profit by buying and selling a share at most twice
 
-int maxProfit(vector<int> &arr)
+int
+maxProfit(vector<int> &arr)
 {
     int first_buy = INT_MIN;
     int first_sell = 0;
