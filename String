@@ -1052,67 +1052,36 @@ int minFlips(string s)
 
 // Second most repeated string in a sequence
 
-class Solution
+#include <bits/stdc++.h>
+using namespace std;
+string secMostRepeated(vector<string> seq)
 {
-public:
-    string secFrequent(string arr[], int n)
-    {
-        sort(arr, arr + n);
-        int mxcnt = 0, mxcnt1 = 0, cnt = 1;
-        sort(arr, arr + n);
-        string curstr1 = "", curstr2 = "";
-        string curr = arr[0];
-        for (int i = 1; i < n; i++)
-        {
-            if (curr == arr[i])
-            {
-                cnt++;
-                if (cnt > mxcnt)
-                {
-                    mxcnt = cnt;
-                    curstr1 = curr;
-                }
-            }
-            else
-            {
-                cnt = 1;
-                curr = arr[i];
-            }
-        }
-        if (mxcnt == n)
-        { // if all the string are of same type:{aaa,aaa}
-            return "";
-        }
-        string curr1 = curstr1;
-        cnt = 1;
-        curr = arr[n - 1];
-        bool v = false; // if second most is only one i.e all other are same type
-        for (int i = n - 2; i >= 0; i--)
-        {
-            if (curr == arr[i] && curr != curr1)
-            {
-                cnt++;
-                v = true;
-                if (cnt < mxcnt && cnt >= mxcnt1)
-                {
-                    //   cout<<curr<<cnt;
-                    curstr2 = curr;
-                    mxcnt1 = cnt;
-                }
-            }
-            else
-            {
-                cnt = 1;
-                curr = arr[i];
-            }
-        }
-        if (!v)
-        {
-            curstr2 = curr;
-        }
-        return curstr2;
-    }
-};
+	// Store all the words with its occurrence
+	unordered_map<string, int> occ;
+	for (int i = 0; i < seq.size(); i++)
+		occ[seq[i]]++;
+	// find the second largest occurrence
+	int first_max = INT_MIN, sec_max = INT_MIN;
+	for (auto it = occ.begin(); it != occ.end(); it++) {
+		if (it->second > first_max) {
+			sec_max = first_max;
+			first_max = it->second;
+		}
+		else if (it->second > sec_max &&
+				it->second != first_max)
+			sec_max = it->second;
+	}
+	// Return string with occurrence equals to sec_max
+	for (auto it = occ.begin(); it != occ.end(); it++)
+		if (it->second == sec_max)
+			return it->first;
+}
+int main()
+{
+	vector<string> seq = { "ccc", "aaa", "ccc", "ddd", "aaa", "aaa" };
+	cout << secMostRepeated(seq);
+	return 0;
+}
 
 // Minimum number of swaps for brackets balancing
 
