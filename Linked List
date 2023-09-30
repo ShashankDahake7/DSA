@@ -1362,31 +1362,28 @@ class Solution{
 
 // Deletion and Reverse in a Linked List
 
-void deleteNode(struct Node **head, int key){
-    Node* temp=*head;
-    while(temp->next->data != key){
-        temp=temp->next;
+void deleteNode(struct Node **head, int key)
+{
+    Node*curr = *head;
+    while( curr->data!=key){
+      curr = curr->next;
     }
-    temp->next=temp->next->next;
+    curr->data = curr->next->data;
+    Node*temp = curr->next;
+    curr->next = curr->next->next;
+    delete temp;
 }
-/* Function to reverse the linked list */
-void reverse(struct Node** head_ref){
-    Node* temp=*head_ref;
-    Node* tail=temp->next;
-    while(tail->next !=temp){
-        tail=tail->next;
+void reverse(struct Node** head_ref)
+{
+    Node*prev = NULL;
+    Node*curr = *head_ref;
+    while(curr!=NULL){
+       Node*next = curr->next;
+       curr->next = prev;
+       prev = curr;
+       curr = next;
     }
-    Node* prev=tail;
-    Node* curr=temp;
-    Node* nex=curr;
-    while(curr!=tail){
-        nex=curr->next;
-        curr->next=prev;
-        prev=curr;
-        curr=nex;
-    }
-    curr->next=prev;
-    *head_ref=curr;
+    *head_ref = prev->next;
 }
 
 // Reverse a doubly linked list
