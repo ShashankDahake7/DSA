@@ -647,7 +647,7 @@ int main() {
     }
 }
 
-// Rasta and kheshtak (Java Solution)
+// Rasta and kheshtak
 
 #include <iostream>
 #include <vector>
