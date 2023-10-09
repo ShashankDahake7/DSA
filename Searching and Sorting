@@ -487,6 +487,7 @@ public:
 
 // Product array puzzle
 
+// Method-1
 class Solution{
   public:
     // nums: given vector
@@ -506,6 +507,21 @@ class Solution{
         return ans;      
     }
 };
+
+// Method-2
+vector<long long int> productExceptSelf(vector<long long int>& nums, int n) {
+    vector<long long> v(n), a(n), b(n);
+    a[0]=1;
+    b[n-1]=1;
+    for(int i=1;i<n;i++){  
+        a[i]=a[i-1]*nums[i-1]; //Product of left side of i
+    } 
+    for(int i=n-2;i>=0;i--){
+        b[i]=b[i+1]*nums[i+1]; //Product of right side of i
+    } 
+    for(int i=0;i<n;i++) v[i]=a[i]*b[i];
+    return v;
+}
 
 // Sort by Set Bit Count
 
