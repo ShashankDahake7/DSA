@@ -730,95 +730,48 @@ int main() {
 
 // Kth smallest number again
 
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
-// The following function helps to merge the given intervals
-vector<vector<ll>> merge(vector<vector<ll>>& intervals) {
-	sort(intervals.begin(),intervals.end());
-	vector<vector<ll>>ans;
-	int left=0,right=1,n=intervals.size();
-	while(left<n && right<n) {
-		if(intervals[left][1]<intervals[right][0]) {
-			left=right;
-		}
-		else {
-			if(intervals[left][1]<intervals[right][1]) {
-				intervals[left][1]=intervals[right][1];
-			}
-			intervals[right]={-1,-1};
-		}
-		right++;
-	}
-	for(int i=0;i<n;i++) {
-		if(intervals[i][0]!=-1) {
-			ans.push_back(intervals[i]);
-		}
-	}
-	return ans;
-}
+int main(){
+  int t; 
+  cin>> t;
+  while (t--){
+     long long int n, q;
+     cin >> n >> q;
+     vector<pair<long long int,long long int>> v;
+     for (long long int i=0; i< n; i++){
+        long long int x,y; cin >> x >> y;
+        v.push_back ({x,y});
+     }
+     sort (v.begin(), v.end()); // sort
+     long long int idx=0; // merge
+     for (long long int i=1; i< v.size(); i++) {
+        if (v[idx].second >= v[i].first){
+              v[idx].second= max(v[idx].second, v[i].second);
+        }
+        else{
+              idx++;
+              v[idx]= v[i];
+        }
+     }     
+     while (q--){
+        long long int k;
+        cin >> k;
+        long long int ans=-1;
+        for (long long int i=0; i<= idx; i++){
+            if ((v[i].second - v[i].first + 1) >= k) {
+               ans= v[i].first + k -1;
+               break;
+            }     
+            else{
 
-// The following function gives the index no. of the range under which 'k' falls.
-int indexProvider(vector<vector<ll>>&boundaries,ll &k) {
-	if(boundaries[boundaries.size()-1][1]<k) {
-		return -1;
-	}
-	int start=0,end=boundaries.size()-1;
-	while(start<=end) {
-		int mid=(start+(end-start)/2);
-		if(boundaries[mid][0]<=k && boundaries[mid][1]>=k) {
-			return mid;
-		}
-		else if(boundaries[mid][0]>k) {
-			end=mid-1;
-		}
-		else if(boundaries[mid][1]<k) {
-			start=mid+1;
-		}
-	}
-	return -1;
-}
-int main() {
-	int t;
-	cin>>t;
-	while(t--) {
-		int n,q;
-		cin>>n>>q;
-		vector<vector<ll>>ranges;
-		for(int i=0;i<n;i++) {
-			ll a,b;
-			cin>>a>>b;
-			ranges.push_back({a,b});
-		}
-		// Merge the given intervals so that computation can be done for distinct numbers only
-		ranges=merge(ranges);
-
-		// The following vector stores the serial no. range of the given ranges
-		vector<vector<ll>>boundaries(ranges.size(),vector<ll>(2));
-
-		// Populate the vector
-		for(int i=0;i<ranges.size();i++) {
-			ll start=(i==0?1:boundaries[i-1][1]+1);
-			ll end=start+(ranges[i][1]-ranges[i][0]);
-			boundaries[i]={start,end};
-		}
-
-		// Take the input 'q' and answer each query
-		for(int i=0;i<q;i++) {
-			ll k;
-			cin>>k;
-
-			// Get the index of the range under which 'k' falls
-			int index=indexProvider(boundaries,k);
-			if(index==-1) {
-				cout<<-1<<"\n";
-			}
-			else {
-				cout<<ranges[index][0]+(k-boundaries[index][0])<<"\n";
-			}
-		}
-	}
-	return 0;
+               k= k - (v[i].second - v[i].first + 1);
+            }
+         }
+         cout << ans << endl;
+       }
+      }
+      return 0;
 }
 
 // Search in a rotated array
