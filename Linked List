@@ -886,6 +886,49 @@ Node *removeDuplicates(Node *head)
 
 // Method-3(sort then use above question approach)
 
+// Remove all occurences of duplicates of the sorted linked list
+
+Node* removeAllDuplicates(struct Node* head){
+        int flag = 0;
+        struct Node* temp = head->next;
+        struct Node* prev = head;
+        struct Node* last = NULL;
+        while(temp != NULL) {
+            if(prev->data == temp->data) {
+                flag = 1;
+                prev->next = temp->next;
+                temp = temp->next;
+            }
+            else if(flag == 1) {
+                if(last == NULL) {
+                    prev = temp;
+                    temp = temp->next;
+                    head = prev;
+                }
+                else{
+                    last->next = temp;
+                    prev = temp;
+                    temp = temp->next;
+                }
+                flag = 0;
+            }
+            else {
+                last = prev;
+                prev = prev->next;
+                temp = temp->next;
+            }
+        }
+        if(flag == 1) {
+            if(last!=NULL) {
+                last->next = NULL;
+            }
+            else{
+                return NULL;
+            }
+        }
+        return head;
+}
+
 // Move last element to front of a given Linked List
 
 #include <bits/stdc++.h>
