@@ -2661,54 +2661,44 @@ long long multiplyTwoLists(Node *l1, Node *l2)
 
 // Delete nodes having greater value on right
 
-class Solution
-{
-public:
-    Node *reverseL(Node *head)
-    {
-        Node *curr = head, *prev = NULL;
-        while (curr != NULL)
-        {
-            Node *temp = curr->next;
+class Solution{
+    public:
+    Node* reverse(Node* head){
+        Node* curr=head;
+        Node* prev=NULL,*next;
+        while(curr!=NULL){
+            next = curr->next;
             curr->next = prev;
             prev = curr;
-            curr = temp;
+            curr = next;
         }
         return prev;
     }
-    Node *compute(Node *head)
-    {
-        Node *head1 = new Node(-1);
-        Node *temp = head1, *ptr = head;
-        while (ptr != NULL)
-        {
-            temp->next = new Node(ptr->data);
-            ptr = ptr->next;
-            temp = temp->next;
-        }
-        head1 = head1->next;
-        Node *rev = reverseL(head1);
-        // delete element having greater element on left
-        temp = rev;
-        Node *prev = NULL;
-        int maxi = temp->data;
-        while (temp != NULL)
-        {
-            if (maxi > temp->data)
-            {
-                prev->next = temp->next;
-                temp = temp->next;
+    Node *compute(Node *head){
+        head = reverse(head);
+        Node* curr = head;
+        Node* prev = head;
+        int maxVal = curr->data;
+        curr = curr->next;
+        while(curr!=NULL){
+            if(curr->data >= maxVal){
+                prev = curr;
+                maxVal = curr->data;
+                curr = curr->next;
             }
-            else
-            {
-                maxi = temp->data;
-                prev = temp;
-                temp = temp->next;
+            else{
+                Node* temp = curr;
+                if(curr->next!=NULL){
+                    prev->next = curr->next;    
+                }
+                else{
+                    prev->next = NULL;
+                }
+                curr = curr->next;
+                delete temp;
             }
         }
-        // reverse back to get original LL
-        Node *res = reverseL(rev);
-        return res;
+        return reverse(head);
     }
 };
 
